@@ -35,13 +35,9 @@ class NetworkParams:
     network_name       : Optional[str] = "MLP"     # dataset, use <Dataset>Eval for FT
     weight_checkpoints : str           = ""
     artifact           : str           = ""
-    vocab_size         : int           = 138499
     dropout         : float = 0.75
     normalization   : str   = 'BatchNorm1d'
     activation      : str   = 'GELU'
-    input_size      : int   = 0    # dummy arg
-    nb_authors      : int   = 149682
-    emb_authors_dim : int   = 64
 
 @dataclass
 class OptimizerParams: 
@@ -54,26 +50,6 @@ class OptimizerParams:
     scheduler     : bool  = True
     warmup_epochs : int   = 5
     max_epochs    : int   = 20
-
-@dataclass
-class EmbedParams:
-    use_neighbors_embeddings          : bool = True
-    use_keywords_embeddings           : bool = True
-    use_abstract_embeddings           : bool = True
-    use_handcrafted_embeddings        : bool = True 
-    
-    use_jaccard_coefficient           : bool = False
-    use_clustering                    : bool = False
-    use_adamic_adar_index             : bool = False
-    use_preferential_attachment       : bool = False
-    use_cn_soundarajan_hopcroft       : bool = False
-    use_ra_index_soundarajan_hopcroft : bool = False
-    use_sorenson_index                : bool = False   
-    # Too big to work
-    use_eigenvector_centrality        : bool = False
-    use_authors_embeddings            : bool = False 
-    use_shortest_path                 : bool = False
-    use_common_neighbor_centrality    : bool = False
     
 
 @dataclass
@@ -81,21 +57,11 @@ class DatasetParams:
     """Dataset Parameters
     ! The batch_size and number of crops should be defined here
     """
-    dataset_name            : Optional[str]           = "SentenceEmbeddingsFeatures"     # dataset, use <Dataset>Eval for FT
+    dataset_name            : Optional[str]           = ""     # dataset, use <Dataset>Eval for FT
     num_workers             : int                     = 8         # number of workers for dataloadersint
     batch_size              : int                     = 32     # batch_size
     split_val               : float                   = 0.2
-    root_dataset            : Optional[str]           = osp.join(os.getcwd(), "input")
-    vocab_size              : int                     = 138499
-
-    abstract_embeddings_artifact     : str = 'altegrad-gnn-link-prediction/altegrad_challenge/embeddings.npy:v0'
-    keywords_embeddings_artifact     : str = 'altegrad-gnn-link-prediction/altegrad_challenge/keywords-emb-10-sentence-transformers-allenai-specter.npy:v0'
-    keywords_artifact                : str = 'altegrad-gnn-link-prediction/altegrad_challenge/keywords-10-sentence-transformers-allenai-specter.npy:v0'
-    name_transformer                 : str = 'sentence-transformers/allenai-specter'
-    only_create_abstract_embeddings  : bool = False
-    only_create_keywords             : bool = False
-    nb_keywords                      : int = 10    
-    embed_param   : EmbedParams     = EmbedParams()           
+    root_dataset            : Optional[str]           = osp.join(os.getcwd(), "input")        
 
 
 @dataclass
