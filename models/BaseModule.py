@@ -3,7 +3,7 @@ import torch.nn as nn
 from pytorch_lightning import LightningModule
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from utils.agent_utils import get_net
-
+from models.Baseline import Baseline
 
 class BaseModule(LightningModule):
     def __init__(self, network_param, optim_param):
@@ -12,19 +12,17 @@ class BaseModule(LightningModule):
         super(BaseModule, self).__init__()
 
         # loss function
-        self.loss = nn.BCEWithLogitsLoss()
+        self.loss = nn.CrossEntropyLoss()
 
         # optimizer
         self.optim_param = optim_param
         self.lr = optim_param.lr
 
         # model
-        # self.model = get_net(network_param.network_name, network_param)
+        self.model = get_net(network_param.network_name, network_param)
         # if network_param.weight_checkpoint is not None:
         #     self.model.load_state_dict(torch.load(
         #         network_param.weight_checkpoint)["state_dict"])
-
-        self.model = nn.Linear(1, 1)
 
     def forward(self, x):
         output = self.model(x)

@@ -21,7 +21,7 @@ class Hparams:
     wandb_project   : str          = f"test-dlmi"
     root_dir        : str          = os.getcwd()  # root_dir
     seed_everything : Optional[int]= None   # seed for the whole run
-    tune_lr         : bool         = True  # tune the model on first run
+    tune_lr         : bool         = False  # tune the model on first run
     gpu             : int          = 0      # number or gpu
     max_epochs      : int          = 30    # maximum number of epochs
     weights_path    : str          = "weights"
@@ -32,12 +32,17 @@ class Hparams:
 
 @dataclass
 class NetworkParams:
-    network_name       : Optional[str] = "MLP"     # dataset, use <Dataset>Eval for FT
-    weight_checkpoints : str           = ""
-    artifact           : str           = ""
-    dropout         : float = 0.75
-    normalization   : str   = 'BatchNorm1d'
-    activation      : str   = 'GELU'
+    feature_extractor_name : str           = "resnet18"
+    network_name           : str           = "Baseline"
+    weight_checkpoints     : str           = ""
+    artifact               : str           = ""
+
+    nb_sample              : int           = 25
+
+    # MLP parameters
+    dropout                : float         = 0.75
+    normalization          : str           = 'BatchNorm1d'
+    activation             : str           = 'GELU'
 
 @dataclass
 class OptimizerParams: 
@@ -50,16 +55,13 @@ class OptimizerParams:
     scheduler     : bool  = True
     warmup_epochs : int   = 5
     max_epochs    : int   = 20
-    
 
 @dataclass
 class DatasetParams:
-    """Dataset Parameters
-    ! The batch_size and number of crops should be defined here
-    """
+    """Dataset Parameters"""
     dataset_name            : Optional[str]           = "BaseDataset"     # dataset, use <Dataset>Eval for FT
-    num_workers             : int                     = 8         # number of workers for dataloadersint
-    batch_size              : int                     = 32     # batch_size
+    num_workers             : int                     = 1         # number of workers for dataloadersint
+    batch_size              : int                     = 4     # batch_size
     split_val               : float                   = 0.2
     root_dataset            : Optional[str]           = osp.join(os.getcwd(), "assets", "mvadlmi")     
     

@@ -38,7 +38,6 @@ class BaseDataset(Dataset):
         # im_scale = imread(path_im, key=2)
 
         im_tensor = torch.from_numpy(img)
-        print(im_tensor.shape)
 
         quantity_to_pad = abs(im_tensor.shape[0] - im_tensor.shape[1])
         bool_temp = im_tensor.shape[1] < im_tensor.shape[0]
@@ -47,7 +46,6 @@ class BaseDataset(Dataset):
             mode='constant', value=255
         ).unsqueeze(0)
         
-        # print(padded_im_tensor.shape)
         assert padded_im_tensor.shape[1] == padded_im_tensor.shape[2] # check that it is a square image
 
         remaining_pixels = padded_im_tensor.shape[1] % self.params.patch_size
@@ -56,7 +54,6 @@ class BaseDataset(Dataset):
                 # padd
                 padded_im_tensor = F.pad(padded_im_tensor, pad=(
                     0, 0, remaining_pixels//2, remaining_pixels//2, remaining_pixels//2, remaining_pixels//2), mode='constant', value=255)
-                # print(padded_im_tensor.shape)
             else:
                 # crop
                 padded_im_tensor = padded_im_tensor[:, 0:padded_im_tensor.shape[1] -
@@ -71,4 +68,4 @@ class BaseDataset(Dataset):
                                                                  self.params.patch_size*3) < self.params.percentage_blank  # remove patch with only blanks pixels
         non_white_patches = output_patches[mask]
 
-        return non_white_patches, label
+        return non_white_patches/255.0, label
