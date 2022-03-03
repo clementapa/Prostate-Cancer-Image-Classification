@@ -13,6 +13,14 @@ def get_net(network_name, network_param):
     net = getattr(mod,network_name)
     return net(network_param)
 
+def get_dataset(dataset_name, dataset_param):
+    """
+    Get Network Architecture based on arguments provided
+    """
+    mod = importlib.import_module(f"datasets.{dataset_name}")
+    dataset = getattr(mod, dataset_name)
+    return dataset(dataset_param)
+
 def get_datamodule(data_param):
     """
     Fetch Datamodule Function Pointer

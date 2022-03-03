@@ -16,13 +16,13 @@ import torch.optim
 class Hparams:
     """Hyperparameters of for the run"""
 
-    wandb_entity    : str          = "altegrad-gnn-link-prediction"         # name of the project
+    wandb_entity    : str          = "clementapa"         # name of the project
     debug           : bool         = False            # test code before running, if testing, no checkpoints are written
-    wandb_project   : str          = f"test-altegrad"
+    wandb_project   : str          = f"test-dlmi"
     root_dir        : str          = os.getcwd()  # root_dir
     seed_everything : Optional[int]= None   # seed for the whole run
     tune_lr         : bool         = True  # tune the model on first run
-    gpu             : int          = 1      # number or gpu
+    gpu             : int          = 0      # number or gpu
     max_epochs      : int          = 30    # maximum number of epochs
     weights_path    : str          = "weights"
     dev_run         : bool         = False
@@ -61,8 +61,10 @@ class DatasetParams:
     num_workers             : int                     = 8         # number of workers for dataloadersint
     batch_size              : int                     = 32     # batch_size
     split_val               : float                   = 0.2
-    root_dataset            : Optional[str]           = osp.join(os.getcwd(), "mvadlmi")     
-
+    root_dataset            : Optional[str]           = osp.join(os.getcwd(), "assets", "mvadlmi")     
+    
+    patch_size              : int                     = 128
+    percentage_blank        : float                   = 0.2
 
 @dataclass
 class Parameters:

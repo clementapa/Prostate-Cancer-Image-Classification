@@ -26,8 +26,7 @@ class BaseTrainer:
         )
 
         logger.info('Loading Model module...')
-        self.pl_model = BaseModule(
-            config.network_param, config.feat_param, config.optim_param)
+        self.pl_model = BaseModule(config.network_param, config.optim_param)
 
         self.wb_run.watch(self.pl_model.model)
 

@@ -25,3 +25,6 @@ The grading process consists of finding and classifying cancer tissue into so-ca
     - different split (may be the best thing to achieve good results on the test)
     - various architectures 
     - tune hyper-parameters
+
+## Interesting articles:
+- https://openreview.net/pdf?id=Hk2YYqssf

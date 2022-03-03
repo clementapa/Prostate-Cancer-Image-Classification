@@ -1,0 +1,2 @@
+tifffile
+pytorch-lightning

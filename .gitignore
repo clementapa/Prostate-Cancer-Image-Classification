@@ -2,8 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-mvadlmi/
-
 
 # C extensions
 *.so
@@ -131,3 +129,5 @@ dmypy.json
 .pyre/
 
 /assets
+*.ckpt
+/wandb
