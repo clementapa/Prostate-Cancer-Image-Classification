@@ -57,11 +57,11 @@ class DatasetParams:
     """Dataset Parameters
     ! The batch_size and number of crops should be defined here
     """
-    dataset_name            : Optional[str]           = ""     # dataset, use <Dataset>Eval for FT
+    dataset_name            : Optional[str]           = "BaseDataset"     # dataset, use <Dataset>Eval for FT
     num_workers             : int                     = 8         # number of workers for dataloadersint
     batch_size              : int                     = 32     # batch_size
     split_val               : float                   = 0.2
-    root_dataset            : Optional[str]           = osp.join(os.getcwd(), "input")        
+    root_dataset            : Optional[str]           = osp.join(os.getcwd(), "mvadlmi")     
 
 
 @dataclass
