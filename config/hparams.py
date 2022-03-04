@@ -68,7 +68,7 @@ class DatasetParams:
     num_workers: int = 1  # number of workers for dataloadersint
     batch_size: int = 2  # batch_size
     split_val: float = 0.2
-    root_dataset: Optional[str] = osp.join(os.getcwd(), "mvadlmi")
+    root_dataset: Optional[str] = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     patch_size: int = 32
     percentage_blank: float = 0.2
