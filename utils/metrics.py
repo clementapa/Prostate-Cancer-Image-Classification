@@ -1,10 +1,11 @@
 from utils.agent_utils import import_class
+
 """
 https://torchmetrics.readthedocs.io/en/stable/references/modules.html#base-class MODULE METRICS
 """
 
-class MetricsModule():
 
+class MetricsModule:
     def __init__(self, set_name, params, device) -> None:
         """
         metrics : list of name metrics e.g ["Accuracy", "IoU"]
@@ -14,7 +15,10 @@ class MetricsModule():
         dict_metrics = {}
         for name in params.list_metrics:
             instance = import_class("torchmetrics." + name)(
-                compute_on_step=False, num_classes=params.num_classes, average=params.average)
+                compute_on_step=False,
+                num_classes=params.num_classes,
+                average=params.average,
+            )
             dict_metrics[name.lower()] = instance.to(device)
 
         self.dict_metrics = dict_metrics
