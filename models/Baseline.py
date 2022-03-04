@@ -14,7 +14,9 @@ class Baseline(nn.Module):
             self.params.feature_extractor_name, pretrained=True
         )  # TODO how deal with the input?
 
-        self.mlp = MLP(self.features_extractor.fc.in_features * params.nb_samples, params)
+        self.mlp = MLP(
+            self.features_extractor.fc.in_features * params.nb_samples, params
+        )
 
     def forward(self, x):
         # step 1: random sampling patches
