@@ -40,7 +40,7 @@ class BaseDataset(Dataset):
         img_path = self.X[idx]
         label = self.y[idx]
 
-        img = imread(img_path, key=2)
+        img = imread(img_path, key=1)
 
         # if self.transform !=None :
         #     img = self.transform(img)
