@@ -72,7 +72,7 @@ class DatasetParams:
 
     patch_size: int = 32
     percentage_blank: float = 0.2
-    nb_samples: int = 64
+    nb_samples: int = 16
 
 
 @dataclass
