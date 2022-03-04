@@ -24,8 +24,12 @@ class Baseline(nn.Module):
         # step 1: random sampling patches
         features = []
         for batch in x:
-            #features.append(self.features_extractor(batch.permute(0, 3, 1, 2)))
-            features.append(self.features_extractor.forward_features(batch.permute(0, 3, 1, 2)).squeeze())
+            # features.append(self.features_extractor(batch.permute(0, 3, 1, 2)))
+            features.append(
+                self.features_extractor.forward_features(
+                    batch.permute(0, 3, 1, 2)
+                ).squeeze()
+            )
         # bs, n_patches, h, w, c
         features = torch.stack(features)
 
