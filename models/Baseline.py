@@ -14,9 +14,7 @@ class Baseline(nn.Module):
             self.params.feature_extractor_name, pretrained=True
         )  # TODO how deal with the input?
 
-        self.mlp = MLP(self.features_extractor.fc.in_features, params)
-
-        self.features_extractor.fc = nn.Identity()
+        self.mlp = MLP(self.features_extractor.fc.in_features*64, params)
 
     def forward(self, x):
         # step 1: random sampling patches
@@ -26,5 +24,5 @@ class Baseline(nn.Module):
         # bs, n_patches, h, w, c
         features = torch.stack(features)
 
-        output = self.mlp(features.mean(dim=1))  # mean to try
+        output = self.mlp(features)  # mean to try
         return output
