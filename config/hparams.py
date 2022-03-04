@@ -98,6 +98,11 @@ class MetricParams:
     average: str = "weighted"
     num_classes: int = 6
 
+@dataclass
+class CallbacksParams:
+    log_freq_img: int = 5
+    log_nb_img: int = 4
+    log_nb_patches: int = 6
 
 @dataclass
 class Parameters:
@@ -108,6 +113,7 @@ class Parameters:
     network_param: NetworkParams = NetworkParams()
     optim_param: OptimizerParams = OptimizerParams()
     metric_param: MetricParams = MetricParams()
+    callbacks_param: CallbacksParams = CallbacksParams()
 
     def __post_init__(self):
         """Post-initialization code"""

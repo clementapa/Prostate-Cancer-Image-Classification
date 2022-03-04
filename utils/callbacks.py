@@ -1,11 +1,15 @@
 from datetime import timedelta
 from typing import Any, Dict, Optional
 
+import numpy as np
 import torch
 import wandb
 from pytorch_lightning.callbacks import Callback, ModelCheckpoint
 from pytorch_lightning.utilities import rank_zero_info
 from pytorch_lightning.utilities.types import _METRIC, _PATH, STEP_OUTPUT
+from torchvision.utils import make_grid
+
+from utils.constant import MEAN, STD
 from utils.metrics import MetricsModule
 
 
@@ -193,3 +197,47 @@ class LogMetricsCallback(Callback):
         """Called when the validation epoch ends."""
 
         self.metrics_module_validation.log_metrics("val/", pl_module)
+
+
+class LogImagesPredictions(Callback):
+    def __init__(self, log_freq_img, log_nb_img, log_nb_patches) -> None:
+        super().__init__()
+        self.log_freq_img = log_freq_img
+        self.log_nb_img = log_nb_img
+        self.log_nb_patches = log_nb_patches
+
+    def on_validation_batch_end(
+        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
+    ):
+        """Called when the validation batch ends."""
+
+        if batch_idx == 0 and pl_module.current_epoch % self.log_freq_img == 0:
+            self.log_images("val", batch, self.log_nb_img, self.log_nb_patches, outputs)
+
+    def on_train_batch_end(
+        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
+    ):
+        """Called when the training batch ends."""
+
+        if batch_idx == 0 and pl_module.current_epoch % self.log_freq_img == 0:
+            self.log_images("train", batch, self.log_nb_img, self.log_nb_patches, outputs)
+
+    def log_images(self, name, batch, n, p, outputs):
+        
+        x, y = batch
+        images = x[:n,:p].detach().cpu()
+        labels = np.array(y[:n].cpu())
+        preds = np.array(outputs['logits'][:n].argmax(dim=1).cpu())
+
+        images = [make_grid(im) for im in images]
+        samples = []
+
+        for i in range(len(images)):
+
+            bg_image = images[i].numpy().transpose((1, 2, 0))
+            bg_image = STD * bg_image + MEAN
+            bg_image = np.clip(bg_image, 0, 1)
+
+            samples.append(wandb.Image(bg_image, caption=f"label: {labels[i]}, prediction: {preds[i]}"))
+
+        wandb.log({f"{name}/predictions": samples})
