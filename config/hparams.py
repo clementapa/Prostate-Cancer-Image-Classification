@@ -30,6 +30,7 @@ class Hparams:
     dev_run: bool = False
     train: bool = True
     best_model: str = ""  # then galant
+    
 
 
 @dataclass
@@ -39,8 +40,8 @@ class NetworkParams:
     weight_checkpoints: str = ""
     artifact: str = ""
 
-    nb_sample: int = 25
-
+    # nb_sample: int = 25
+    nb_samples: int = 16
     # MLP parameters
     dropout: float = 0.75
     normalization: str = "BatchNorm1d"
@@ -73,6 +74,7 @@ class DatasetParams:
     patch_size: int = 32
     percentage_blank: float = 0.2
     nb_samples: int = 16
+
 
 
 @dataclass
