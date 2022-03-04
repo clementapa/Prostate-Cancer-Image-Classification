@@ -16,7 +16,7 @@ import torch.optim
 class Hparams:
     """Hyperparameters of for the run"""
 
-    wandb_entity    : str          = "younesbelkada"         # name of the project
+    wandb_entity    : str          = "attributes_classification_celeba"         # name of the project
     debug           : bool         = False            # test code before running, if testing, no checkpoints are written
     wandb_project   : str          = f"test-dlmi"
     root_dir        : str          = os.getcwd()  # root_dir
@@ -27,7 +27,7 @@ class Hparams:
     weights_path    : str          = "weights"
     dev_run         : bool         = False
     train           : bool         = True
-    best_model      : str          = "elated-aardvark-644" # then galant
+    best_model      : str          = "" # then galant
     
 
 @dataclass
@@ -61,11 +61,11 @@ class DatasetParams:
     """Dataset Parameters"""
     dataset_name            : Optional[str]           = "BaseDataset"     # dataset, use <Dataset>Eval for FT
     num_workers             : int                     = 1         # number of workers for dataloadersint
-    batch_size              : int                     = 4     # batch_size
+    batch_size              : int                     = 2     # batch_size
     split_val               : float                   = 0.2
     root_dataset            : Optional[str]           = osp.join(os.getcwd(), "mvadlmi")     
     
-    patch_size              : int                     = 128
+    patch_size              : int                     = 32
     percentage_blank        : float                   = 0.2
     nb_samples              : int                     = 64
 

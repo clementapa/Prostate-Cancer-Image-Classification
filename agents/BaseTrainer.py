@@ -28,7 +28,7 @@ class BaseTrainer:
         logger.info('Loading Model module...')
         self.pl_model = BaseModule(config.network_param, config.optim_param)
 
-        self.wb_run.watch(self.pl_model.model)
+        self.wb_run.watch(self.pl_model.model.mlp)
 
     def run(self):
         if self.config.tune_lr:
