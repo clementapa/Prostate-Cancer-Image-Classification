@@ -39,7 +39,7 @@ class BaseTrainer:
                 auto_lr_find=True,
                 accelerator="auto",
                 default_root_dir=self.wb_run.save_dir,
-                progress_bar_refresh_rate=self.config.progress_bar_refresh_rate,
+                enable_progress_bar=self.config.enable_progress_bar,
             )
             trainer.logger = self.wb_run
             trainer.tune(self.pl_model, datamodule=self.datamodule)
@@ -58,7 +58,7 @@ class BaseTrainer:
             log_every_n_steps=1,
             fast_dev_run=self.config.dev_run,
             amp_backend="apex",
-            progress_bar_refresh_rate=self.config.progress_bar_refresh_rate,
+            enable_progress_bar=self.config.enable_progress_bar,
         )
         trainer.logger = self.wb_run
         trainer.fit(self.pl_model, datamodule=self.datamodule)
