@@ -19,16 +19,17 @@ class BaseDataModule(LightningDataModule):
         if stage in (None, "fit"):
             # Load dataset
             self.dataset = getattr(datasets, self.config.dataset_name)(
-                self.config, train=True)
+                self.config, train=True
+            )
 
             val_length = int(len(self.dataset) * self.config.split_val)
             lengths = [len(self.dataset) - val_length, val_length]
-            self.train_dataset, self.val_dataset = random_split(
-                self.dataset, lengths)
+            self.train_dataset, self.val_dataset = random_split(self.dataset, lengths)
 
         if stage == "predict":
             self.dataset = getattr(datasets, self.config.dataset_name)(
-                self.config, train=False)
+                self.config, train=False
+            )
 
     def train_dataloader(self):
         train_loader = DataLoader(
