@@ -46,7 +46,7 @@ class NetworkParams:
     # nb_sample: int = 25
     nb_samples: int = 16
     # MLP parameters
-    dropout: float = 0.75
+    dropout: float = 0.1
     normalization: str = "BatchNorm1d"
     activation: str = "GELU"
 
@@ -74,14 +74,14 @@ class DatasetParams:
     root_dataset: Optional[str] = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
-    split_val: float = 0.2
+    split_val: float = 0.1
     patch_size: int = 256
     percentage_blank: float = 0.2
     nb_samples: int = 16
 
     # dataloader
-    num_workers: int = 1  # number of workers for dataloadersint
-    batch_size: int = 2  # batch_size
+    num_workers: int = 4  # number of workers for dataloadersint
+    batch_size: int = 8  # batch_size
 
 
 @dataclass
