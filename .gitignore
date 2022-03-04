@@ -2,6 +2,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+assets/
+mvadlmi/
 
 # C extensions
 *.so

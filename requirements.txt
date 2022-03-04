@@ -1,2 +1,5 @@
 tifffile
 pytorch-lightning
+simple_parsing
+einops
+timm

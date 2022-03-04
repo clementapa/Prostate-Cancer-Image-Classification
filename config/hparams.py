@@ -16,7 +16,7 @@ import torch.optim
 class Hparams:
     """Hyperparameters of for the run"""
 
-    wandb_entity    : str          = "clementapa"         # name of the project
+    wandb_entity    : str          = "younesbelkada"         # name of the project
     debug           : bool         = False            # test code before running, if testing, no checkpoints are written
     wandb_project   : str          = f"test-dlmi"
     root_dir        : str          = os.getcwd()  # root_dir
