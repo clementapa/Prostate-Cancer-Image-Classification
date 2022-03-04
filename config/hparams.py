@@ -34,7 +34,6 @@ class Hparams:
     train: bool = True
 
     best_model: str = ""  # then galant
-    
 
 
 @dataclass
@@ -83,7 +82,6 @@ class DatasetParams:
     # dataloader
     num_workers: int = 1  # number of workers for dataloadersint
     batch_size: int = 2  # batch_size
-
 
 
 @dataclass
