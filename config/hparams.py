@@ -35,7 +35,7 @@ class Hparams:
     dev_run: bool = True
     train: bool = True
 
-    # for inference and test
+    # for inference and test
     best_model: str = ""
 
 
@@ -89,11 +89,7 @@ class DatasetParams:
 class MetricParams:
 
     list_metrics: List[str] = list_field(
-        "Accuracy",
-        "AUROC",
-        "F1",
-        "Recall",
-        "Precision"
+        "Accuracy", "AUROC", "F1", "Recall", "Precision"
     )
     average: str = "weighted"
     num_classes: int = 6

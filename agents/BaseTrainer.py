@@ -101,7 +101,7 @@ class BaseTrainer:
             RichProgressBar(),
             LearningRateMonitor(),
             StochasticWeightAveraging(),
-            LogMetricsCallback(self.metric_param)
+            LogMetricsCallback(self.metric_param),
         ]
         monitor = "val/loss"
         mode = "min"
