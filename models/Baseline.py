@@ -23,7 +23,9 @@ class Baseline(nn.Module):
     def forward(self, x):
         features = []
         for batch in x:
-            features.append(self.features_extractor(batch.permute(0, 3, 1, 2)))
+            # features.append(self.features_extractor(batch.permute(0, 3, 1, 2)))
+            # TODO fix the permute issue
+            features.append(self.features_extractor(batch))
             # features.append(
             #     self.features_extractor.forward_features(
             #         batch.permute(0, 3, 1, 2)
