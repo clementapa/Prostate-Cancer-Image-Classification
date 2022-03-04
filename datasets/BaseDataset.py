@@ -31,6 +31,7 @@ class BaseDataset(Dataset):
         # )
 
         self.transform = transform
+
     def __len__(self):
         return len(self.X)
 
