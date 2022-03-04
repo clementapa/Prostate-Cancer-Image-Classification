@@ -1,2 +1,3 @@
 tifffile
 pytorch-lightning
+simple_parsing
