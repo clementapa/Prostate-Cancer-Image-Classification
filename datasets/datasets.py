@@ -50,7 +50,7 @@ class PatchDataset(BaseDataset):
         img = imread(img_path, key=self.params.key)
         img = torch.from_numpy(img)
 
-        # Square image 
+        # Square image
         quantity_to_pad = abs(img.shape[0] - img.shape[1])
         bool_temp = img.shape[1] < img.shape[0]
         img = F.pad(
@@ -67,16 +67,12 @@ class PatchDataset(BaseDataset):
             value=255,
         ).unsqueeze(0)
 
-        assert (
-            img.shape[1] == img.shape[2]
-        )  # check that it is a square image
+        assert img.shape[1] == img.shape[2]  # check that it is a square image
 
         # process image to divide per patch
         remaining_pixels = img.shape[1] % self.params.patch_size
         if remaining_pixels != 0:
-            if (
-                img.shape[1] + remaining_pixels
-            ) % self.params.patch_size == 0:
+            if (img.shape[1] + remaining_pixels) % self.params.patch_size == 0:
                 # padd
                 img = F.pad(
                     img,
@@ -112,7 +108,7 @@ class PatchDataset(BaseDataset):
             w=w,
         )
 
-        # Remove white patches
+        # Remove white patches
         mask = (1.0 * (output_patches == 255)).sum(dim=(2, 3, 4)) / (
             self.params.patch_size * self.params.patch_size * 3
         ) < self.params.percentage_blank  # remove patch with only blanks pixels
