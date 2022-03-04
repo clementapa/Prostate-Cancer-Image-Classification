@@ -61,11 +61,11 @@ class DatasetParams:
     """Dataset Parameters"""
     dataset_name            : Optional[str]           = "BaseDataset"     # dataset, use <Dataset>Eval for FT
     num_workers             : int                     = 1         # number of workers for dataloadersint
-    batch_size              : int                     = 4     # batch_size
+    batch_size              : int                     = 2     # batch_size
     split_val               : float                   = 0.2
     root_dataset            : Optional[str]           = osp.join(os.getcwd(), "assets", "mvadlmi")     
     
-    patch_size              : int                     = 128
+    patch_size              : int                     = 32
     percentage_blank        : float                   = 0.2
 
 @dataclass
