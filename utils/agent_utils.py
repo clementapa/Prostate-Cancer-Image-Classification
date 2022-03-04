@@ -1,7 +1,9 @@
 import importlib
 import os
-
 import wandb
+
+import torchvision.transforms as transforms
+
 from config.hparams import Parameters
 from datasets.datamodule import BaseDataModule
 

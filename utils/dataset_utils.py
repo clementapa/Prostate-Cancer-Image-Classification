@@ -15,9 +15,15 @@ def parse_csv(path_dataset, split='train'):
                 y.append(int(row[-2]))
     return X, y
 
-def coll_fn(batch):
-    N = min([b[0].shape[-1] for b in batch])
-    y = torch.LongTensor([b[1] for b in batch])
+# def coll_fn(batch):
+#     N = min([b[0].shape[-1] for b in batch])
+#     y = torch.LongTensor([b[1] for b in batch])
 
-    X = torch.stack([b[0][:N] for b in batch])
+#     X = torch.stack([b[0][:N] for b in batch])
+#     return X, y
+
+def coll_fn(batch):
+    y = torch.LongTensor([b[1] for b in batch])
+    X = torch.stack([b[0] for b in batch])
+    
     return X, y

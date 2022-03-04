@@ -22,7 +22,7 @@ class Hparams:
     root_dir        : str          = os.getcwd()  # root_dir
     seed_everything : Optional[int]= None   # seed for the whole run
     tune_lr         : bool         = False  # tune the model on first run
-    gpu             : int          = 0      # number or gpu
+    gpu             : int          = 1      # number or gpu
     max_epochs      : int          = 30    # maximum number of epochs
     weights_path    : str          = "weights"
     dev_run         : bool         = False
@@ -63,10 +63,13 @@ class DatasetParams:
     num_workers             : int                     = 1         # number of workers for dataloadersint
     batch_size              : int                     = 4     # batch_size
     split_val               : float                   = 0.2
-    root_dataset            : Optional[str]           = osp.join(os.getcwd(), "assets", "mvadlmi")     
+    root_dataset            : Optional[str]           = osp.join(os.getcwd(), "mvadlmi")     
     
     patch_size              : int                     = 128
     percentage_blank        : float                   = 0.2
+    nb_samples              : int                     = 64
+
+
 
 @dataclass
 class Parameters:

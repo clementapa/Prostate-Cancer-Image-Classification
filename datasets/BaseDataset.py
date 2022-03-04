@@ -1,8 +1,13 @@
+import random
 import torch
+
 import torch.nn.functional as F
+import torchvision.transforms as transforms
+
 from einops import rearrange
 from tifffile import imread
 from torch.utils.data import Dataset
+
 from utils.dataset_utils import parse_csv
 
 
@@ -21,7 +26,9 @@ class BaseDataset(Dataset):
         else:
             self.X, self.y = parse_csv(params.root_dataset, 'test')
 
-        self.transform = transform
+        self.transform = transforms.Compose([
+            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+        ])
 
     def __len__(self):
         return len(self.X)
@@ -68,4 +75,10 @@ class BaseDataset(Dataset):
                                                                  self.params.patch_size*3) < self.params.percentage_blank  # remove patch with only blanks pixels
         non_white_patches = output_patches[mask]
 
-        return non_white_patches/255.0, label
+        indexes_to_sample = [random.randint(0, non_white_patches.shape[0]-1) for _ in range(self.params.nb_samples)]
+        output_tensor = torch.stack([non_white_patches[i]/255.0 for i in indexes_to_sample])
+        
+        if self.transform:
+            output_tensor = self.transform(output_tensor)
+
+        return output_tensor, label
