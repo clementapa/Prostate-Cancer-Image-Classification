@@ -58,6 +58,7 @@ class BaseTrainer:
             log_every_n_steps=1,
             fast_dev_run=self.config.dev_run,
             amp_backend="apex",
+            progress_bar_refresh_rate=self.config.progress_bar_refresh_rate,
         )
         trainer.logger = self.wb_run
         trainer.fit(self.pl_model, datamodule=self.datamodule)
