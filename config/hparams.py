@@ -16,19 +16,23 @@ import torch.optim
 class Hparams:
     """Hyperparameters of for the run"""
 
+    # wandb
     wandb_entity: str = "attributes_classification_celeba"  # name of the project
-    debug: bool = (
-        False  # test code before running, if testing, no checkpoints are written
-    )
+    debug: bool = False
     wandb_project: str = f"test-dlmi"
     root_dir: str = os.getcwd()  # root_dir
+
+    # basic params
     seed_everything: Optional[int] = None  # seed for the whole run
-    tune_lr: bool = False  # tune the model on first run
     gpu: int = 1  # number or gpu
     max_epochs: int = 30  # maximum number of epochs
-    weights_path: str = "weights"
+    weights_path: str = osp.join(os.getcwd(), "weights")
+
+    # modes
+    tune_lr: bool = False  # tune the model on first run
     dev_run: bool = False
     train: bool = True
+
     best_model: str = ""  # then galant
     
 
@@ -56,6 +60,8 @@ class OptimizerParams:
     lr: float = 0.003  # learning rate,               default = 5e-4
     min_lr: float = 5e-9  # min lr reached at the end of the cosine schedule
     weight_decay: float = 1e-8
+
+    # Scheduler
     scheduler: bool = True
     warmup_epochs: int = 5
     max_epochs: int = 20
@@ -66,14 +72,17 @@ class DatasetParams:
     """Dataset Parameters"""
 
     dataset_name: Optional[str] = "BaseDataset"  # dataset, use <Dataset>Eval for FT
-    num_workers: int = 1  # number of workers for dataloadersint
-    batch_size: int = 2  # batch_size
-    split_val: float = 0.2
     root_dataset: Optional[str] = osp.join(os.getcwd(), "assets", "mvadlmi")
 
+    # dataset
+    split_val: float = 0.2
     patch_size: int = 32
     percentage_blank: float = 0.2
     nb_samples: int = 16
+
+    # dataloader
+    num_workers: int = 1  # number of workers for dataloadersint
+    batch_size: int = 2  # batch_size
 
 
 
