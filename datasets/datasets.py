@@ -36,11 +36,19 @@ class BaseDataset(Dataset):
         return len(self.X)
 
     def __getitem__(self, idx):
+        raise NotImplementedError(f'Should be implemented in derived class!')
 
+
+class PatchDataset(BaseDataset):
+
+    def __init__(self, params, train=True, transform=None):
+        super().__init__(params, train, transform)
+        
+    def __getitem__(self, idx):
         img_path = self.X[idx]
         label = self.y[idx]
 
-        img = imread(img_path, key=1)
+        img = imread(img_path, key=self.params.key)
 
         # if self.transform !=None :
         #     img = self.transform(img)

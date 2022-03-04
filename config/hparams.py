@@ -24,7 +24,7 @@ class Hparams:
 
     # basic params
     seed_everything: Optional[int] = None  # seed for the whole run
-    gpu: int = 1  # number or gpu
+    gpu: int = 0  # number or gpu
     max_epochs: int = 30  # maximum number of epochs
     weights_path: str = osp.join(os.getcwd(), "weights")
 
@@ -33,7 +33,7 @@ class Hparams:
     dev_run: bool = False
     train: bool = True
 
-    best_model: str = ""  # then galant
+    best_model: str = ""
 
 
 @dataclass
@@ -43,8 +43,6 @@ class NetworkParams:
     weight_checkpoints: str = ""
     artifact: str = ""
 
-    # nb_sample: int = 25
-    nb_samples: int = 16
     # MLP parameters
     dropout: float = 0.1
     normalization: str = "BatchNorm1d"
@@ -70,7 +68,7 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: Optional[str] = "BaseDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: Optional[str] = "PatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: Optional[str] = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
@@ -78,10 +76,11 @@ class DatasetParams:
     patch_size: int = 256
     percentage_blank: float = 0.2
     nb_samples: int = 16
+    key: int = 1
 
     # dataloader
-    num_workers: int = 2  # number of workers for dataloadersint
-    batch_size: int = 8  # batch_size
+    num_workers: int = 2  # number of workers for dataloaders
+    batch_size: int = 2  # batch_size
 
 
 @dataclass
@@ -93,8 +92,6 @@ class Parameters:
     network_param: NetworkParams = NetworkParams()
     optim_param: OptimizerParams = OptimizerParams()
 
-    network_param.nb_samples = data_param.nb_samples
-
     def __post_init__(self):
         """Post-initialization code"""
         if self.hparams.seed_everything is None:
@@ -103,6 +100,8 @@ class Parameters:
         random.seed(self.hparams.seed_everything)
         torch.manual_seed(self.hparams.seed_everything)
         pl.seed_everything(self.hparams.seed_everything)
+
+        self.network_param.nb_samples = self.data_param.nb_samples
 
     @classmethod
     def parse(cls):
