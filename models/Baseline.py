@@ -2,6 +2,8 @@ import timm
 import torch
 import torch.nn as nn
 
+from einops import rearrange
+
 from models.MLP import MLP
 
 
@@ -22,9 +24,10 @@ class Baseline(nn.Module):
         # step 1: random sampling patches
         features = []
         for batch in x:
-            features.append(self.features_extractor(batch.permute(0, 3, 1, 2)))
+            #features.append(self.features_extractor(batch.permute(0, 3, 1, 2)))
+            features.append(self.features_extractor.forward_features(batch.permute(0, 3, 1, 2)).squeeze())
         # bs, n_patches, h, w, c
         features = torch.stack(features)
 
-        output = self.mlp(features)  # mean to try
+        output = self.mlp(rearrange(features, "b p d -> b (p d)"))  # mean to try
         return output
