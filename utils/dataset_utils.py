@@ -4,6 +4,7 @@ import torch
 import openslide
 import numpy as np
 
+
 def parse_csv(path_dataset, split="train"):
     X = []
     y = []
@@ -32,13 +33,23 @@ def coll_fn(batch):
 
     return X, y
 
+
 def return_random_patch(whole_slide, patch_dim, percentage_blank):
     wsi_dimensions = whole_slide.dimensions
     random_location_x = random.randint(0, wsi_dimensions[0] - patch_dim)
     random_location_y = random.randint(0, wsi_dimensions[1] - patch_dim)
-    cropped_image = whole_slide.read_region((random_location_x, random_location_y), 0, (patch_dim, patch_dim))
-    while np.sum(np.any(np.array(cropped_image)[:, :, :-1] == [255.0, 255.0, 255.0], axis=-1)) > percentage_blank * patch_dim * patch_dim:
+    cropped_image = whole_slide.read_region(
+        (random_location_x, random_location_y), 0, (patch_dim, patch_dim)
+    )
+    while (
+        np.sum(
+            np.any(np.array(cropped_image)[:, :, :-1] == [255.0, 255.0, 255.0], axis=-1)
+        )
+        > percentage_blank * patch_dim * patch_dim
+    ):
         random_location_x = random.randint(0, wsi_dimensions[0] - patch_dim)
         random_location_y = random.randint(0, wsi_dimensions[1] - patch_dim)
-        cropped_image = whole_slide.read_region((random_location_x, random_location_y), 0, (patch_dim, patch_dim))
-    return cropped_image.convert('RGB')
+        cropped_image = whole_slide.read_region(
+            (random_location_x, random_location_y), 0, (patch_dim, patch_dim)
+        )
+    return cropped_image.convert("RGB")
