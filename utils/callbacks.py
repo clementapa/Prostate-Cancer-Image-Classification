@@ -212,14 +212,16 @@ class LogImagesPredictions(Callback):
         """Called when the training batch ends."""
 
         if batch_idx == 0 and pl_module.current_epoch % self.log_freq_img == 0:
-            self.log_images("train", batch, self.log_nb_img, self.log_nb_patches, outputs)
+            self.log_images(
+                "train", batch, self.log_nb_img, self.log_nb_patches, outputs
+            )
 
     def log_images(self, name, batch, n, p, outputs):
-        
+
         x, y = batch
-        images = x[:n,:p].detach().cpu()
+        images = x[:n, :p].detach().cpu()
         labels = np.array(y[:n].cpu())
-        preds = np.array(outputs['logits'][:n].argmax(dim=1).cpu())
+        preds = np.array(outputs["logits"][:n].argmax(dim=1).cpu())
 
         images = [make_grid(im) for im in images]
         samples = []
@@ -230,6 +232,10 @@ class LogImagesPredictions(Callback):
             bg_image = STD * bg_image + MEAN
             bg_image = np.clip(bg_image, 0, 1)
 
-            samples.append(wandb.Image(bg_image, caption=f"label: {labels[i]}, prediction: {preds[i]}"))
+            samples.append(
+                wandb.Image(
+                    bg_image, caption=f"label: {labels[i]}, prediction: {preds[i]}"
+                )
+            )
 
         wandb.log({f"{name}/predictions": samples})
