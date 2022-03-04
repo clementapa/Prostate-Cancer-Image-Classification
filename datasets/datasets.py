@@ -48,17 +48,13 @@ class PatchDataset(BaseDataset):
         label = self.y[idx]
 
         img = imread(img_path, key=self.params.key)
+        img = torch.from_numpy(img)
 
-        # if self.transform !=None :
-        #     img = self.transform(img)
-        # im_scale = imread(path_im, key=2)
-
-        im_tensor = torch.from_numpy(img)
-
-        quantity_to_pad = abs(im_tensor.shape[0] - im_tensor.shape[1])
-        bool_temp = im_tensor.shape[1] < im_tensor.shape[0]
-        padded_im_tensor = F.pad(
-            im_tensor,
+        # Square image 
+        quantity_to_pad = abs(img.shape[0] - img.shape[1])
+        bool_temp = img.shape[1] < img.shape[0]
+        img = F.pad(
+            img,
             pad=(
                 0,
                 0,
@@ -72,17 +68,18 @@ class PatchDataset(BaseDataset):
         ).unsqueeze(0)
 
         assert (
-            padded_im_tensor.shape[1] == padded_im_tensor.shape[2]
+            img.shape[1] == img.shape[2]
         )  # check that it is a square image
 
-        remaining_pixels = padded_im_tensor.shape[1] % self.params.patch_size
+        # process image to divide per patch
+        remaining_pixels = img.shape[1] % self.params.patch_size
         if remaining_pixels != 0:
             if (
-                padded_im_tensor.shape[1] + remaining_pixels
+                img.shape[1] + remaining_pixels
             ) % self.params.patch_size == 0:
                 # padd
-                padded_im_tensor = F.pad(
-                    padded_im_tensor,
+                img = F.pad(
+                    img,
                     pad=(
                         0,
                         0,
@@ -96,17 +93,18 @@ class PatchDataset(BaseDataset):
                 )
             else:
                 # crop
-                padded_im_tensor = padded_im_tensor[
+                img = img[
                     :,
-                    0 : padded_im_tensor.shape[1] - remaining_pixels,
-                    0 : padded_im_tensor.shape[2] - remaining_pixels,
+                    0 : img.shape[1] - remaining_pixels,
+                    0 : img.shape[2] - remaining_pixels,
                     :,
                 ]
 
-        h = padded_im_tensor.shape[1] // self.params.patch_size
-        w = padded_im_tensor.shape[2] // self.params.patch_size
+        # Divide image per patch
+        h = img.shape[1] // self.params.patch_size
+        w = img.shape[2] // self.params.patch_size
         output_patches = rearrange(
-            padded_im_tensor,
+            img,
             "b (h p1) (w p2) c -> b (h w) p1 p2 c",
             p1=self.params.patch_size,
             p2=self.params.patch_size,
@@ -114,6 +112,7 @@ class PatchDataset(BaseDataset):
             w=w,
         )
 
+        # Remove white patches
         mask = (1.0 * (output_patches == 255)).sum(dim=(2, 3, 4)) / (
             self.params.patch_size * self.params.patch_size * 3
         ) < self.params.percentage_blank  # remove patch with only blanks pixels

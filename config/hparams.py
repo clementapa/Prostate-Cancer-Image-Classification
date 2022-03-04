@@ -68,8 +68,8 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: Optional[str] = "PatchDataset"  # dataset, use <Dataset>Eval for FT
-    root_dataset: Optional[str] = osp.join(os.getcwd(), "assets", "mvadlmi")
+    dataset_name: str = "PatchDataset"  # dataset, use <Dataset>Eval for FT
+    root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
     split_val: float = 0.1
