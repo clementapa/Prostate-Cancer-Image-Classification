@@ -80,7 +80,7 @@ class DatasetParams:
     nb_samples: int = 16
 
     # dataloader
-    num_workers: int = 4  # number of workers for dataloadersint
+    num_workers: int = 2  # number of workers for dataloadersint
     batch_size: int = 8  # batch_size
 
 
