@@ -16,13 +16,13 @@ import torch.optim
 class Hparams:
     """Hyperparameters of for the run"""
 
-    # wandb 
+    # wandb
     wandb_entity: str = "attributes_classification_celeba"  # name of the project
     debug: bool = False
     wandb_project: str = f"test-dlmi"
     root_dir: str = os.getcwd()  # root_dir
 
-    # basic params 
+    # basic params
     seed_everything: Optional[int] = None  # seed for the whole run
     gpu: int = 1  # number or gpu
     max_epochs: int = 30  # maximum number of epochs
@@ -32,9 +32,9 @@ class Hparams:
     tune_lr: bool = False  # tune the model on first run
     dev_run: bool = False
     train: bool = True
-    
+
     # best model for prediction
-    best_model: str = ""  
+    best_model: str = ""
 
 
 @dataclass
@@ -61,7 +61,7 @@ class OptimizerParams:
     min_lr: float = 5e-9  # min lr reached at the end of the cosine schedule
     weight_decay: float = 1e-8
 
-    # Scheduler
+    # Scheduler
     scheduler: bool = True
     warmup_epochs: int = 5
     max_epochs: int = 20
@@ -83,7 +83,6 @@ class DatasetParams:
     # dataloader
     num_workers: int = 1  # number of workers for dataloadersint
     batch_size: int = 2  # batch_size
-
 
 
 @dataclass
