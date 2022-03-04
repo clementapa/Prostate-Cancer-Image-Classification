@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from pytorch_lightning import LightningModule
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from utils.agent_utils import get_net
@@ -30,21 +31,21 @@ class BaseModule(LightningModule):
 
     def training_step(self, batch, batch_idx):
         """needs to return a loss from a single batch"""
-        loss = self._get_loss(batch)
+        loss, logits = self._get_preds_loss_accuracy(batch)
 
         # Log loss
         self.log("train/loss", loss)
 
-        return loss
+        return {"loss": loss, "logits": logits.detach()}
 
     def validation_step(self, batch, batch_idx):
         """used for logging metrics"""
-        loss = self._get_loss(batch)
+        loss, logits = self._get_preds_loss_accuracy(batch)
 
         # Log loss
         self.log("val/loss", loss)
 
-        return loss
+        return {"logits": logits}
 
     def predict_step(self, batch, batch_idx):
 
@@ -76,11 +77,12 @@ class BaseModule(LightningModule):
 
         return optimizer
 
-    def _get_loss(self, batch):
+    def _get_preds_loss_accuracy(self, batch):
         """convenience function since train/valid/test steps are similar"""
         x, y = batch
         output = self(x)
 
         loss = self.loss(output, y)
+        logits = F.softmax(output, dim=0)
 
-        return loss
+        return loss, logits

@@ -46,7 +46,6 @@ class MLP(nn.Module):
                 break
 
         self.layers.append(nn.Linear(in_size, 6))
-        # self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
         for layer in self.layers:

@@ -6,6 +6,7 @@ import wandb
 from pytorch_lightning.callbacks import Callback, ModelCheckpoint
 from pytorch_lightning.utilities import rank_zero_info
 from pytorch_lightning.utilities.types import _METRIC, _PATH, STEP_OUTPUT
+from utils.metrics import MetricsModule
 
 
 class AutoSaveModelCheckpoint(ModelCheckpoint):
@@ -55,7 +56,8 @@ class AutoSaveModelCheckpoint(ModelCheckpoint):
         trainer: "pl.Trainer",
         monitor_candidates: Dict[str, _METRIC],
     ) -> None:
-        k = len(self.best_k_models) + 1 if self.save_top_k == -1 else self.save_top_k
+        k = len(self.best_k_models) + \
+            1 if self.save_top_k == -1 else self.save_top_k
 
         del_filepath = None
         if len(self.best_k_models) == k and k > 0:
@@ -85,7 +87,8 @@ class AutoSaveModelCheckpoint(ModelCheckpoint):
             self.kth_value = self.best_k_models[self.kth_best_model_path]
 
         _op = min if self.mode == "min" else max
-        self.best_model_path = _op(self.best_k_models, key=self.best_k_models.get)
+        self.best_model_path = _op(
+            self.best_k_models, key=self.best_k_models.get)
         self.best_model_score = self.best_k_models[self.best_model_path]
 
         if self.verbose:
@@ -105,7 +108,8 @@ class AutoSaveModelCheckpoint(ModelCheckpoint):
         indices = [(i + 1) for i, x in enumerate(score) if x == current]
         alias = f"top-{indices[0]}"  #
         name = f"{wandb.run.name}"  # name of the model
-        model_artifact = wandb.Artifact(type="model", name=name, metadata=self.config)
+        model_artifact = wandb.Artifact(
+            type="model", name=name, metadata=self.config)
         model_artifact.add_file(filepath)
         wandb.log_artifact(model_artifact, aliases=[alias])
 
@@ -117,7 +121,8 @@ class AutoSaveModelCheckpoint(ModelCheckpoint):
             rank_zero_info(f"Saved '{name}' weights to wandb")
 
     def del_artifacts(self):
-        api = wandb.Api(overrides={"project": self.project, "entity": self.entity})
+        api = wandb.Api(
+            overrides={"project": self.project, "entity": self.entity})
         artifact_type, artifact_name = "model", f"{wandb.run.name}"
         try:
             for version in api.artifact_versions(artifact_type, artifact_name):
@@ -144,3 +149,47 @@ class AutoSaveModelCheckpoint(ModelCheckpoint):
         self, trainer: "pl.Trainer", pl_module: "pl.LightningModule"
     ) -> None:
         self.del_artifacts()
+
+
+class LogMetricsCallback(Callback):
+    def __init__(self, params):
+        self.params = params
+
+    def on_fit_start(
+        self, trainer: "pl.Trainer", pl_module: "pl.LightningModule"
+    ) -> None:
+        device = pl_module.device
+
+        self.metrics_module_train = MetricsModule(
+            "train", self.params, device
+        )
+
+        self.metrics_module_validation = MetricsModule(
+            "val", self.params, device
+        )
+
+    def on_train_batch_end(
+        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
+    ):
+        """Called when the train batch ends."""
+
+        _, y = batch
+        self.metrics_module_train.update_metrics(outputs["logits"], y)
+
+    def on_train_epoch_end(self, trainer, pl_module):
+        """Called when the train epoch ends."""
+
+        self.metrics_module_train.log_metrics("train/", pl_module)
+
+    def on_validation_batch_end(
+        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
+    ):
+        """Called when the validation batch ends."""
+
+        _, y = batch
+        self.metrics_module_validation.update_metrics(outputs["logits"], y)
+
+    def on_validation_epoch_end(self, trainer, pl_module):
+        """Called when the validation epoch ends."""
+
+        self.metrics_module_validation.log_metrics("val/", pl_module)

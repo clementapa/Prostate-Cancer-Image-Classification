@@ -8,7 +8,7 @@ from pytorch_lightning.callbacks import (
     StochasticWeightAveraging,
 )
 from utils.agent_utils import get_artifact, get_datamodule
-from utils.callbacks import AutoSaveModelCheckpoint
+from utils.callbacks import AutoSaveModelCheckpoint, LogMetricsCallback
 from utils.logger import init_logger
 
 
@@ -17,6 +17,7 @@ class BaseTrainer:
         self.config = config.hparams
         self.wb_run = run
         self.network_param = config.network_param
+        self.metric_param = config.metric_param
 
         logger = init_logger("BaseTrainer", "INFO")
 
@@ -100,6 +101,7 @@ class BaseTrainer:
             RichProgressBar(),
             LearningRateMonitor(),
             StochasticWeightAveraging(),
+            LogMetricsCallback(self.metric_param)
         ]
         monitor = "val/loss"
         mode = "min"

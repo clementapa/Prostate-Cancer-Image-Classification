@@ -2,8 +2,6 @@ import importlib
 import os
 import wandb
 
-import torchvision.transforms as transforms
-
 from config.hparams import Parameters
 from datasets.datamodule import BaseDataModule
 
@@ -53,3 +51,17 @@ def parse_params(parameters: Parameters) -> dict:
         for key, value in vars(v).items():
             wdb_config[f"{k}-{key}"] = value
     return wdb_config
+
+
+def import_class(name, instantiate=None):
+
+    namesplit = name.split(".")
+    module = importlib.import_module(".".join(namesplit[:-1]))
+    imported_class = getattr(module, namesplit[-1])
+
+    if imported_class:
+        if instantiate is not None:
+            return imported_class(**instantiate)
+        else:
+            return imported_class
+    raise Exception("Class {} can be imported".format(import_class))

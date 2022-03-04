@@ -3,6 +3,7 @@ import random
 from dataclasses import dataclass
 from os import path as osp
 from typing import Any, ClassVar, Dict, List, Optional
+from simple_parsing.helpers import Serializable, choice, dict_field, list_field
 
 import pytorch_lightning as pl
 import simple_parsing
@@ -27,14 +28,15 @@ class Hparams:
     gpu: int = 0  # number or gpu
     max_epochs: int = 30  # maximum number of epochs
     weights_path: str = osp.join(os.getcwd(), "weights")
+    enable_progress_bar: bool = True
 
     # modes
     tune_lr: bool = False  # tune the model on first run
-    dev_run: bool = False
+    dev_run: bool = True
     train: bool = True
 
+    # for inference and test
     best_model: str = ""
-    enable_progress_bar: bool = False
 
 
 @dataclass
@@ -77,11 +79,24 @@ class DatasetParams:
     patch_size: int = 256
     percentage_blank: float = 0.2
     nb_samples: int = 4
-    key: int = 1
 
     # dataloader
     num_workers: int = 0  # number of workers for dataloaders
     batch_size: int = 2  # batch_size
+
+
+@dataclass
+class MetricParams:
+
+    list_metrics: List[str] = list_field(
+        "Accuracy",
+        "AUROC",
+        "F1",
+        "Recall",
+        "Precision"
+    )
+    average: str = "weighted"
+    num_classes: int = 6
 
 
 @dataclass
@@ -92,6 +107,7 @@ class Parameters:
     data_param: DatasetParams = DatasetParams()
     network_param: NetworkParams = NetworkParams()
     optim_param: OptimizerParams = OptimizerParams()
+    metric_param: MetricParams = MetricParams()
 
     def __post_init__(self):
         """Post-initialization code"""
