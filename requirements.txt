@@ -3,3 +3,4 @@ pytorch-lightning
 simple_parsing
 einops
 timm
+openslide-python

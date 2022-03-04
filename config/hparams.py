@@ -68,18 +68,18 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "PatchDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "PatchDataset_Optimized"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
     split_val: float = 0.1
     patch_size: int = 256
     percentage_blank: float = 0.2
-    nb_samples: int = 16
+    nb_samples: int = 4
     key: int = 1
 
     # dataloader
-    num_workers: int = 2  # number of workers for dataloaders
+    num_workers: int = 0  # number of workers for dataloaders
     batch_size: int = 2  # batch_size
 
 
