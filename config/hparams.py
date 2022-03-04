@@ -84,6 +84,8 @@ class Parameters:
     network_param: NetworkParams = NetworkParams()
     optim_param: OptimizerParams = OptimizerParams()
 
+    network_param.nb_samples = data_param.nb_samples
+
     def __post_init__(self):
         """Post-initialization code"""
         if self.hparams.seed_everything is None:
