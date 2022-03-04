@@ -4,15 +4,15 @@ import torch.nn as nn
 
 from models.MLP import MLP
 
+
 class Baseline(nn.Module):
     def __init__(self, params):
         super().__init__()
         self.params = params
 
         self.features_extractor = timm.create_model(
-            self.params.feature_extractor_name,
-            pretrained=True
-        ) # TODO how deal with the input?
+            self.params.feature_extractor_name, pretrained=True
+        )  # TODO how deal with the input?
 
         self.mlp = MLP(self.features_extractor.fc.in_features, params)
 
@@ -26,5 +26,5 @@ class Baseline(nn.Module):
         # bs, n_patches, h, w, c
         features = torch.stack(features)
 
-        output = self.mlp(features.mean(dim=1)) # mean to try
+        output = self.mlp(features.mean(dim=1))  # mean to try
         return output

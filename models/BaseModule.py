@@ -5,10 +5,10 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from utils.agent_utils import get_net
 from models.Baseline import Baseline
 
+
 class BaseModule(LightningModule):
     def __init__(self, network_param, optim_param):
-        """method used to define our model parameters
-        """
+        """method used to define our model parameters"""
         super(BaseModule, self).__init__()
 
         # loss function
@@ -57,17 +57,19 @@ class BaseModule(LightningModule):
     def configure_optimizers(self):
         """defines model optimizer"""
         optimizer = getattr(torch.optim, self.optim_param.optimizer)
-        optimizer = optimizer(self.parameters(), lr=self.lr,
-                              weight_decay=self.optim_param.weight_decay)
+        optimizer = optimizer(
+            self.parameters(), lr=self.lr, weight_decay=self.optim_param.weight_decay
+        )
 
         if self.optim_param.scheduler:
             # scheduler = LinearWarmupCosineAnnealingLR(
             #     optimizer, warmup_epochs=self.optim_param.warmup_epochs, max_epochs=self.optim_param.max_epochs
             # )
-            scheduler = {"scheduler": ReduceLROnPlateau(
-                optimizer, mode="min", patience=5, min_lr=5e-6
-            ),
-                "monitor": "val/loss"
+            scheduler = {
+                "scheduler": ReduceLROnPlateau(
+                    optimizer, mode="min", patience=5, min_lr=5e-6
+                ),
+                "monitor": "val/loss",
             }
 
             return [[optimizer], [scheduler]]

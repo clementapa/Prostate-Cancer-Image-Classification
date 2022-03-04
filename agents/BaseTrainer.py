@@ -2,8 +2,11 @@ import pytorch_lightning as pl
 import torch
 import wandb
 from models.BaseModule import BaseModule
-from pytorch_lightning.callbacks import (LearningRateMonitor, RichProgressBar,
-                                         StochasticWeightAveraging)
+from pytorch_lightning.callbacks import (
+    LearningRateMonitor,
+    RichProgressBar,
+    StochasticWeightAveraging,
+)
 from utils.agent_utils import get_artifact, get_datamodule
 from utils.callbacks import AutoSaveModelCheckpoint
 from utils.logger import init_logger
@@ -17,15 +20,13 @@ class BaseTrainer:
 
         logger = init_logger("BaseTrainer", "INFO")
 
-        logger.info('Loading artifact...')
+        logger.info("Loading artifact...")
         self.load_artifact(config.network_param, config.data_param)
 
-        logger.info('Loading Data module...')
-        self.datamodule = get_datamodule(
-            config.data_param
-        )
+        logger.info("Loading Data module...")
+        self.datamodule = get_datamodule(config.data_param)
 
-        logger.info('Loading Model module...')
+        logger.info("Loading Model module...")
         self.pl_model = BaseModule(config.network_param, config.optim_param)
 
         self.wb_run.watch(self.pl_model.model.mlp)
@@ -55,7 +56,7 @@ class BaseTrainer:
             max_epochs=self.config.max_epochs,  # number of epochs
             log_every_n_steps=1,
             fast_dev_run=self.config.dev_run,
-            amp_backend="apex"
+            amp_backend="apex",
         )
         trainer.logger = self.wb_run
         trainer.fit(self.pl_model, datamodule=self.datamodule)
@@ -93,16 +94,18 @@ class BaseTrainer:
         #     data_param.keywords_artifact, type="dataset")
 
     def get_callbacks(self):
-        callbacks = [RichProgressBar(), LearningRateMonitor(),
-                     StochasticWeightAveraging()]
+        callbacks = [
+            RichProgressBar(),
+            LearningRateMonitor(),
+            StochasticWeightAveraging(),
+        ]
         monitor = "val/loss"
         mode = "min"
         wandb.define_metric(monitor, summary=mode)
         save_top_k = 1
         every_n_epochs = 1
         callbacks += [
-            AutoSaveModelCheckpoint  # ModelCheckpoint
-            (
+            AutoSaveModelCheckpoint(  # ModelCheckpoint
                 config=(self.network_param).__dict__,
                 project=self.config.wandb_project,
                 entity=self.config.wandb_entity,
@@ -113,7 +116,7 @@ class BaseTrainer:
                 dirpath=self.config.weights_path + f"/{str(wandb.run.name)}",
                 save_top_k=save_top_k,
                 every_n_epochs=every_n_epochs,
-                auto_insert_metric_name=False
+                auto_insert_metric_name=False,
             )
         ]  # our model checkpoint callback
 

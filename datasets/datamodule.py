@@ -1,8 +1,10 @@
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, random_split
+
 # from utils.agent_utils import get_dataset
 import importlib
 from utils.dataset_utils import coll_fn
+
 
 class BaseDataModule(LightningDataModule):
     def __init__(self, dataset_param):
@@ -20,14 +22,15 @@ class BaseDataModule(LightningDataModule):
         # Build dataset
         if stage in (None, "fit"):
             # Load dataset
-            val_length = int(len(self.dataset)*self.config.split_val)
-            lengths = [len(self.dataset)-val_length, val_length]
-            self.train_dataset, self.val_dataset = random_split(
-                self.dataset, lengths)
+            val_length = int(len(self.dataset) * self.config.split_val)
+            lengths = [len(self.dataset) - val_length, val_length]
+            self.train_dataset, self.val_dataset = random_split(self.dataset, lengths)
 
         if stage == "predict":
             mod = importlib.import_module(f"datasets.{self.config.dataset_name}")
-            self.dataset = getattr(mod, self.config.dataset_name)(self.config, train=False)
+            self.dataset = getattr(mod, self.config.dataset_name)(
+                self.config, train=False
+            )
 
     def train_dataloader(self):
         train_loader = DataLoader(
@@ -35,7 +38,7 @@ class BaseDataModule(LightningDataModule):
             shuffle=True,
             batch_size=self.config.batch_size,
             num_workers=self.config.num_workers,
-            collate_fn=coll_fn
+            collate_fn=coll_fn,
         )
         return train_loader
 
@@ -45,7 +48,7 @@ class BaseDataModule(LightningDataModule):
             shuffle=False,
             batch_size=self.config.batch_size,
             num_workers=self.config.num_workers,
-            collate_fn=coll_fn
+            collate_fn=coll_fn,
         )
         return val_loader
 
