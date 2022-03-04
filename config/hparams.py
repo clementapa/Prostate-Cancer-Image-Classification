@@ -16,7 +16,7 @@ import torch.optim
 class Hparams:
     """Hyperparameters of for the run"""
 
-    wandb_entity    : str          = "younesbelkada"         # name of the project
+    wandb_entity    : str          = "attributes_classification_celeba"         # name of the project
     debug           : bool         = False            # test code before running, if testing, no checkpoints are written
     wandb_project   : str          = f"test-dlmi"
     root_dir        : str          = os.getcwd()  # root_dir
@@ -27,7 +27,7 @@ class Hparams:
     weights_path    : str          = "weights"
     dev_run         : bool         = False
     train           : bool         = True
-    best_model      : str          = "elated-aardvark-644" # then galant
+    best_model      : str          = "" # then galant
     
 
 @dataclass
