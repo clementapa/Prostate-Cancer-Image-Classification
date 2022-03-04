@@ -2,8 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-assets/
-mvadlmi/
 
 # C extensions
 *.so
@@ -133,3 +131,4 @@ dmypy.json
 /assets
 *.ckpt
 /wandb
+/mvadlmi
