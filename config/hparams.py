@@ -34,6 +34,7 @@ class Hparams:
     train: bool = True
 
     best_model: str = ""
+    progress_bar_refresh_rate : int = 0
 
 
 @dataclass

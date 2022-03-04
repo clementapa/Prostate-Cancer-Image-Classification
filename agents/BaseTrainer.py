@@ -39,6 +39,7 @@ class BaseTrainer:
                 auto_lr_find=True,
                 accelerator="auto",
                 default_root_dir=self.wb_run.save_dir,
+                progress_bar_refresh_rate=self.config.progress_bar_refresh_rate,
             )
             trainer.logger = self.wb_run
             trainer.tune(self.pl_model, datamodule=self.datamodule)
