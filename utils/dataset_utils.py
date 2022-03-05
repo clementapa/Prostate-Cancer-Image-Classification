@@ -96,22 +96,24 @@ def return_random_patch_with_mask(whole_slide, seg_slide, patch_dim, percentage_
     wsi_dimensions = whole_slide.dimensions
     random_location_x = random.randint(0, wsi_dimensions[0] - patch_dim)
     random_location_y = random.randint(0, wsi_dimensions[1] - patch_dim)
-    cropped_image = whole_slide.read_region(
+    cropped_mask = seg_slide.read_region(
         (random_location_x, random_location_y), 0, (patch_dim, patch_dim)
     )
     while (
         np.sum(
-            np.any(np.array(cropped_image)[:, :, :-1] == [255.0, 255.0, 255.0], axis=-1)
+            1.0*(np.array(cropped_mask)[:, :, 0] == 0)
         )
         > percentage_blank * patch_dim * patch_dim
     ):
         random_location_x = random.randint(0, wsi_dimensions[0] - patch_dim)
         random_location_y = random.randint(0, wsi_dimensions[1] - patch_dim)
-        cropped_image = whole_slide.read_region(
+        
+        cropped_mask = seg_slide.read_region(
             (random_location_x, random_location_y), 0, (patch_dim, patch_dim)
         )
-    cropped_mask = seg_slide.read_region(
-        (random_location_x, random_location_y), 0, (patch_dim, patch_dim)
+
+    cropped_image = whole_slide.read_region(
+            (random_location_x, random_location_y), 0, (patch_dim, patch_dim)
     )
 
     assert (np.max(np.array(cropped_mask.convert("RGB"))[:, :, 1]) == 0) and (
