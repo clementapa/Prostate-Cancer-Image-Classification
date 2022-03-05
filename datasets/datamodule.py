@@ -10,6 +10,7 @@ class BaseDataModule(LightningDataModule):
         super().__init__()
 
         self.config = dataset_param
+        self.batch_size = self.config.batch_size
 
         if "seg" in dataset_param.dataset_name.lower():
             self.collate_fn = coll_fn_seg
@@ -40,7 +41,7 @@ class BaseDataModule(LightningDataModule):
         train_loader = DataLoader(
             self.train_dataset,
             shuffle=True,
-            batch_size=self.config.batch_size,
+            batch_size=self.batch_size,
             num_workers=self.config.num_workers,
             collate_fn=self.collate_fn,
         )
@@ -50,7 +51,7 @@ class BaseDataModule(LightningDataModule):
         val_loader = DataLoader(
             self.val_dataset,
             shuffle=False,
-            batch_size=self.config.batch_size,
+            batch_size=self.batch_size,
             num_workers=self.config.num_workers,
             collate_fn=self.collate_fn,
         )
@@ -59,7 +60,7 @@ class BaseDataModule(LightningDataModule):
     def predict_dataloader(self):
         predict_loader = DataLoader(
             self.dataset,
-            batch_size=self.config.batch_size,
+            batch_size=self.batch_size,
             num_workers=self.config.num_workers,
             shuffle=False,
             collate_fn=self.collate_fn,
