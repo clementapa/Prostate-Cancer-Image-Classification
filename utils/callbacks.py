@@ -239,3 +239,63 @@ class LogImagesPredictions(Callback):
             )
 
         wandb.log({f"{name}/predictions": samples})
+
+class LogImagesPredictionsSegmentation(Callback):
+    def __init__(self, log_freq_img, log_nb_img, log_nb_patches) -> None:
+        super().__init__()
+        self.log_freq_img = log_freq_img
+        self.log_nb_img = log_nb_img
+        self.log_nb_patches = log_nb_patches
+
+    def on_validation_batch_end(
+        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
+    ):
+        """Called when the validation batch ends."""
+
+        if batch_idx == 0 and pl_module.current_epoch % self.log_freq_img == 0:
+            self.log_images("val", batch, self.log_nb_img, self.log_nb_patches, outputs)
+
+    def on_train_batch_end(
+        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
+    ):
+        """Called when the training batch ends."""
+
+        if batch_idx == 0 and pl_module.current_epoch % self.log_freq_img == 0:
+            self.log_images(
+                "train", batch, self.log_nb_img, self.log_nb_patches, outputs
+            )
+
+    def log_images(self, name, batch, n, p, outputs):
+
+        x, y = batch
+        images = x[:n, :p].detach().cpu()
+        labels = y[:n].cpu()
+        preds = outputs["logits"][:n].argmax(dim=1).cpu()
+
+        images = [make_grid(im) for im in images]
+        samples = []
+
+        for i in range(len(images)):
+
+            bg_image = images[i].numpy().transpose((1, 2, 0))
+            bg_image = STD * bg_image + MEAN
+            bg_image = np.clip(bg_image, 0, 1)
+
+            prediction = np.array(preds[i])
+            true_mask = np.array(labels[i])
+
+            samples.append(
+                wandb.Image(
+                    bg_image,
+                    masks={
+                        "prediction":{
+                            "mask_data":prediction
+                        },
+                        "ground_truth":{
+                            "mask_data":true_mask
+                        }
+                    }
+                )
+            )
+
+        wandb.log({f"{name}/predictions": samples})

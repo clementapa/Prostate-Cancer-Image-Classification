@@ -10,6 +10,7 @@ from pytorch_lightning.callbacks import (
 from utils.agent_utils import get_artifact, get_datamodule
 from utils.callbacks import (
     AutoSaveModelCheckpoint,
+    LogImagesPredictionsSegmentation,
     LogMetricsCallback,
     LogImagesPredictions,
 )
@@ -35,7 +36,8 @@ class BaseTrainer:
         logger.info("Loading Model module...")
         self.pl_model = BaseModule(config.network_param, config.optim_param)
 
-        self.wb_run.watch(self.pl_model.model.mlp)
+        if self.network_param.network_name != "Segmentation":
+            self.wb_run.watch(self.pl_model.model.mlp)
 
     def run(self):
         if self.config.tune_lr:
@@ -107,7 +109,7 @@ class BaseTrainer:
             LearningRateMonitor(),
             StochasticWeightAveraging(),
             LogMetricsCallback(self.metric_param),
-            LogImagesPredictions(
+            LogImagesPredictionsSegmentation(
                 self.callbacks_param.log_freq_img,
                 self.callbacks_param.log_nb_img,
                 self.callbacks_param.log_nb_patches,

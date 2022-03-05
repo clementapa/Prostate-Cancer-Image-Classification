@@ -9,7 +9,7 @@ from einops import rearrange
 from tifffile import imread
 from torch.utils.data import Dataset
 
-from utils.dataset_utils import parse_csv, return_random_patch
+from utils.dataset_utils import parse_csv, parse_csv_seg, return_random_patch, get_segmentation_paths, return_random_patch_with_mask
 
 
 class BaseDataset(Dataset):
@@ -22,8 +22,11 @@ class BaseDataset(Dataset):
 
         self.params = params
 
+        self.path_seg = None
+
         if train:
             self.X, self.y = parse_csv(params.root_dataset, "train")
+            # self.path_seg = get_segmentation_paths(self.X)
         else:
             self.X, self.y = parse_csv(params.root_dataset, "test")
 
@@ -38,7 +41,6 @@ class BaseDataset(Dataset):
 
     def __getitem__(self, idx):
         raise NotImplementedError(f"Should be implemented in derived class!")
-
 
 class PatchDataset(BaseDataset):
     def __init__(self, params, train=True, transform=None):
@@ -155,3 +157,63 @@ class PatchDataset_Optimized(BaseDataset):
         output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
 
         return output_tensor, label
+
+class BaseSegDataset(Dataset):
+    """
+    A base dataset module to load the dataset for the challenge
+    """
+
+    def __init__(self, params, train=True, transform=None):
+        super().__init__()
+
+        self.params = params
+
+        self.path_seg = None
+
+        if train:
+            self.X, self.y = parse_csv_seg(params.root_dataset, "train", params.data_provider)
+            self.X, self.path_seg, self.y = get_segmentation_paths(self.X, self.y)
+        else:
+            self.X, self.y = parse_csv_seg(params.root_dataset, "test", params.data_provider)
+
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, idx):
+        raise NotImplementedError(f"Should be implemented in derived class!")
+
+class PatchSegDataset(BaseSegDataset):
+    def __init__(self, params, train=True, transform=None):
+        super().__init__(params, train, transform)
+        self.transform = transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )
+
+    def __getitem__(self, idx):
+        img_path = self.X[idx]
+        seg_path = self.path_seg[idx]
+
+        wsi_image = openslide.OpenSlide(img_path)
+        wsi_seg = openslide.OpenSlide(seg_path)
+
+        pil_imgs = []
+        seg_gt = []
+        for _ in range(self.params.nb_samples):
+            pil_img, seg_img = return_random_patch_with_mask(
+                wsi_image, wsi_seg, self.params.patch_size, self.params.percentage_blank
+            )
+            pil_imgs.append(pil_img)
+            seg_gt.append(seg_img)
+
+        
+        output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
+        seg_masks = torch.stack(seg_gt)
+        return output_tensor, seg_masks
+

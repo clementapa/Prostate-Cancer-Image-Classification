@@ -1,7 +1,7 @@
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, random_split
 
-from utils.dataset_utils import coll_fn
+from utils.dataset_utils import coll_fn, coll_fn_seg
 import datasets.datasets as datasets
 
 
@@ -10,6 +10,11 @@ class BaseDataModule(LightningDataModule):
         super().__init__()
 
         self.config = dataset_param
+        
+        if "seg" in dataset_param.dataset_name.lower():
+            self.collate_fn = coll_fn_seg
+        else:
+            self.collate_fn = coll_fn
 
     def prepare_data(self) -> None:
         return super().prepare_data()
@@ -37,7 +42,7 @@ class BaseDataModule(LightningDataModule):
             shuffle=True,
             batch_size=self.config.batch_size,
             num_workers=self.config.num_workers,
-            collate_fn=coll_fn,
+            collate_fn=self.collate_fn,
         )
         return train_loader
 
@@ -47,7 +52,7 @@ class BaseDataModule(LightningDataModule):
             shuffle=False,
             batch_size=self.config.batch_size,
             num_workers=self.config.num_workers,
-            collate_fn=coll_fn,
+            collate_fn=self.collate_fn,
         )
         return val_loader
 
@@ -57,7 +62,7 @@ class BaseDataModule(LightningDataModule):
             batch_size=self.config.batch_size,
             num_workers=self.config.num_workers,
             shuffle=False,
-            collate_fn=coll_fn,
+            collate_fn=self.collate_fn,
             pin_memory=True,
         )
         return predict_loader
