@@ -10,7 +10,7 @@ class BaseDataModule(LightningDataModule):
         super().__init__()
 
         self.config = dataset_param
-        
+
         if "seg" in dataset_param.dataset_name.lower():
             self.collate_fn = coll_fn_seg
         else:

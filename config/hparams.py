@@ -94,10 +94,7 @@ class MetricParams:
     # list_metrics: List[str] = list_field(
     #     "Accuracy", "AUROC", "F1", "Recall", "Precision"
     # )
-    list_metrics: List[str] = list_field(
-        
-        
-    )
+    list_metrics: List[str] = list_field()
     average: str = "weighted"
     num_classes: int = 6
 
