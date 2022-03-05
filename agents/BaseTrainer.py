@@ -6,14 +6,14 @@ from pytorch_lightning.callbacks import (
     LearningRateMonitor,
     RichProgressBar,
     StochasticWeightAveraging,
+    EarlyStopping
 )
 from utils.agent_utils import get_artifact, get_datamodule
 from utils.callbacks import (
     AutoSaveModelCheckpoint,
     LogImagesPredictionsSegmentation,
     LogMetricsCallback,
-    LogImagesPredictions,
-    EarlyStopping
+    LogImagesPredictions
 )
 from utils.logger import init_logger
 
