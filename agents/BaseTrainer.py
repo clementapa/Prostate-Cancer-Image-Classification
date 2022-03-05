@@ -49,11 +49,11 @@ class BaseTrainer:
                 gpus=self.config.gpu,
                 auto_scale_batch_size="power",
                 accelerator="auto",
-                default_root_dir=self.wb_run.save_dir
+                default_root_dir=self.wb_run.save_dir,
             )
             trainer.logger = self.wb_run
             trainer.tune(self.model, datamodule=self.datamodule)
-            
+
         if self.config.tune_lr:
             trainer = pl.Trainer(
                 logger=self.wb_run,
