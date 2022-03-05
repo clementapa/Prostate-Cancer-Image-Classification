@@ -10,14 +10,13 @@ __all__ = ["JaccardLoss"]
 
 
 class JaccardLoss(_Loss):
-
     def __init__(
         self,
         mode: str = "multiclass",
         classes: Optional[List[int]] = None,
         log_loss: bool = False,
         from_logits: bool = True,
-        smooth: float = 0.,
+        smooth: float = 0.0,
         eps: float = 1e-7,
     ):
         """Implementation of Jaccard loss for image segmentation task.
@@ -28,7 +27,7 @@ class JaccardLoss(_Loss):
             log_loss: If True, loss computed as `- log(jaccard_coeff)`, otherwise `1 - jaccard_coeff`
             from_logits: If True, assumes input is raw logits
             smooth: Smoothness constant for dice coefficient
-            eps: A small epsilon for numerical stability to avoid zero division error 
+            eps: A small epsilon for numerical stability to avoid zero division error
                 (denominator will be always greater or equal to eps)
         Shape
              - **y_pred** - torch.Tensor of shape (N, C, H, W)
@@ -41,7 +40,9 @@ class JaccardLoss(_Loss):
 
         self.mode = mode
         if classes is not None:
-            assert mode != BINARY_MODE, "Masking classes is not supported with mode=binary"
+            assert (
+                mode != BINARY_MODE
+            ), "Masking classes is not supported with mode=binary"
             classes = to_tensor(classes, dtype=torch.long)
 
         self.classes = classes
@@ -82,7 +83,13 @@ class JaccardLoss(_Loss):
             y_true = y_true.view(bs, num_classes, -1)
             y_pred = y_pred.view(bs, num_classes, -1)
 
-        scores = soft_jaccard_score(y_pred, y_true.type(y_pred.dtype), smooth=self.smooth, eps=self.eps, dims=dims)
+        scores = soft_jaccard_score(
+            y_pred,
+            y_true.type(y_pred.dtype),
+            smooth=self.smooth,
+            eps=self.eps,
+            dims=dims,
+        )
 
         if self.log_loss:
             loss = -torch.log(scores.clamp_min(self.eps))

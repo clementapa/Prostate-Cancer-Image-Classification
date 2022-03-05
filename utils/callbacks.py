@@ -12,6 +12,7 @@ from torchvision.utils import make_grid
 from utils.constant import MEAN, STD, DICT_COLORS
 import utils.metrics as metrics
 
+
 class AutoSaveModelCheckpoint(ModelCheckpoint):
     def __init__(
         self,
@@ -159,9 +160,13 @@ class LogMetricsCallback(Callback):
     ) -> None:
         device = pl_module.device
 
-        self.metrics_module_train = getattr(metrics, self.params.name_module)("train", self.params, device)
+        self.metrics_module_train = getattr(metrics, self.params.name_module)(
+            "train", self.params, device
+        )
 
-        self.metrics_module_validation = getattr(metrics, self.params.name_module)("val", self.params, device)
+        self.metrics_module_validation = getattr(metrics, self.params.name_module)(
+            "val", self.params, device
+        )
 
     def on_train_batch_end(
         self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
@@ -189,6 +194,7 @@ class LogMetricsCallback(Callback):
 
         self.metrics_module_validation.log_metrics("val/", pl_module)
 
+
 class BaseLogImages(Callback):
     def __init__(self, log_freq_img, log_nb_img, log_nb_patches) -> None:
         super().__init__()
@@ -213,7 +219,7 @@ class BaseLogImages(Callback):
             self.log_images(
                 "train", batch, self.log_nb_img, self.log_nb_patches, outputs
             )
-    
+
     def log_images(self, name, batch, n, p, outputs):
         raise NotImplementedError(f"Should be implemented in derived class!")
 
