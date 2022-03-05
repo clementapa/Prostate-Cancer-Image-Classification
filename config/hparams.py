@@ -96,13 +96,11 @@ class MetricParams:
     # )
     list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "IoU")
     num_classes: int = 6
-    pixel_wise_parameters : Dict[str, Any] = dict_field(
-        dict(
-            average           = "weighted",
-            mdmc_average      = "global"
-        )
+    pixel_wise_parameters: Dict[str, Any] = dict_field(
+        dict(average="weighted", mdmc_average="global")
     )
     name_module: str = "MetricsModuleSegmentation"
+
 
 @dataclass
 class CallbacksParams:

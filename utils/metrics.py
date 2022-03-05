@@ -49,7 +49,6 @@ class MetricsModuleClassification(BaseMetricsModule):
 
 
 class MetricsModuleSegmentation(BaseMetricsModule):
-
     def __init__(self, set_name, params, device) -> None:
         super().__init__(set_name, params, device)
         """
@@ -61,14 +60,20 @@ class MetricsModuleSegmentation(BaseMetricsModule):
         if set_name != "train":
             for name in params.list_metrics:
                 if name != "IoU":
-                    instance = import_class("torchmetrics." + name)(compute_on_step=False, num_classes=params.num_classes,
-                                                                    **params.pixel_wise_parameters)
+                    instance = import_class("torchmetrics." + name)(
+                        compute_on_step=False,
+                        num_classes=params.num_classes,
+                        **params.pixel_wise_parameters
+                    )
                 else:
-                    instance = import_class("torchmetrics." + name)(compute_on_step=False, num_classes=params.num_classes,
-                                                                    )
+                    instance = import_class("torchmetrics." + name)(
+                        compute_on_step=False,
+                        num_classes=params.num_classes,
+                    )
                 dict_metrics[name.lower()] = instance.to(device)
         else:
-            dict_metrics["iou"] = import_class(
-                "torchmetrics.IoU")(compute_on_step=False, num_classes=params.num_classes).to(device)
+            dict_metrics["iou"] = import_class("torchmetrics.IoU")(
+                compute_on_step=False, num_classes=params.num_classes
+            ).to(device)
 
         self.dict_metrics = dict_metrics

@@ -8,6 +8,7 @@ from models.Baseline import Baseline
 
 from models.losses.segmentation.dice import DiceLoss
 
+
 class BaseModule(LightningModule):
     def __init__(self, network_param, optim_param):
         """method used to define our model parameters"""
