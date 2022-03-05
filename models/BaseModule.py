@@ -6,6 +6,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from utils.agent_utils import get_net
 from models.Baseline import Baseline
 
+from models.losses.segmentation.dice import DiceLoss
 
 class BaseModule(LightningModule):
     def __init__(self, network_param, optim_param):
@@ -13,7 +14,8 @@ class BaseModule(LightningModule):
         super(BaseModule, self).__init__()
 
         # loss function
-        self.loss = nn.CrossEntropyLoss()
+        # self.loss = nn.CrossEntropyLoss()
+        self.loss = DiceLoss()
 
         # optimizer
         self.optim_param = optim_param
