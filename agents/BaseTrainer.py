@@ -38,6 +38,8 @@ class BaseTrainer:
 
         if self.network_param.network_name != "Segmentation":
             self.wb_run.watch(self.pl_model.model.mlp)
+        else:
+            self.wb_run.watch(self.pl_model.model)
 
     def run(self):
         if self.config.tune_lr:

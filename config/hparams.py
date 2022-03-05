@@ -32,7 +32,7 @@ class Hparams:
 
     # modes
     tune_lr: bool = False  # tune the model on first run
-    dev_run: bool = True
+    dev_run: bool = False
     train: bool = True
 
     # for inference and test
