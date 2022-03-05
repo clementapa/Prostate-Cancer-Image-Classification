@@ -50,10 +50,11 @@ class BaseTrainer:
                 auto_scale_batch_size="power",
                 accelerator="auto",
                 default_root_dir=self.wb_run.save_dir
+                enable_progress_bar=self.config.enable_progress_bar,
             )
             trainer.logger = self.wb_run
-            trainer.tune(self.model, datamodule=self.datamodule)
-            
+            trainer.tune(self.pl_model, datamodule=self.datamodule)
+
         if self.config.tune_lr:
             trainer = pl.Trainer(
                 logger=self.wb_run,
