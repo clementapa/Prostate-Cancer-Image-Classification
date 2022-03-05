@@ -24,6 +24,7 @@ class BaseTrainer:
         self.network_param = config.network_param
         self.metric_param = config.metric_param
         self.callbacks_param = config.callbacks_param
+        self.data_param = config.data_param
 
         logger = init_logger("BaseTrainer", "INFO")
 
@@ -115,6 +116,7 @@ class BaseTrainer:
                 self.callbacks_param.log_freq_img,
                 self.callbacks_param.log_nb_img,
                 self.callbacks_param.log_nb_patches,
+                self.data_param.data_provider,
             ),
         ]
         monitor = "val/loss"

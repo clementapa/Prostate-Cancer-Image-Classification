@@ -9,7 +9,7 @@ from pytorch_lightning.utilities import rank_zero_info
 from pytorch_lightning.utilities.types import _METRIC, _PATH, STEP_OUTPUT
 from torchvision.utils import make_grid
 
-from utils.constant import MEAN, STD
+from utils.constant import MEAN, STD, DICT_COLORS
 from utils.metrics import MetricsModule
 
 
@@ -242,11 +242,12 @@ class LogImagesPredictions(Callback):
 
 
 class LogImagesPredictionsSegmentation(Callback):
-    def __init__(self, log_freq_img, log_nb_img, log_nb_patches) -> None:
+    def __init__(self, log_freq_img, log_nb_img, log_nb_patches, data_provider) -> None:
         super().__init__()
         self.log_freq_img = log_freq_img
         self.log_nb_img = log_nb_img
         self.log_nb_patches = log_nb_patches
+        self.data_provider = data_provider
 
     def on_validation_batch_end(
         self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
@@ -289,8 +290,8 @@ class LogImagesPredictionsSegmentation(Callback):
                 wandb.Image(
                     bg_image,
                     masks={
-                        "prediction": {"mask_data": prediction},
-                        "ground_truth": {"mask_data": true_mask},
+                        "prediction": {"mask_data": prediction, "class_labels":DICT_COLORS[self.data_provider]},
+                        "ground_truth": {"mask_data": true_mask, "class_labels":DICT_COLORS[self.data_provider]},
                     },
                 )
             )
