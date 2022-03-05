@@ -4,3 +4,4 @@ einops
 timm
 openslide-python
 pytorch
+segmentation-models-pytorch
