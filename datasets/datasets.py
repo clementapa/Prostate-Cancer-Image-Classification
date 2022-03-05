@@ -9,7 +9,13 @@ from einops import rearrange
 from tifffile import imread
 from torch.utils.data import Dataset
 
-from utils.dataset_utils import parse_csv, parse_csv_seg, return_random_patch, get_segmentation_paths, return_random_patch_with_mask
+from utils.dataset_utils import (
+    parse_csv,
+    parse_csv_seg,
+    return_random_patch,
+    get_segmentation_paths,
+    return_random_patch_with_mask,
+)
 
 
 class BaseDataset(Dataset):
@@ -41,6 +47,7 @@ class BaseDataset(Dataset):
 
     def __getitem__(self, idx):
         raise NotImplementedError(f"Should be implemented in derived class!")
+
 
 class PatchDataset(BaseDataset):
     def __init__(self, params, train=True, transform=None):
@@ -158,6 +165,7 @@ class PatchDataset_Optimized(BaseDataset):
 
         return output_tensor, label
 
+
 class BaseSegDataset(Dataset):
     """
     A base dataset module to load the dataset for the challenge
@@ -171,10 +179,14 @@ class BaseSegDataset(Dataset):
         self.path_seg = None
 
         if train:
-            self.X, self.y = parse_csv_seg(params.root_dataset, "train", params.data_provider)
+            self.X, self.y = parse_csv_seg(
+                params.root_dataset, "train", params.data_provider
+            )
             self.X, self.path_seg, self.y = get_segmentation_paths(self.X, self.y)
         else:
-            self.X, self.y = parse_csv_seg(params.root_dataset, "test", params.data_provider)
+            self.X, self.y = parse_csv_seg(
+                params.root_dataset, "test", params.data_provider
+            )
 
         self.transform = transform
 
@@ -183,6 +195,7 @@ class BaseSegDataset(Dataset):
 
     def __getitem__(self, idx):
         raise NotImplementedError(f"Should be implemented in derived class!")
+
 
 class PatchSegDataset(BaseSegDataset):
     def __init__(self, params, train=True, transform=None):
@@ -212,8 +225,6 @@ class PatchSegDataset(BaseSegDataset):
             pil_imgs.append(pil_img)
             seg_gt.append(seg_img)
 
-        
         output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
         seg_masks = torch.stack(seg_gt)
         return output_tensor, seg_masks
-

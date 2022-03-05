@@ -240,6 +240,7 @@ class LogImagesPredictions(Callback):
 
         wandb.log({f"{name}/predictions": samples})
 
+
 class LogImagesPredictionsSegmentation(Callback):
     def __init__(self, log_freq_img, log_nb_img, log_nb_patches) -> None:
         super().__init__()
@@ -288,13 +289,9 @@ class LogImagesPredictionsSegmentation(Callback):
                 wandb.Image(
                     bg_image,
                     masks={
-                        "prediction":{
-                            "mask_data":prediction
-                        },
-                        "ground_truth":{
-                            "mask_data":true_mask
-                        }
-                    }
+                        "prediction": {"mask_data": prediction},
+                        "ground_truth": {"mask_data": true_mask},
+                    },
                 )
             )
 

@@ -20,6 +20,7 @@ def parse_csv(path_dataset, split="train"):
                 y.append(int(row[-2]))
     return X, y
 
+
 def parse_csv_seg(path_dataset, split="train", data_provider="radboud"):
     X = []
     y = []
@@ -33,16 +34,18 @@ def parse_csv_seg(path_dataset, split="train", data_provider="radboud"):
                 y.append(int(row[-2]))
     return X, y
 
+
 def get_segmentation_paths(input_paths, labels):
     segmentation_paths = []
     cleaned_input_paths = []
     cleaned_labels = []
     for i, path in enumerate(input_paths):
-        if os.path.exists(path.replace('train', 'train_label_masks')):
-            segmentation_paths.append(path.replace('train', 'train_label_masks'))
+        if os.path.exists(path.replace("train", "train_label_masks")):
+            segmentation_paths.append(path.replace("train", "train_label_masks"))
             cleaned_input_paths.append(path)
             cleaned_labels.append(labels[i])
     return cleaned_input_paths, segmentation_paths, cleaned_labels
+
 
 # def coll_fn(batch):
 #     N = min([b[0].shape[-1] for b in batch])
@@ -57,6 +60,7 @@ def coll_fn(batch):
     X = torch.stack([b[0] for b in batch])
 
     return X, y
+
 
 def coll_fn_seg(batch):
     y = torch.stack([b[1] for b in batch])
@@ -87,6 +91,7 @@ def return_random_patch(whole_slide, patch_dim, percentage_blank):
         )
     return cropped_image.convert("RGB")
 
+
 def return_random_patch_with_mask(whole_slide, seg_slide, patch_dim, percentage_blank):
     wsi_dimensions = whole_slide.dimensions
     random_location_x = random.randint(0, wsi_dimensions[0] - patch_dim)
@@ -109,10 +114,12 @@ def return_random_patch_with_mask(whole_slide, seg_slide, patch_dim, percentage_
         (random_location_x, random_location_y), 0, (patch_dim, patch_dim)
     )
 
-    assert (np.max(np.array(cropped_mask.convert('RGB'))[:, :, 1]) == 0) and (np.max(np.array(cropped_mask.convert('RGB'))[:, :, 2]) == 0)
+    assert (np.max(np.array(cropped_mask.convert("RGB"))[:, :, 1]) == 0) and (
+        np.max(np.array(cropped_mask.convert("RGB"))[:, :, 2]) == 0
+    )
 
-    cropped_mask = torch.as_tensor(np.array(cropped_mask.convert('RGB'))[:, :, 0], dtype=torch.int64)
-    
+    cropped_mask = torch.as_tensor(
+        np.array(cropped_mask.convert("RGB"))[:, :, 0], dtype=torch.int64
+    )
 
     return cropped_image.convert("RGB"), cropped_mask
-
