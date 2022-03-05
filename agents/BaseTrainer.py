@@ -49,7 +49,7 @@ class BaseTrainer:
                 gpus=self.config.gpu,
                 auto_scale_batch_size="power",
                 accelerator="auto",
-                default_root_dir=self.wb_run.save_dir
+                default_root_dir=self.wb_run.save_dir,
                 enable_progress_bar=self.config.enable_progress_bar,
             )
             trainer.logger = self.wb_run
