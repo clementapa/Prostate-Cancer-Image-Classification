@@ -290,8 +290,14 @@ class LogImagesPredictionsSegmentation(Callback):
                 wandb.Image(
                     bg_image,
                     masks={
-                        "prediction": {"mask_data": prediction, "class_labels":DICT_COLORS[self.data_provider]},
-                        "ground_truth": {"mask_data": true_mask, "class_labels":DICT_COLORS[self.data_provider]},
+                        "prediction": {
+                            "mask_data": prediction,
+                            "class_labels": DICT_COLORS[self.data_provider],
+                        },
+                        "ground_truth": {
+                            "mask_data": true_mask,
+                            "class_labels": DICT_COLORS[self.data_provider],
+                        },
                     },
                 )
             )
