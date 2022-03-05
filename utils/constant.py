@@ -18,3 +18,5 @@ DICT_COLORS = {
         5: "cancerous epothelium (Gleason 5)",
     },
 }
+
+CLASSES_PER_PROVIDER = {"radboud": 6, "karolinska": 3}

@@ -1,15 +1,17 @@
 import torch.nn as nn
 import segmentation_models_pytorch as smp
 
-CLASSES_PER_PROVIDER = {"radboud": 6, "karolinska": 3}
-
+from utils.constant import CLASSES_PER_PROVIDER
 
 class Segmentation(nn.Module):
+    '''
+    https://smp.readthedocs.io/en/latest/
+    '''
     def __init__(self, params):
         super().__init__()
         self.params = params
 
-        self.seg_model = smp.Unet(
+        self.seg_model = smp.DeepLabV3Plus(
             encoder_name=params.feature_extractor_name,  # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
             encoder_weights="imagenet",  # use `imagenet` pre-trained weights for encoder initialization
             in_channels=3,  # model input channels (1 for gray-scale images, 3 for RGB, etc.)
