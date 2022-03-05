@@ -13,7 +13,7 @@ from utils.callbacks import (
     LogImagesPredictionsSegmentation,
     LogMetricsCallback,
     LogImagesPredictions,
-    EarlyStopping
+    EarlyStopping,
 )
 from utils.logger import init_logger
 
@@ -133,7 +133,7 @@ class BaseTrainer:
                 self.callbacks_param.log_nb_patches,
                 self.data_param.data_provider,
             ),
-            EarlyStopping(monitor="val/loss", mode="min", patience=5)
+            EarlyStopping(monitor="val/loss", mode="min", patience=5),
         ]
         monitor = "val/loss"
         mode = "min"
