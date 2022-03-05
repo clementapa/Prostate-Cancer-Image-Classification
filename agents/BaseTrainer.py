@@ -25,6 +25,7 @@ class BaseTrainer:
         self.metric_param = config.metric_param
         self.callbacks_param = config.callbacks_param
         self.data_param = config.data_param
+        self.batch_size = config.data_param.batch_size # for tuning
 
         logger = init_logger("BaseTrainer", "INFO")
 
