@@ -3,10 +3,12 @@ import segmentation_models_pytorch as smp
 
 from utils.constant import CLASSES_PER_PROVIDER
 
+
 class Segmentation(nn.Module):
-    '''
+    """
     https://smp.readthedocs.io/en/latest/
-    '''
+    """
+
     def __init__(self, params):
         super().__init__()
         self.params = params
