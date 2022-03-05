@@ -3,5 +3,5 @@ simple_parsing
 einops
 timm
 openslide-python
-pytorch
+torch
 segmentation-models-pytorch
