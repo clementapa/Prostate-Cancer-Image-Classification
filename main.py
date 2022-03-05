@@ -30,7 +30,7 @@ def main():
                 parameters.data_param.dataset_name,
                 str(parameters.data_param.patch_size),
                 parameters.optim_param.optimizer,
-                parameters.data_param.data_provider,    
+                parameters.data_param.data_provider,
             ],
         )
 
