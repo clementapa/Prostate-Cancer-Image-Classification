@@ -13,6 +13,7 @@ from utils.callbacks import (
     LogImagesPredictionsSegmentation,
     LogMetricsCallback,
     LogImagesPredictions,
+    EarlyStopping
 )
 from utils.logger import init_logger
 
@@ -48,6 +49,7 @@ class BaseTrainer:
                 logger=self.wb_run,
                 gpus=self.config.gpu,
                 auto_scale_batch_size="power",
+                log_every_n_steps=1,
                 accelerator="auto",
                 default_root_dir=self.wb_run.save_dir,
                 enable_progress_bar=self.config.enable_progress_bar,
@@ -60,6 +62,7 @@ class BaseTrainer:
                 logger=self.wb_run,
                 gpus=self.config.gpu,
                 auto_lr_find=True,
+                log_every_n_steps=1,
                 accelerator="auto",
                 default_root_dir=self.wb_run.save_dir,
                 enable_progress_bar=self.config.enable_progress_bar,
@@ -130,6 +133,7 @@ class BaseTrainer:
                 self.callbacks_param.log_nb_patches,
                 self.data_param.data_provider,
             ),
+            EarlyStopping(monitor="val/loss", mode="min", patience=5)
         ]
         monitor = "val/loss"
         mode = "min"
