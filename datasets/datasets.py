@@ -223,7 +223,7 @@ class PatchSegDataset(BaseSegDataset):
             pil_img, seg_img = return_random_patch_with_mask(
                 wsi_image, wsi_seg, self.params.patch_size, self.params.percentage_blank
             )
-            
+
             if self.params.data_provider == "radboud_merged":
                 seg_img = merge_cls(seg_img)
             pil_imgs.append(pil_img)
