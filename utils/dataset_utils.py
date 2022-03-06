@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torchvision.transforms import ToTensor
 from PIL import Image
 
-from patchify import patchify
+# from patchify import patchify
 
 from albumentations.pytorch.transforms import ToTensorV2
 
