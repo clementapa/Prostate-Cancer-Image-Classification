@@ -143,8 +143,7 @@ def main(patch_size, split, percentage_blank, level):
     )
 
     artifact.add_file(zip_name + '.zip')
-    artifact.add_file(osp.join(patch_path, df['image_id'][i]+".npy"))
-    wandb.log_artifact(artifact, aliases=["latest"])
+    wandb.log_artifact(artifact, aliases=["latest"]) # FIXME doesnot work 
 
 
 if __name__ == '__main__':
