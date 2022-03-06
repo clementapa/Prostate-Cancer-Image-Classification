@@ -16,5 +16,10 @@ DICT_COLORS = {
         3:"cancerous epothelium (Gleason 3)",
         4:"cancerous epothelium (Gleason 4)",
         5:"cancerous epothelium (Gleason 5)"
+    },
+    "radboud_merged":{
+        0:"background or unknown",
+        1:"healthy",
+        2:"cancerous tissue"
     }
 }

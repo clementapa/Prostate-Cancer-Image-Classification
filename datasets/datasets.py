@@ -10,6 +10,7 @@ from tifffile import imread
 from torch.utils.data import Dataset
 
 from utils.dataset_utils import (
+    merge_cls,
     parse_csv,
     parse_csv_seg,
     return_random_patch,
@@ -222,9 +223,11 @@ class PatchSegDataset(BaseSegDataset):
             pil_img, seg_img = return_random_patch_with_mask(
                 wsi_image, wsi_seg, self.params.patch_size, self.params.percentage_blank
             )
+            
+            if self.params.data_provider == "radboud_merged":
+                seg_img = merge_cls(seg_img)
             pil_imgs.append(pil_img)
             seg_gt.append(seg_img)
-
         output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
         seg_masks = torch.stack(seg_gt)
         return output_tensor, seg_masks

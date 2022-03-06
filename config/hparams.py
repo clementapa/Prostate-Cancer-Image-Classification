@@ -32,7 +32,7 @@ class Hparams:
 
     # modes
     tune_lr: bool = False  # tune the model on first run
-    dev_run: bool = False
+    dev_run: bool = True
     train: bool = True
 
     # for inference and test
@@ -76,8 +76,8 @@ class DatasetParams:
 
     # dataset
     split_val: float = 0.1
-    patch_size: int = 256
-    percentage_blank: float = 0.05
+    patch_size: int = 512
+    percentage_blank: float = 0.5
     nb_samples: int = 4
 
     # dataloader
@@ -85,7 +85,8 @@ class DatasetParams:
     batch_size: int = 2  # batch_size
 
     # for segmentation
-    data_provider: str = "radboud"
+    data_provider: str = "karolinska"
+    # merge_cls: bool = True # Only for radboud
 
 
 @dataclass

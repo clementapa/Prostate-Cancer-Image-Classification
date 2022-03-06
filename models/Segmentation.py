@@ -1,7 +1,7 @@
 import torch.nn as nn
 import segmentation_models_pytorch as smp
 
-CLASSES_PER_PROVIDER = {"radboud": 6, "karolinska": 3}
+CLASSES_PER_PROVIDER = {"radboud": 6, "karolinska": 3, "radboud_merged":3}
 
 
 class Segmentation(nn.Module):
