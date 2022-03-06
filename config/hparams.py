@@ -31,8 +31,8 @@ class Hparams:
     enable_progress_bar: bool = True
 
     # modes
-    tune_lr: bool = True  # tune the model on first run
-    tune_batch_size: bool = False
+    tune_lr: bool = False  # tune the model on first run
+    tune_batch_size: bool = True
     dev_run: bool = False
     train: bool = True
 
@@ -58,9 +58,9 @@ class OptimizerParams:
     """Optimization parameters"""
 
     optimizer: str = "Adam"  # Optimizer default vit: AdamW, default resnet50: Adam
-    lr: float = 0.003  # learning rate,               default = 5e-4
+    lr: float = 5e-4  # learning rate,               default = 5e-4
     min_lr: float = 5e-9  # min lr reached at the end of the cosine schedule
-    weight_decay: float = 1e-8
+    weight_decay: float = 0.0
 
     # Scheduler
     scheduler: bool = True
@@ -82,13 +82,13 @@ class DatasetParams:
     nb_samples: int = 4
 
     # dataloader
-    num_workers: int = 0  # number of workers for dataloaders
-    batch_size: int = 2  # batch_size
+    num_workers: int = 4  # number of workers for dataloaders
+    batch_size: int = 4  # batch_size
 
     # for segmentation
     data_provider: str = "karolinska"
     # merge_cls: bool = True # Only for radboud
-
+    image_size: int = 512
 
 @dataclass
 class MetricParams:
@@ -96,9 +96,9 @@ class MetricParams:
     # list_metrics: List[str] = list_field(
     #     "Accuracy", "AUROC", "F1", "Recall", "Precision"
     # )
-    # list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "IoU")
-    list_metrics: List[str] = list_field("IoU")
-    num_classes: int = 6
+    list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "IoU")
+    # list_metrics: List[str] = list_field("IoU")
+    num_classes: int = 3
     pixel_wise_parameters: Dict[str, Any] = dict_field(
         dict(average="weighted", mdmc_average="global")
     )

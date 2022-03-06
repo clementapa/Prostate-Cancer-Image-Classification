@@ -1,10 +1,12 @@
 import csv
-import os, random
-import torch
-import openslide
-import numpy as np
+import os
+import random
 
-from torchvision.transforms import ToTensor
+import albumentations as albu
+import numpy as np
+import openslide
+import torch
+from albumentations.pytorch.transforms import ToTensorV2
 
 
 def merge_cls(seg_img):
@@ -54,14 +56,6 @@ def get_segmentation_paths(input_paths, labels):
             cleaned_input_paths.append(path)
             cleaned_labels.append(labels[i])
     return cleaned_input_paths, segmentation_paths, cleaned_labels
-
-
-# def coll_fn(batch):
-#     N = min([b[0].shape[-1] for b in batch])
-#     y = torch.LongTensor([b[1] for b in batch])
-
-#     X = torch.stack([b[0][:N] for b in batch])
-#     return X, y
 
 
 def coll_fn(batch):
@@ -132,3 +126,17 @@ def return_random_patch_with_mask(whole_slide, seg_slide, patch_dim, percentage_
     )
 
     return cropped_image.convert("RGB"), cropped_mask
+
+def get_training_augmentation(num_classes):
+    train_transform = [
+        albu.HorizontalFlip(p=0.5),
+        ToTensorV2()
+    ]
+
+    return albu.Compose(train_transform)
+
+def get_validation_augmentation(num_classes):
+    test_transform = [
+        ToTensorV2()
+    ]
+    return albu.Compose(test_transform)
