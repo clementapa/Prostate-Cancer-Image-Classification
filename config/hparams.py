@@ -118,7 +118,7 @@ class Parameters:
         """Post-initialization code"""
         if self.hparams.seed_everything is None:
             self.hparams.seed_everything = random.randint(1, 10000)
-        
+
         random.seed(self.hparams.seed_everything)
         torch.manual_seed(self.hparams.seed_everything)
         pl.seed_everything(self.hparams.seed_everything)
