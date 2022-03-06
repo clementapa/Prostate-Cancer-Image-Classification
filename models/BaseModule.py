@@ -83,9 +83,10 @@ class BaseModule(LightningModule):
     def _get_preds_loss_accuracy(self, batch):
         """convenience function since train/valid/test steps are similar"""
         x, y = batch
-        output = self(x)
+        output = self(x['image'])
 
-        loss = self.loss(output, y)
+        # loss = self.loss(output, y['segmentation_mask'])
+        loss = self.loss(output, y['isup_grade'])
         logits = F.softmax(output, dim=0)
 
         return loss, logits

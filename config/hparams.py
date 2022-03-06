@@ -3,6 +3,7 @@ import random
 from dataclasses import dataclass
 from os import path as osp
 from typing import Any, ClassVar, Dict, List, Optional
+from numpy import average
 from simple_parsing.helpers import Serializable, choice, dict_field, list_field
 
 import pytorch_lightning as pl
@@ -43,8 +44,8 @@ class Hparams:
 
 @dataclass
 class NetworkParams:
-    feature_extractor_name: str = "resnet34"
-    network_name: str = "Segmentation"
+    feature_extractor_name: str = "vit_tiny_patch16_384"
+    network_name: str = "Classifier"
     weight_checkpoints: str = ""
     artifact: str = ""
 
@@ -73,7 +74,7 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "PatchSegDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "HybridSupervisionDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
@@ -84,27 +85,33 @@ class DatasetParams:
 
     # dataloader
     num_workers: int = 4  # number of workers for dataloaders
-    batch_size: int = 4  # batch_size
+    batch_size: int = 6  # batch_size
 
     # for segmentation
-    data_provider: str = "karolinska"
+    data_provider: str = " "
     # merge_cls: bool = True # Only for radboud
-    image_size: int = 512
+    image_size: int = 384
 
 
 @dataclass
-class MetricParams:
+class MetricSegmentationParams:
 
-    # list_metrics: List[str] = list_field(
-    #     "Accuracy", "AUROC", "F1", "Recall", "Precision"
-    # )
     list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "IoU")
-    # list_metrics: List[str] = list_field("IoU")
     num_classes: int = 3
     pixel_wise_parameters: Dict[str, Any] = dict_field(
         dict(average="weighted", mdmc_average="global")
     )
     name_module: str = "MetricsModuleSegmentation"
+
+
+@dataclass
+class MetricClassificationParams:
+    list_metrics: List[str] = list_field(
+        "Accuracy", "AUROC", "F1", "Recall", "Precision"
+    )
+    average: str = "weighted"
+    num_classes: int = 6
+    name_module: str = "MetricsModuleClassification"
 
 
 @dataclass
@@ -122,7 +129,7 @@ class Parameters:
     data_param: DatasetParams = DatasetParams()
     network_param: NetworkParams = NetworkParams()
     optim_param: OptimizerParams = OptimizerParams()
-    metric_param: MetricParams = MetricParams()
+    metric_param: MetricClassificationParams = MetricClassificationParams()
     callbacks_param: CallbacksParams = CallbacksParams()
 
     def __post_init__(self):

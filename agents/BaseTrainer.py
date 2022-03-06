@@ -39,7 +39,7 @@ class BaseTrainer:
         self.pl_model = BaseModule(config.network_param, config.optim_param)
 
         if self.network_param.network_name != "Segmentation":
-            self.wb_run.watch(self.pl_model.model.mlp)
+            self.wb_run.watch(self.pl_model.model)
         else:
             self.wb_run.watch(self.pl_model.model)
 
@@ -127,11 +127,16 @@ class BaseTrainer:
             LearningRateMonitor(),
             StochasticWeightAveraging(),
             LogMetricsCallback(self.metric_param),
-            LogImagesPredictionsSegmentation(
+            # LogImagesPredictionsSegmentation(
+            #     self.callbacks_param.log_freq_img,
+            #     self.callbacks_param.log_nb_img,
+            #     self.callbacks_param.log_nb_patches,
+            #     self.data_param.data_provider,
+            # ),
+            LogImagesPredictions(
                 self.callbacks_param.log_freq_img,
                 self.callbacks_param.log_nb_img,
                 self.callbacks_param.log_nb_patches,
-                self.data_param.data_provider,
             ),
             EarlyStopping(monitor="val/loss", mode="min", patience=30),
         ]

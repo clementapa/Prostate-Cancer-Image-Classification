@@ -224,6 +224,34 @@ class BaseLogImages(Callback):
         raise NotImplementedError(f"Should be implemented in derived class!")
 
 
+# class LogImagesPredictions(BaseLogImages):
+#     def __init__(self, log_freq_img, log_nb_img, log_nb_patches) -> None:
+#         super().__init__(log_freq_img, log_nb_img, log_nb_patches)
+
+#     def log_images(self, name, batch, n, p, outputs):
+
+#         x, y = batch
+#         images = x[:n, :p].detach().cpu()
+#         labels = np.array(y[:n].cpu())
+#         preds = np.array(outputs["logits"][:n].argmax(dim=1).cpu())
+
+#         images = [make_grid(im) for im in images]
+#         samples = []
+
+#         for i in range(len(images)):
+
+#             bg_image = images[i].numpy().transpose((1, 2, 0))
+#             bg_image = STD * bg_image + MEAN
+#             bg_image = np.clip(bg_image, 0, 1)
+
+#             samples.append(
+#                 wandb.Image(
+#                     bg_image, caption=f"label: {labels[i]}, prediction: {preds[i]}"
+#                 )
+#             )
+
+#         wandb.log({f"{name}/predictions": samples})
+
 class LogImagesPredictions(BaseLogImages):
     def __init__(self, log_freq_img, log_nb_img, log_nb_patches) -> None:
         super().__init__(log_freq_img, log_nb_img, log_nb_patches)
@@ -231,8 +259,8 @@ class LogImagesPredictions(BaseLogImages):
     def log_images(self, name, batch, n, p, outputs):
 
         x, y = batch
-        images = x[:n, :p].detach().cpu()
-        labels = np.array(y[:n].cpu())
+        images = x['image'][:n].detach().cpu()
+        labels = np.array(y['isup_grade'][:n].cpu())
         preds = np.array(outputs["logits"][:n].argmax(dim=1).cpu())
 
         images = [make_grid(im) for im in images]
@@ -251,7 +279,6 @@ class LogImagesPredictions(BaseLogImages):
             )
 
         wandb.log({f"{name}/predictions": samples})
-
 
 class LogImagesPredictionsSegmentation(BaseLogImages):
     def __init__(self, log_freq_img, log_nb_img, log_nb_patches, data_provider) -> None:

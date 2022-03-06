@@ -1,7 +1,7 @@
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, random_split
 
-from utils.dataset_utils import coll_fn, coll_fn_seg
+from utils.dataset_utils import coll_fn, coll_fn_seg, coll_fn_
 import datasets.datasets as datasets
 
 
@@ -12,7 +12,9 @@ class BaseDataModule(LightningDataModule):
         self.config = dataset_param
         self.batch_size = self.config.batch_size
 
-        if "seg" in dataset_param.dataset_name.lower():
+        if dataset_param.dataset_name == "HybridSupervisionDataset":
+            self.collate_fn = None
+        elif "seg" in dataset_param.dataset_name.lower():
             self.collate_fn = coll_fn_seg
         else:
             self.collate_fn = coll_fn

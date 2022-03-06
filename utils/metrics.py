@@ -10,10 +10,7 @@ class BaseMetricsModule:
         self.device = device
 
     def update_metrics(self, x, y):
-
-        for _, m in self.dict_metrics.items():
-            # metric on current batch
-            m(x, y)  # update metrics (torchmetrics method)
+        raise NotImplementedError(f"Should be implemented in derived class!")
 
     def log_metrics(self, name, pl_module):
 
@@ -46,7 +43,12 @@ class MetricsModuleClassification(BaseMetricsModule):
             dict_metrics[name.lower()] = instance.to(device)
 
         self.dict_metrics = dict_metrics
+    
+    def update_metrics(self, x, y):
 
+        for _, m in self.dict_metrics.items():
+            # metric on current batch
+            m(x, y['isup_grade'])  # update metrics (torchmetrics method)
 
 class MetricsModuleSegmentation(BaseMetricsModule):
     def __init__(self, set_name, params, device) -> None:
@@ -77,3 +79,9 @@ class MetricsModuleSegmentation(BaseMetricsModule):
             ).to(device)
 
         self.dict_metrics = dict_metrics
+    
+    def update_metrics(self, x, y):
+
+        for _, m in self.dict_metrics.items():
+            # metric on current batch
+            m(x, y['segmentation_mask'])  # update metrics (torchmetrics method)

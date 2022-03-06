@@ -1,11 +1,17 @@
 import csv
 import os
 import random
+from einops import rearrange
 
 import albumentations as albu
 import numpy as np
-import openslide
 import torch
+import torch.nn.functional as F
+from torchvision.transforms import ToTensor
+from PIL import Image
+
+from patchify import patchify
+
 from albumentations.pytorch.transforms import ToTensorV2
 
 
@@ -74,6 +80,13 @@ def coll_fn_seg(batch):
     return X, y
 
 
+def coll_fn_(batch):
+    y = torch.LongTensor([b[1] for b in batch])
+    X = torch.stack([b[0] for b in batch])
+
+    return X, y
+
+
 def return_random_patch(whole_slide, patch_dim, percentage_blank):
     wsi_dimensions = whole_slide.dimensions
     random_location_x = random.randint(0, wsi_dimensions[0] - patch_dim)
@@ -128,6 +141,82 @@ def return_random_patch_with_mask(whole_slide, seg_slide, patch_dim, percentage_
     return cropped_image.convert("RGB"), cropped_mask
 
 
+def image_to_patches(whole_slide, patch_size, percentage_blank):
+    wsi_dimensions = whole_slide.dimensions
+    img_patched = []
+
+    whole_image = whole_slide.read_region(
+        wsi_dimensions, 0, wsi_dimensions
+    )
+    whole_image = ToTensor()(whole_image)
+    img_patched = patchify(whole_image, (patch_size, patch_size), step=1)
+    # # Square image
+    # quantity_to_pad = abs(img.shape[0] - img.shape[1])
+    # bool_temp = img.shape[1] < img.shape[0]
+    # img = F.pad(
+    #     img,
+    #     pad=(
+    #         0,
+    #         0,
+    #         quantity_to_pad * bool_temp,
+    #         0,
+    #         quantity_to_pad * (1 - bool_temp),
+    #         0,
+    #     ),
+    #     mode="constant",
+    #     value=255,
+    # ).unsqueeze(0)
+
+    # assert img.shape[1] == img.shape[2]  # check that it is a square image
+
+    # # process image to divide per patch
+    # remaining_pixels = img.shape[1] % patch_size
+    # if remaining_pixels != 0:
+    #     if (img.shape[1] + remaining_pixels) % patch_size == 0:
+    #         # padd
+    #         img = F.pad(
+    #             img,
+    #             pad=(
+    #                 0,
+    #                 0,
+    #                 remaining_pixels // 2,
+    #                 remaining_pixels // 2,
+    #                 remaining_pixels // 2,
+    #                 remaining_pixels // 2,
+    #             ),
+    #             mode="constant",
+    #             value=255,
+    #         )
+    #     else:
+    #         # crop
+    #         img = img[
+    #             :,
+    #             0 : img.shape[1] - remaining_pixels,
+    #             0 : img.shape[2] - remaining_pixels,
+    #             :,
+    #         ]
+
+    # # Divide image per patch
+    # h = img.shape[1] // patch_size
+    # w = img.shape[2] // patch_size
+    # output_patches = rearrange(
+    #     img,
+    #     "b (h p1) (w p2) c -> b (h w) p1 p2 c",
+    #     p1=patch_size,
+    #     p2=patch_size,
+    #     h=h,
+    #     w=w,
+    # )
+
+    # Remove white patches
+    # mask = (1.0 * (output_patches == 255)).sum(dim=(2, 3, 4)) / (
+    #     patch_size * patch_size * 3
+    # ) < percentage_blank  # remove patch with only blanks pixels
+    # non_white_patches = output_patches[mask]
+
+    return img_patched
+
+
 def get_training_augmentation(num_classes):
     train_transform = [albu.HorizontalFlip(p=0.5), ToTensorV2()]
 
@@ -137,3 +226,16 @@ def get_training_augmentation(num_classes):
 def get_validation_augmentation(num_classes):
     test_transform = [ToTensorV2()]
     return albu.Compose(test_transform)
+
+def expand2square(pil_img, background_color):
+    width, height = pil_img.size
+    if width == height:
+        return pil_img
+    elif width > height:
+        result = Image.new(pil_img.mode, (width, width), background_color)
+        result.paste(pil_img, (0, (width - height) // 2))
+        return result
+    else:
+        result = Image.new(pil_img.mode, (height, height), background_color)
+        result.paste(pil_img, ((height - width) // 2, 0))
+        return result
