@@ -13,7 +13,6 @@ class Segmentation(nn.Module):
         super().__init__()
         self.params = params
 
-
         self.seg_model = smp.DeepLabV3Plus(
             encoder_name=params.feature_extractor_name,  # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
             encoder_weights="imagenet",  # use `imagenet` pre-trained weights for encoder initialization

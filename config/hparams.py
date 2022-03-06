@@ -134,7 +134,9 @@ class Parameters:
 
         self.network_param.nb_samples = self.data_param.nb_samples
         self.network_param.data_provider = self.data_param.data_provider
-        self.data_param.feature_extractor_name = self.network_param.feature_extractor_name
+        self.data_param.feature_extractor_name = (
+            self.network_param.feature_extractor_name
+        )
 
     @classmethod
     def parse(cls):

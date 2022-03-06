@@ -42,7 +42,9 @@ class BaseDataset(Dataset):
         #     [transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))]
         # )
 
-        self.transform = get_preprocessing_fn(params.feature_extractor_name, pretrained="imagenet")
+        self.transform = get_preprocessing_fn(
+            params.feature_extractor_name, pretrained="imagenet"
+        )
 
     def __len__(self):
         return len(self.X)
