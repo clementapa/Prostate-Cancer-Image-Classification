@@ -20,7 +20,8 @@ class Hparams:
     # wandb
     wandb_entity: str = "attributes_classification_celeba"  # name of the project
     debug: bool = False
-    wandb_project: str = f"test-dlmi"
+    test: bool = True
+    wandb_project : str  = (f"{'test-'*test}dlmi")
     root_dir: str = os.getcwd()  # root_dir
 
     # basic params
