@@ -134,10 +134,10 @@ class PatchSegDataset(BaseSegDataset):
         seg_masks = torch.stack(seg_gt)
         return output_tensor, seg_masks
 
+
 class SegDataset(BaseSegDataset):
     def __init__(self, params, train=True, transform=None):
         super().__init__(params, train, transform)
-
 
         # self.transform = transforms.Compose(
         #     [
@@ -148,10 +148,13 @@ class SegDataset(BaseSegDataset):
         #     ]
         # )
         if train:
-            self.transform = get_training_augmentation(CLASSES_PER_PROVIDER[params.data_provider])
+            self.transform = get_training_augmentation(
+                CLASSES_PER_PROVIDER[params.data_provider]
+            )
         else:
-            self.transform = get_validation_augmentation(CLASSES_PER_PROVIDER[params.data_provider])
-
+            self.transform = get_validation_augmentation(
+                CLASSES_PER_PROVIDER[params.data_provider]
+            )
 
     def __getitem__(self, idx):
         img_path = self.X[idx]
@@ -160,17 +163,21 @@ class SegDataset(BaseSegDataset):
         wsi_image = openslide.OpenSlide(img_path)
         wsi_seg = openslide.OpenSlide(seg_path)
 
-        resized_img = wsi_image.get_thumbnail((self.params.image_size, self.params.image_size))
-        resized_mask = np.array(wsi_seg.get_thumbnail((self.params.image_size, self.params.image_size)))[:, :, 0].T
+        resized_img = wsi_image.get_thumbnail(
+            (self.params.image_size, self.params.image_size)
+        )
+        resized_mask = np.array(
+            wsi_seg.get_thumbnail((self.params.image_size, self.params.image_size))
+        )[:, :, 0].T
 
         # resized_mask = torch.as_tensor(
         #     np.array(resized_mask.convert("RGB"))[:, :, 0], dtype=torch.int64
         # )
 
         # resized_mask = transforms.ToTensor()(resized_mask)[:, :, 0]
-        
+
         if self.transform != None:
             sample = self.transform(image=resized_img, mask=resized_mask)
-            resized_img, resized_mask = sample['image'], sample['mask']
+            resized_img, resized_mask = sample["image"], sample["mask"]
 
         return resized_img, resized_mask

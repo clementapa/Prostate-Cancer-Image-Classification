@@ -91,6 +91,7 @@ class DatasetParams:
     # merge_cls: bool = True # Only for radboud
     image_size: int = 512
 
+
 @dataclass
 class MetricParams:
 

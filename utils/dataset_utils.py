@@ -127,16 +127,13 @@ def return_random_patch_with_mask(whole_slide, seg_slide, patch_dim, percentage_
 
     return cropped_image.convert("RGB"), cropped_mask
 
+
 def get_training_augmentation(num_classes):
-    train_transform = [
-        albu.HorizontalFlip(p=0.5),
-        ToTensorV2()
-    ]
+    train_transform = [albu.HorizontalFlip(p=0.5), ToTensorV2()]
 
     return albu.Compose(train_transform)
 
+
 def get_validation_augmentation(num_classes):
-    test_transform = [
-        ToTensorV2()
-    ]
+    test_transform = [ToTensorV2()]
     return albu.Compose(test_transform)
