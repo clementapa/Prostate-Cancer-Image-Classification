@@ -134,6 +134,8 @@ class Parameters:
         torch.manual_seed(self.hparams.seed_everything)
         pl.seed_everything(self.hparams.seed_everything)
 
+        self.hparams.wandb_project = f"{'test-'*self.hparams.test}dlmi"
+
         self.network_param.nb_samples = self.data_param.nb_samples
         self.network_param.data_provider = self.data_param.data_provider
         self.data_param.feature_extractor_name = (
