@@ -6,12 +6,14 @@ import numpy as np
 
 from torchvision.transforms import ToTensor
 
+
 def merge_cls(seg_img):
     seg_img[seg_img == 2] = 1
     seg_img[(seg_img == 3)] = 2
     seg_img[(seg_img == 4)] = 2
     seg_img[(seg_img == 5)] = 2
     return seg_img
+
 
 def parse_csv(path_dataset, split="train"):
     X = []
@@ -30,7 +32,7 @@ def parse_csv(path_dataset, split="train"):
 def parse_csv_seg(path_dataset, split="train", data_provider="radboud"):
     X = []
     y = []
-    data_provider = data_provider.replace('_merged', '')
+    data_provider = data_provider.replace("_merged", "")
     path_images = os.path.join(path_dataset, split, split)
     path_csv_file = os.path.join(path_dataset, split + ".csv")
     with open(path_csv_file, "r") as csvfile:
