@@ -35,7 +35,7 @@ class BaseDataset(Dataset):
     def __getitem__(self, idx):
         raise NotImplementedError(f"Should be implemented in derived class!")
 
-class PatchDataset_Optimized(BaseDataset):
+class PatchDataset(BaseDataset):
     def __init__(self, params, train=True, transform=None):
         super().__init__(params, train, transform)
         self.transform = transforms.Compose(
