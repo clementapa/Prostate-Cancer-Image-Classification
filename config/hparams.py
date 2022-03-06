@@ -66,7 +66,7 @@ class OptimizerParams:
     # Scheduler
     scheduler: bool = True
     warmup_epochs: int = 5
-    max_epochs: int = 20
+    max_epochs: int = 30
 
 
 @dataclass
