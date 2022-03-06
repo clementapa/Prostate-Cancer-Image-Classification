@@ -31,8 +31,8 @@ class Hparams:
     enable_progress_bar: bool = True
 
     # modes
-    tune_lr: bool = False  # tune the model on first run
-    tune_batch_size: bool = False
+    tune_lr: bool = True  # tune the model on first run
+    tune_batch_size: bool = True
     dev_run: bool = False
     train: bool = True
 
