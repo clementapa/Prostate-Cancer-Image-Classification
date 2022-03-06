@@ -1,7 +1,6 @@
 import torch.nn as nn
 import segmentation_models_pytorch as smp
 
-
 from utils.constant import CLASSES_PER_PROVIDER
 
 
@@ -13,6 +12,7 @@ class Segmentation(nn.Module):
     def __init__(self, params):
         super().__init__()
         self.params = params
+
 
         self.seg_model = smp.DeepLabV3Plus(
             encoder_name=params.feature_extractor_name,  # choose encoder, e.g. mobilenet_v2 or efficientnet-b7

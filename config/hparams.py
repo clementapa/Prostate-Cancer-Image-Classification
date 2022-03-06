@@ -32,7 +32,7 @@ class Hparams:
 
     # modes
     tune_lr: bool = True  # tune the model on first run
-    tune_batch_size: bool = True
+    tune_batch_size: bool = False
     dev_run: bool = False
     train: bool = True
 
@@ -134,6 +134,7 @@ class Parameters:
 
         self.network_param.nb_samples = self.data_param.nb_samples
         self.network_param.data_provider = self.data_param.data_provider
+        self.data_param.feature_extractor_name = self.network_param.feature_extractor_name
 
     @classmethod
     def parse(cls):

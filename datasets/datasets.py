@@ -4,6 +4,7 @@ import openslide
 
 import torch.nn.functional as F
 import torchvision.transforms as transforms
+from segmentation_models_pytorch.encoders import get_preprocessing_fn
 
 from einops import rearrange
 from tifffile import imread
@@ -41,7 +42,7 @@ class BaseDataset(Dataset):
         #     [transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))]
         # )
 
-        self.transform = transform
+        self.transform = get_preprocessing_fn(params.feature_extractor_name, pretrained="imagenet")
 
     def __len__(self):
         return len(self.X)
@@ -204,9 +205,9 @@ class PatchSegDataset(BaseSegDataset):
         self.transform = transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-                ),
+                # transforms.Normalize(
+                #     mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                # ),
             ]
         )
 
