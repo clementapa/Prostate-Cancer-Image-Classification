@@ -33,7 +33,7 @@ class Hparams:
 
     # modes
     tune_lr: bool = False  # tune the model on first run
-    tune_batch_size: bool = True
+    tune_batch_size: bool = False
     dev_run: bool = False
     train: bool = True
 
