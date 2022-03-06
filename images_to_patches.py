@@ -1,4 +1,5 @@
 import argparse
+
 # import json
 import os
 import os.path as osp
@@ -6,11 +7,13 @@ import shutil
 
 import matplotlib.pyplot as plt
 import numpy as np
+
 # import openslide
 import pandas as pd
 import torch
 import torch.nn.functional as F
 from einops import rearrange
+
 # from patchify import patchify
 from tifffile import imread
 from torchvision.utils import make_grid
@@ -25,16 +28,19 @@ def main(patch_size, split, percentage_blank, level):
 
     df = pd.read_csv(osp.join(root_dataset, split + ".csv"))
 
-    patch_path = osp.join(os.getcwd(), "assets", "dataset_patches",
-                          f"{split}_{patch_size}_{level}_{percentage_blank}")
+    patch_path = osp.join(
+        os.getcwd(),
+        "assets",
+        "dataset_patches",
+        f"{split}_{patch_size}_{level}_{percentage_blank}",
+    )
 
     if not os.path.exists(patch_path):
         os.makedirs(patch_path)
 
     for i in tqdm(df.index):
 
-        img_path = osp.join(root_dataset, split, split,
-                            df['image_id'][i] + '.tiff')
+        img_path = osp.join(root_dataset, split, split, df["image_id"][i] + ".tiff")
 
         # wsi_image = openslide.OpenSlide(img_path)
 
@@ -91,8 +97,8 @@ def main(patch_size, split, percentage_blank, level):
                 # crop
                 img = img[
                     :,
-                    0: img.shape[1] - remaining_pixels,
-                    0: img.shape[2] - remaining_pixels,
+                    0 : img.shape[1] - remaining_pixels,
+                    0 : img.shape[2] - remaining_pixels,
                     :,
                 ]
 
@@ -114,40 +120,42 @@ def main(patch_size, split, percentage_blank, level):
         ) <= percentage_blank  # remove patch with only blanks pixels
         non_white_patches = img[mask]
         print(non_white_patches.shape)
-        plt.imshow(make_grid(non_white_patches.permute(
-            0, 3, 1, 2)).permute(1, 2, 0))
+        plt.imshow(make_grid(non_white_patches.permute(0, 3, 1, 2)).permute(1, 2, 0))
         plt.show()
-        np.save(osp.join(patch_path, df['image_id']
-                [i]), non_white_patches.numpy())
+        np.save(osp.join(patch_path, df["image_id"][i]), non_white_patches.numpy())
         break
 
-    zip_name = osp.join(osp.join(os.getcwd(), "assets", "dataset_patches", f"{split}_{patch_size}_{level}_{percentage_blank}"))
-    shutil.make_archive(zip_name, 'zip', patch_path)
+    zip_name = osp.join(
+        osp.join(
+            os.getcwd(),
+            "assets",
+            "dataset_patches",
+            f"{split}_{patch_size}_{level}_{percentage_blank}",
+        )
+    )
+    shutil.make_archive(zip_name, "zip", patch_path)
 
     # Push artifact
-    wandb.init(
-        entity="attributes_classification_celeba",
-        project="dlmi"
-    )
+    wandb.init(entity="attributes_classification_celeba", project="dlmi")
 
-    artifact=wandb.Artifact(
+    artifact = wandb.Artifact(
         name=os.path.basename(zip_name),
         type="dataset",
         metadata={
             "split": split,
             "patch_size": patch_size,
             "percentage_blank": percentage_blank,
-            "level": level
+            "level": level,
         },
-        description=f" {split} dataset of images split by patches {patch_size}, level {level}, percentage_blank {percentage_blank} "
+        description=f" {split} dataset of images split by patches {patch_size}, level {level}, percentage_blank {percentage_blank} ",
     )
 
-    artifact.add_file(zip_name + '.zip')
-    wandb.log_artifact(artifact, aliases=["latest"]) # FIXME doesnot work 
+    artifact.add_file(zip_name + ".zip")
+    wandb.log_artifact(artifact, aliases=["latest"])  # FIXME doesnot work
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # parser = argparse.ArgumentParser(description="Push an artifact to wandb")
     # parser.add_argument("--patch_size", required=True, dea type = str, help = "name of the language that you want to convert")
     # args = parser.parse_args()
-    main(192, 'train', 0.5, 1)
+    main(192, "train", 0.5, 1)
