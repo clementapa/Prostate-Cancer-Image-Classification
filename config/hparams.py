@@ -20,7 +20,8 @@ class Hparams:
     # wandb
     wandb_entity: str = "attributes_classification_celeba"  # name of the project
     debug: bool = False
-    wandb_project: str = f"test-dlmi"
+    test: bool = True
+    wandb_project: str = f"{'test-'*test}dlmi"
     root_dir: str = os.getcwd()  # root_dir
 
     # basic params
@@ -71,7 +72,7 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "PatchDataset_Optimized"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "PatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
@@ -117,11 +118,12 @@ class Parameters:
         """Post-initialization code"""
         if self.hparams.seed_everything is None:
             self.hparams.seed_everything = random.randint(1, 10000)
-
+        
         random.seed(self.hparams.seed_everything)
         torch.manual_seed(self.hparams.seed_everything)
         pl.seed_everything(self.hparams.seed_everything)
 
+        self.hparams.wandb_project = f"{'test-'*self.hparams.test}dlmi"
         self.network_param.nb_samples = self.data_param.nb_samples
 
     @classmethod
