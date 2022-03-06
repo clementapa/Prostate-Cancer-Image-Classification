@@ -32,7 +32,8 @@ class Hparams:
 
     # modes
     tune_lr: bool = False  # tune the model on first run
-    dev_run: bool = True
+    tune_batch_size: bool = False
+    dev_run: bool = False
     train: bool = True
 
     # for inference and test
@@ -41,7 +42,7 @@ class Hparams:
 
 @dataclass
 class NetworkParams:
-    feature_extractor_name: str = "resnet18"
+    feature_extractor_name: str = "resnet34"
     network_name: str = "Segmentation"
     weight_checkpoints: str = ""
     artifact: str = ""
@@ -95,9 +96,12 @@ class MetricParams:
     # list_metrics: List[str] = list_field(
     #     "Accuracy", "AUROC", "F1", "Recall", "Precision"
     # )
-    list_metrics: List[str] = list_field()
-    average: str = "weighted"
+    list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "IoU")
     num_classes: int = 6
+    pixel_wise_parameters: Dict[str, Any] = dict_field(
+        dict(average="weighted", mdmc_average="global")
+    )
+    name_module: str = "MetricsModuleSegmentation"
 
 
 @dataclass

@@ -28,9 +28,10 @@ def main():
             tags=[
                 parameters.network_param.network_name,
                 parameters.data_param.dataset_name,
-                str(parameters.data_param.patch_size),
+                f"patch_size:{parameters.data_param.patch_size}",
                 parameters.optim_param.optimizer,
                 parameters.data_param.data_provider,
+                f"nb_sample:{parameters.data_param.nb_samples}",
             ],
         )
 

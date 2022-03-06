@@ -10,7 +10,7 @@ from pytorch_lightning.utilities.types import _METRIC, _PATH, STEP_OUTPUT
 from torchvision.utils import make_grid
 
 from utils.constant import MEAN, STD, DICT_COLORS
-from utils.metrics import MetricsModule
+import utils.metrics as metrics
 
 
 class AutoSaveModelCheckpoint(ModelCheckpoint):
@@ -160,9 +160,13 @@ class LogMetricsCallback(Callback):
     ) -> None:
         device = pl_module.device
 
-        self.metrics_module_train = MetricsModule("train", self.params, device)
+        self.metrics_module_train = getattr(metrics, self.params.name_module)(
+            "train", self.params, device
+        )
 
-        self.metrics_module_validation = MetricsModule("val", self.params, device)
+        self.metrics_module_validation = getattr(metrics, self.params.name_module)(
+            "val", self.params, device
+        )
 
     def on_train_batch_end(
         self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
@@ -191,7 +195,7 @@ class LogMetricsCallback(Callback):
         self.metrics_module_validation.log_metrics("val/", pl_module)
 
 
-class LogImagesPredictions(Callback):
+class BaseLogImages(Callback):
     def __init__(self, log_freq_img, log_nb_img, log_nb_patches) -> None:
         super().__init__()
         self.log_freq_img = log_freq_img
@@ -215,6 +219,14 @@ class LogImagesPredictions(Callback):
             self.log_images(
                 "train", batch, self.log_nb_img, self.log_nb_patches, outputs
             )
+
+    def log_images(self, name, batch, n, p, outputs):
+        raise NotImplementedError(f"Should be implemented in derived class!")
+
+
+class LogImagesPredictions(BaseLogImages):
+    def __init__(self, log_freq_img, log_nb_img, log_nb_patches) -> None:
+        super().__init__(log_freq_img, log_nb_img, log_nb_patches)
 
     def log_images(self, name, batch, n, p, outputs):
 
@@ -241,31 +253,11 @@ class LogImagesPredictions(Callback):
         wandb.log({f"{name}/predictions": samples})
 
 
-class LogImagesPredictionsSegmentation(Callback):
+class LogImagesPredictionsSegmentation(BaseLogImages):
     def __init__(self, log_freq_img, log_nb_img, log_nb_patches, data_provider) -> None:
-        super().__init__()
-        self.log_freq_img = log_freq_img
-        self.log_nb_img = log_nb_img
-        self.log_nb_patches = log_nb_patches
+        super().__init__(log_freq_img, log_nb_img, log_nb_patches)
+
         self.data_provider = data_provider
-
-    def on_validation_batch_end(
-        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
-    ):
-        """Called when the validation batch ends."""
-
-        if batch_idx == 0 and pl_module.current_epoch % self.log_freq_img == 0:
-            self.log_images("val", batch, self.log_nb_img, self.log_nb_patches, outputs)
-
-    def on_train_batch_end(
-        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
-    ):
-        """Called when the training batch ends."""
-
-        if batch_idx == 0 and pl_module.current_epoch % self.log_freq_img == 0:
-            self.log_images(
-                "train", batch, self.log_nb_img, self.log_nb_patches, outputs
-            )
 
     def log_images(self, name, batch, n, p, outputs):
 
@@ -290,8 +282,14 @@ class LogImagesPredictionsSegmentation(Callback):
                 wandb.Image(
                     bg_image,
                     masks={
-                        "prediction": {"mask_data": prediction, "class_labels":DICT_COLORS[self.data_provider]},
-                        "ground_truth": {"mask_data": true_mask, "class_labels":DICT_COLORS[self.data_provider]},
+                        "prediction": {
+                            "mask_data": prediction,
+                            "class_labels": DICT_COLORS[self.data_provider],
+                        },
+                        "ground_truth": {
+                            "mask_data": true_mask,
+                            "class_labels": DICT_COLORS[self.data_provider],
+                        },
                     },
                 )
             )

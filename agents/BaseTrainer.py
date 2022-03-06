@@ -6,6 +6,7 @@ from pytorch_lightning.callbacks import (
     LearningRateMonitor,
     RichProgressBar,
     StochasticWeightAveraging,
+    EarlyStopping,
 )
 from utils.agent_utils import get_artifact, get_datamodule
 from utils.callbacks import (
@@ -43,11 +44,25 @@ class BaseTrainer:
             self.wb_run.watch(self.pl_model.model)
 
     def run(self):
+        if self.config.tune_batch_size:
+            trainer = pl.Trainer(
+                logger=self.wb_run,
+                gpus=self.config.gpu,
+                auto_scale_batch_size="power",
+                log_every_n_steps=1,
+                accelerator="auto",
+                default_root_dir=self.wb_run.save_dir,
+                enable_progress_bar=self.config.enable_progress_bar,
+            )
+            trainer.logger = self.wb_run
+            trainer.tune(self.pl_model, datamodule=self.datamodule)
+
         if self.config.tune_lr:
             trainer = pl.Trainer(
                 logger=self.wb_run,
                 gpus=self.config.gpu,
                 auto_lr_find=True,
+                log_every_n_steps=1,
                 accelerator="auto",
                 default_root_dir=self.wb_run.save_dir,
                 enable_progress_bar=self.config.enable_progress_bar,
@@ -118,6 +133,7 @@ class BaseTrainer:
                 self.callbacks_param.log_nb_patches,
                 self.data_param.data_provider,
             ),
+            EarlyStopping(monitor="val/loss", mode="min", patience=5),
         ]
         monitor = "val/loss"
         mode = "min"
