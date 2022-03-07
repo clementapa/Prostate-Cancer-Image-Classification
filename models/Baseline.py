@@ -20,7 +20,7 @@ class Baseline(nn.Module):
 
         self.bottleneck = nn.Sequential(
             nn.Linear(in_shape, params.bottleneck_shape),
-            nn.ReLU()
+            nn.Sigmoid()
         )
 
         self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)

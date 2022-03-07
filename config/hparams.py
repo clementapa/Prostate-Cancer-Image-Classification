@@ -52,7 +52,7 @@ class NetworkParams:
     dropout: float = 0.1
     normalization: str = "BatchNorm1d"
     activation: str = "GELU"
-    bottleneck_shape: int = 16
+    bottleneck_shape: int = 1
 
 
 @dataclass
