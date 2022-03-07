@@ -39,10 +39,7 @@ class BaseTrainer:
         logger.info("Loading Model module...")
         self.pl_model = BaseModule(config.network_param, config.optim_param)
 
-        if self.network_param.network_name != "Segmentation":
-            self.wandb_logger.watch(self.pl_model.model.mlp)
-        else:
-            self.wandb_logger.watch(self.pl_model.model)
+        self.wandb_logger.watch(self.pl_model.model)
 
     def run(self):
         if self.config.tune_batch_size:

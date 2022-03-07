@@ -40,7 +40,6 @@ class Baseline(nn.Module):
             # )
         # bs, n_patches, h, w, c
         features = torch.stack(features)
-        # features = torch.stack(features)
 
         output = self.mlp(rearrange(features, "b p d -> b (p d)"))
         return output

@@ -80,6 +80,25 @@ class BaseModule(LightningModule):
 
         return optimizer
 
+    # def _get_preds_loss_accuracy(self, batch):
+    #     """convenience function since train/valid/test steps are similar"""
+    #     x, y = batch
+        
+    #     logits = []
+    #     loss = 0.0
+    #     outputs = []
+    #     for img in x:
+    #         output = self(img)
+    #         outputs.append(output)
+    #         logits.append(F.softmax(output, dim=0))
+        
+    #     outputs = torch.stack(outputs)
+    #     logits = torch.stack(logits)
+
+    #     loss = self.loss(outputs, y)
+
+    #     return loss, logits
+
     def _get_preds_loss_accuracy(self, batch):
         """convenience function since train/valid/test steps are similar"""
         x, y = batch
