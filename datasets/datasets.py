@@ -1,20 +1,17 @@
+import os
 import random
 import torch
 import openslide
+import zipfile
 
 import numpy as np
 import torchvision.transforms as transforms
 from torch.utils.data import Dataset
 
-from utils.dataset_utils import get_training_augmentation, get_validation_augmentation
-from utils.constant import CLASSES_PER_PROVIDER
 from utils.dataset_utils import (
-    merge_cls,
     parse_csv,
-    parse_csv_seg,
+    parse_csv_static,
     return_random_patch,
-    get_segmentation_paths,
-    return_random_patch_with_mask,
 )
 
 
@@ -39,6 +36,44 @@ class BaseDataset(Dataset):
     def __getitem__(self, idx):
         raise NotImplementedError(f"Should be implemented in derived class!")
 
+class BaseStaticDataset(Dataset):
+    """
+    A base dataset module to load the dataset for the challenge
+    """
+
+    def __init__(self, params, train=True, transform=None, wb_run=None):
+        super().__init__()
+
+        self.params = params
+        
+        # TODO wrap everything in a function
+
+        if train:
+            path_artifact = self.params.train_artifact.split('/')[-1].split(':')[0]
+            if not os.path.exists(os.path.join(self.params.path_patches, path_artifact)):
+                artifact = wb_run.use_artifact(self.params.train_artifact)
+                datadir = artifact.download(root=self.params.path_patches)
+
+                path_to_zip_file = os.path.join(self.params.path_patches, path_artifact+'.zip')
+                with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
+                    zip_ref.extractall(datadir)
+            self.X, self.y = parse_csv_static(params.root_dataset, "train", params.path_patches, path_artifact)
+        else:
+            path_artifact = self.params.test_artifact.split('/')[-1].split(':')[0]
+            if not os.path.exists(os.path.join(self.params.path_patches, path_artifact)):
+                artifact = wb_run.use_artifact(self.params.test_artifact)
+                datadir = artifact.download(root=self.params.path_patches)
+
+                path_to_zip_file = os.path.join(self.params.path_patches, path_artifact+'.zip')
+                with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
+                    zip_ref.extractall(datadir)
+            self.X, self.y = parse_csv_static(params.root_dataset, "test", params.path_patches, path_artifact)
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, idx):
+        raise NotImplementedError(f"Should be implemented in derived class!")
 
 class PatchDataset(BaseDataset):
     def __init__(self, params, train=True, transform=None):
@@ -67,117 +102,25 @@ class PatchDataset(BaseDataset):
 
         return output_tensor, label
 
-
-class BaseSegDataset(Dataset):
-    """
-    A base dataset module to load the dataset for the challenge
-    """
-
-    def __init__(self, params, train=True, transform=None):
-        super().__init__()
-
-        self.params = params
-
-        self.path_seg = None
-
-        if train:
-            self.X, self.y = parse_csv_seg(
-                params.root_dataset, "train", params.data_provider
-            )
-            self.X, self.path_seg, self.y = get_segmentation_paths(self.X, self.y)
-        else:
-            self.X, self.y = parse_csv_seg(
-                params.root_dataset, "test", params.data_provider
-            )
-
-        self.transform = transform
-
-    def __len__(self):
-        return len(self.X)
-
-    def __getitem__(self, idx):
-        raise NotImplementedError(f"Should be implemented in derived class!")
-
-
-class PatchSegDataset(BaseSegDataset):
-    def __init__(self, params, train=True, transform=None):
-        super().__init__(params, train, transform)
-
+class StaticPatchDataset(BaseStaticDataset):
+    def __init__(self, params, train=True, transform=None, wb_run=None):
+        super().__init__(params, train, transform, wb_run)
         self.transform = transforms.Compose(
             [
-                transforms.ToTensor(),
                 transforms.Normalize(
                     mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
                 ),
             ]
         )
 
-    def __getitem__(self, idx):
-        img_path = self.X[idx]
-        seg_path = self.path_seg[idx]
-
-        wsi_image = openslide.OpenSlide(img_path)
-        wsi_seg = openslide.OpenSlide(seg_path)
-
-        pil_imgs = []
-        seg_gt = []
-        for _ in range(self.params.nb_samples):
-            pil_img, seg_img = return_random_patch_with_mask(
-                wsi_image, wsi_seg, self.params.patch_size, self.params.percentage_blank
-            )
-
-            if self.params.data_provider == "radboud_merged":
-                seg_img = merge_cls(seg_img)
-            pil_imgs.append(pil_img)
-            seg_gt.append(seg_img)
-        output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
-        seg_masks = torch.stack(seg_gt)
-        return output_tensor, seg_masks
-
-
-class SegDataset(BaseSegDataset):
-    def __init__(self, params, train=True, transform=None):
-        super().__init__(params, train, transform)
-
-        # self.transform = transforms.Compose(
-        #     [
-        #         transforms.ToTensor(),
-        #         transforms.Normalize(
-        #             mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-        #         ),
-        #     ]
-        # )
-        if train:
-            self.transform = get_training_augmentation(
-                CLASSES_PER_PROVIDER[params.data_provider]
-            )
-        else:
-            self.transform = get_validation_augmentation(
-                CLASSES_PER_PROVIDER[params.data_provider]
-            )
 
     def __getitem__(self, idx):
-        img_path = self.X[idx]
-        seg_path = self.path_seg[idx]
+        np_path = self.X[idx]
+        np_array = np.load(open(np_path, "rb"))
+        
+        label = self.y[idx]
+      
+        output_tensor = torch.stack([self.transform((torch.from_numpy(np_img)/255.0).permute(2,1,0)) for np_img in np_array[:self.params.nb_samples]])
 
-        wsi_image = openslide.OpenSlide(img_path)
-        wsi_seg = openslide.OpenSlide(seg_path)
+        return output_tensor, label
 
-        resized_img = wsi_image.get_thumbnail(
-            (self.params.image_size, self.params.image_size)
-        )
-        resized_mask = np.array(
-            wsi_seg.get_thumbnail((self.params.image_size, self.params.image_size))
-        )[:, :, 0].T
-
-        # resized_mask = torch.as_tensor(
-        #     np.array(resized_mask.convert("RGB"))[:, :, 0], dtype=torch.int64
-        # )
-
-        # resized_mask = transforms.ToTensor()(resized_mask)[:, :, 0]
-
-        if self.transform != None:
-            sample = self.transform(image=resized_img, mask=resized_mask)
-            resized_img, resized_mask = sample["image"], sample["mask"]
-
-        return resized_img, resized_mask

@@ -44,7 +44,7 @@ class Hparams:
 @dataclass
 class NetworkParams:
     feature_extractor_name: str = "resnet34"
-    network_name: str = "Segmentation"
+    network_name: str = "Baseline"
     weight_checkpoints: str = ""
     artifact: str = ""
 
@@ -52,6 +52,7 @@ class NetworkParams:
     dropout: float = 0.1
     normalization: str = "BatchNorm1d"
     activation: str = "GELU"
+    bottleneck_shape: int = 16
 
 
 @dataclass
@@ -73,14 +74,14 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "PatchSegDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "StaticPatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
     split_val: float = 0.1
     patch_size: int = 512
     percentage_blank: float = 0.5
-    nb_samples: int = 4
+    nb_samples: int = 10
 
     # dataloader
     num_workers: int = 4  # number of workers for dataloaders
@@ -88,23 +89,28 @@ class DatasetParams:
 
     # for segmentation
     data_provider: str = "karolinska"
-    # merge_cls: bool = True # Only for radboud
     image_size: int = 512
+
+    # wandb artifacts
+    train_artifact: str = "attributes_classification_celeba/dlmi/train_256_1_0.5:v0"
+    test_artifact: str = "attributes_classification_celeba/dlmi/test_256_1_0.5:v0"
+    path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
 
 @dataclass
 class MetricParams:
 
-    # list_metrics: List[str] = list_field(
-    #     "Accuracy", "AUROC", "F1", "Recall", "Precision"
-    # )
-    list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "IoU")
+    list_metrics: List[str] = list_field(
+        "F1"
+    )
+    # list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1")
     # list_metrics: List[str] = list_field("IoU")
-    num_classes: int = 3
+    num_classes: int = 6
     pixel_wise_parameters: Dict[str, Any] = dict_field(
         dict(average="weighted", mdmc_average="global")
     )
-    name_module: str = "MetricsModuleSegmentation"
+    name_module: str = "MetricsModuleClassification"
+    average: str = "weighted"
 
 
 @dataclass

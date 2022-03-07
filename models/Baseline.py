@@ -18,14 +18,21 @@ class Baseline(nn.Module):
         self.features_extractor.reset_classifier(0)
         in_shape = self.features_extractor(torch.randn(1, 3, 224, 224)).shape[1]
 
-        self.mlp = MLP(in_shape * params.nb_samples, params)
+        self.bottleneck = nn.Sequential(
+            nn.Linear(in_shape, params.bottleneck_shape),
+            nn.ReLU()
+        )
+
+        self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)
 
     def forward(self, x):
         features = []
         for batch in x:
             # features.append(self.features_extractor(batch.permute(0, 3, 1, 2)))
             # TODO fix the permute issue
-            features.append(self.features_extractor(batch))
+            feature = self.features_extractor(batch)
+            transformed_feature = self.bottleneck(feature)
+            features.append(transformed_feature)
             # features.append(
             #     self.features_extractor.forward_features(
             #         batch.permute(0, 3, 1, 2)

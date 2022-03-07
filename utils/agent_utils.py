@@ -24,11 +24,11 @@ def get_dataset(dataset_name, dataset_param):
     return dataset(dataset_param)
 
 
-def get_datamodule(data_param):
+def get_datamodule(data_param, wb_run=None):
     """
     Fetch Datamodule Function Pointer
     """
-    return BaseDataModule(data_param)
+    return BaseDataModule(data_param, wb_run)
 
 
 def get_artifact(name: str, type: str) -> str:

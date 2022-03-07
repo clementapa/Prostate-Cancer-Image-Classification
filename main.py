@@ -18,7 +18,7 @@ def main():
     wdb_config = parse_params(parameters)
 
     if parameters.hparams.train:
-        wandb.init(
+        wandb_run = wandb.init(
             # vars(parameters),  # FIXME use the full parameters
             config=wdb_config,
             project=parameters.hparams.wandb_project,
@@ -35,7 +35,7 @@ def main():
             ],
         )
 
-        wandb_run = WandbLogger(
+        wandb_logger = WandbLogger(
             config=wdb_config,  # vars(parameters),  # FIXME use the full parameters
             project=parameters.hparams.wandb_project,
             entity=parameters.hparams.wandb_entity,
@@ -43,7 +43,7 @@ def main():
             # save_dir=parameters.hparams.save_dir,
         )
 
-        agent = BaseTrainer(parameters, wandb_run)
+        agent = BaseTrainer(parameters, wandb_run, wandb_logger)
         agent.run()
     else:
         wandb.init(

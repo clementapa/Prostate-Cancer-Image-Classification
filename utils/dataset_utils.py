@@ -6,8 +6,15 @@ import albumentations as albu
 import numpy as np
 import openslide
 import torch
+import wandb
+
 from albumentations.pytorch.transforms import ToTensorV2
 
+def get_artifact(artifact_name, output_path):
+    if os.path.exists(output_path):
+        pass
+    else:
+        pass
 
 def merge_cls(seg_img):
     seg_img[seg_img == 2] = 1
@@ -42,6 +49,19 @@ def parse_csv_seg(path_dataset, split="train", data_provider="radboud"):
         for i, row in enumerate(spamreader):
             if i > 0 and row[1] == data_provider:
                 X.append(os.path.join(path_images, row[0] + ".tiff"))
+                y.append(int(row[-2]))
+    return X, y
+
+def parse_csv_static(path_dataset, split="train", path_patches="patches_dataset", path_artifact=""):
+    X = []
+    y = []
+   #  data_provider = data_provider.replace("_merged", "")
+    path_csv_file = os.path.join(path_dataset, split + ".csv")
+    with open(path_csv_file, "r") as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=",", quotechar="|")
+        for i, row in enumerate(spamreader):
+            if i > 0:
+                X.append(os.path.join(path_patches, path_artifact, row[0] + ".npy"))
                 y.append(int(row[-2]))
     return X, y
 
