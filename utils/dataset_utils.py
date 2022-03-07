@@ -52,19 +52,6 @@ def parse_csv_seg(path_dataset, split="train", data_provider="radboud"):
                 y.append(int(row[-2]))
     return X, y
 
-def parse_csv_static(path_dataset, split="train", path_patches="patches_dataset", path_artifact=""):
-    X = []
-    y = []
-   #  data_provider = data_provider.replace("_merged", "")
-    path_csv_file = os.path.join(path_dataset, split + ".csv")
-    with open(path_csv_file, "r") as csvfile:
-        spamreader = csv.reader(csvfile, delimiter=",", quotechar="|")
-        for i, row in enumerate(spamreader):
-            if i > 0:
-                X.append(os.path.join(path_patches, path_artifact, row[0] + ".npy"))
-                y.append(int(row[-2]))
-    return X, y
-
 
 def get_segmentation_paths(input_paths, labels):
     segmentation_paths = []
