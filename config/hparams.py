@@ -93,6 +93,7 @@ class DatasetParams:
 
     # wandb artifacts
     train_artifact: str = "attributes_classification_celeba/dlmi/train_256_1_0.5:v0"
+    # train_artifact: str = "attributes_classification_celeba/dlmi/train_192_1_0.5:v0"
     test_artifact: str = "attributes_classification_celeba/dlmi/test_256_1_0.5:v0"
     path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
@@ -100,10 +101,10 @@ class DatasetParams:
 @dataclass
 class MetricParams:
 
-    list_metrics: List[str] = list_field(
-        "F1", "AUROC"
-    )
-    # list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1")
+    # list_metrics: List[str] = list_field(
+    #     "F1", "AUROC"
+    # )
+    list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1")
     # list_metrics: List[str] = list_field("IoU")
     num_classes: int = 6
     pixel_wise_parameters: Dict[str, Any] = dict_field(
