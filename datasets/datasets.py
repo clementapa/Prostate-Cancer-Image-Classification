@@ -119,6 +119,8 @@ class StaticPatchDataset(BaseStaticDataset):
         np_array = np.load(open(np_path, "rb"))
         
         label = self.y[idx]
+
+        # TODO choose n randomly
       
         output_tensor = torch.stack([self.transform((torch.from_numpy(np_img)/255.0).permute(2,1,0)) for np_img in np_array[:self.params.nb_samples]])
 
