@@ -101,7 +101,7 @@ class DatasetParams:
 class MetricParams:
 
     list_metrics: List[str] = list_field(
-        "F1"
+        "F1", "AUROC"
     )
     # list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1")
     # list_metrics: List[str] = list_field("IoU")
