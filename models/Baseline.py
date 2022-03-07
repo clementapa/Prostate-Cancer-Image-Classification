@@ -23,8 +23,7 @@ class Baseline(nn.Module):
             nn.Sigmoid()
         )
 
-        #self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)
-        self.mlp = MLP(params.bottleneck_shape * 1, params)
+        self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)
 
     def forward(self, x):
         features = []
@@ -40,9 +39,8 @@ class Baseline(nn.Module):
             #     ).squeeze()
             # )
         # bs, n_patches, h, w, c
-        features = torch.stack(features).mean(dim=1)
+        features = torch.stack(features)
         # features = torch.stack(features)
 
-        # output = self.mlp(rearrange(features, "b p d -> b (p d)"))
-        output = self.mlp(features)
+        output = self.mlp(rearrange(features, "b p d -> b (p d)"))
         return output
