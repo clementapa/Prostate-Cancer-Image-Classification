@@ -118,7 +118,10 @@ class StaticPatchDataset(BaseStaticDataset):
         np_array = np.load(open(np_path, "rb"))
 
         label = data['isup_grade']
-        output_tensor = torch.stack([self.transform((torch.from_numpy(np_img)/255.0).permute(2,1,0)) for np_img in np_array[:self.params.nb_samples]])
+        images_to_pick = [random.randint(0, np_array.shape[0]-1) for _ in range(self.params.nb_samples)]
+        # output_tensor = torch.stack([self.transform((torch.from_numpy(np_img)/255.0).permute(2,1,0)) for np_img in np_array[:self.params.nb_samples]])
+        
+        output_tensor = torch.stack([self.transform((torch.from_numpy(np_img)/255.0).permute(2,1,0)) for np_img in np_array[images_to_pick]])
 
         return output_tensor, label
 
