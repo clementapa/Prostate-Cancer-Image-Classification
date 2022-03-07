@@ -15,15 +15,15 @@ class MLP(nn.Module):
 
         self.layers.append(
             nn.Sequential(
-                nn.Linear(in_size, 2 * in_size),
-                self.norm(2 * in_size),
+                nn.Linear(in_size, in_size),
+                self.norm(in_size),
                 self.activation(),
                 nn.Dropout(params.dropout),
             )
         )
         self.layers.append(
             nn.Sequential(
-                nn.Linear(2 * in_size, in_size),
+                nn.Linear(in_size, in_size),
                 self.norm(in_size),
                 self.activation(),
                 nn.Dropout(params.dropout),
