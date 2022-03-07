@@ -56,7 +56,7 @@ class BaseStaticDataset(Dataset):
 
                 path_to_zip_file = os.path.join(self.params.path_patches, path_artifact+'.zip')
                 with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
-                    zip_ref.extractall(datadir)
+                    zip_ref.extractall(os.path.join(datadir, path_artifact))
             self.X, self.y = parse_csv_static(params.root_dataset, "train", params.path_patches, path_artifact)
         else:
             path_artifact = self.params.test_artifact.split('/')[-1].split(':')[0]
@@ -66,7 +66,7 @@ class BaseStaticDataset(Dataset):
 
                 path_to_zip_file = os.path.join(self.params.path_patches, path_artifact+'.zip')
                 with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
-                    zip_ref.extractall(datadir)
+                    zip_ref.extractall(os.path.join(datadir, path_artifact))
             self.X, self.y = parse_csv_static(params.root_dataset, "test", params.path_patches, path_artifact)
 
     def __len__(self):
