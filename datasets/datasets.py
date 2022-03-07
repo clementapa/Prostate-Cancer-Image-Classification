@@ -79,6 +79,7 @@ class BaseStaticDataset(Dataset):
         if train:
             self.name_dataset = osp.basename(self.params.train_artifact).split(':')[0]
             if not os.path.exists(os.path.join(self.params.path_patches, self.name_dataset)):
+                # check get artifact in agent_utils
                 artifact = wb_run.use_artifact(self.params.train_artifact)
                 datadir = artifact.download(root=self.params.path_patches)
 
