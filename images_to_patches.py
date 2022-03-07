@@ -50,8 +50,8 @@ def main(patch_size, split, percentage_blank, level):
         #     wsi_dimensions[level], level, wsi_dimensions[level]
         # )
         img = imread(img_path, key=level)
-        plt.imshow(img)
-        plt.show()
+        # plt.imshow(img)
+        # plt.show()
         img = torch.from_numpy(img)
 
         # img_patched = patchify(img, (patch_size, patch_size), step=1)
@@ -113,17 +113,13 @@ def main(patch_size, split, percentage_blank, level):
             h=h,
             w=w,
         )
-        print(img.shape)
         # Remove white patches
         mask = (1.0 * (img >= 240)).sum(dim=(2, 3, 4)) / (
             patch_size * patch_size * 3
         ) <= percentage_blank  # remove patch with only blanks pixels
         non_white_patches = img[mask]
-        print(non_white_patches.shape)
-        plt.imshow(make_grid(non_white_patches.permute(0, 3, 1, 2)).permute(1, 2, 0))
-        plt.show()
+        
         np.save(osp.join(patch_path, df["image_id"][i]), non_white_patches.numpy())
-        break
 
     zip_name = osp.join(
         osp.join(
@@ -151,11 +147,20 @@ def main(patch_size, split, percentage_blank, level):
     )
 
     artifact.add_file(zip_name + ".zip")
-    wandb.log_artifact(artifact, aliases=["latest"])  # FIXME doesnot work
+    wandb.log_artifact(artifact, aliases=["latest"])  
 
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser(description="Push an artifact to wandb")
-    # parser.add_argument("--patch_size", required=True, dea type = str, help = "name of the language that you want to convert")
-    # args = parser.parse_args()
-    main(192, "train", 0.5, 1)
+    parser = argparse.ArgumentParser(description="Push an artifact to wandb")
+    parser.add_argument("--patch_size", required=True, type = int, help = "patch size ")
+    parser.add_argument("--split", required=True, type = str, help = "name of the split")
+    parser.add_argument("--percentage_blank", required=False, type = float, help = "percentage of blank pixels", default=0.5)
+    parser.add_argument("--level", required=False, type = int, help = "Level of tiff file", default=1)
+    args = parser.parse_args()
+    
+    split = args.split
+    patch_size = args.patch_size
+    percentage_blank = args.percentage_blank
+    level = args.level
+    
+    main(patch_size, split, percentage_blank, level)
