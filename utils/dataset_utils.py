@@ -93,3 +93,9 @@ def get_training_augmentation(num_classes):
 def get_validation_augmentation(num_classes):
     test_transform = [ToTensorV2()]
     return albu.Compose(test_transform)
+
+def seg_max_to_score(seg_mask):
+    score_0 = torch.where(seg_mask==0, 1.0, 0.0).sum(axis=-1).sum(axis=-1)
+    score_1 = torch.where(seg_mask==1, 1.0, 0.0).sum(axis=-1).sum(axis=-1)
+    score_2 = torch.where(seg_mask==2, 1.0, 0.0).sum(axis=-1).sum(axis=-1)
+    return torch.stack([score_0, score_1, score_2], dim=-1)/(256*256)

@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from pytorch_lightning import LightningModule
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from models.losses.segmentation.customized_ce import C_Crossentropy
 from utils.agent_utils import get_net
 
 from models.losses.segmentation.dice import DiceLoss
@@ -16,6 +17,8 @@ class BaseModule(LightningModule):
         # loss function
         if network_param.network_name == "Segmentation":
             self.loss = DiceLoss()
+        elif network_param.network_name == "MMSg":
+            self.loss = C_Crossentropy()
         else:
             self.loss = nn.CrossEntropyLoss()
 
@@ -84,9 +87,14 @@ class BaseModule(LightningModule):
     def _get_preds_loss_accuracy(self, batch):
         """convenience function since train/valid/test steps are similar"""
         x, y = batch
-        output = self(x)
+        output, probas = self(x)
 
-        loss = self.loss(output, y)
+        loss = self.loss(output, y, probas)
         logits = F.softmax(output, dim=0)
 
         return loss, logits
+
+class BaseModuleForInference(nn.Module):
+    def __init__(self, params) -> None:
+        super().__init__()
+        self.model = get_net(params.network_name, params)

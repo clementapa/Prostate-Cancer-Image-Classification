@@ -44,7 +44,7 @@ class Hparams:
 @dataclass
 class NetworkParams:
     feature_extractor_name: str = "resnet34"
-    network_name: str = "Segmentation"
+    network_name: str = "MMSg"
     weight_checkpoints: str = ""
     artifact: str = ""
 
@@ -52,6 +52,9 @@ class NetworkParams:
     dropout: float = 0.1
     normalization: str = "BatchNorm1d"
     activation: str = "GELU"
+
+    # Seg Model param
+    wb_run_seg: str = "expert-surf-171"
 
 
 @dataclass
@@ -73,7 +76,7 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "PatchSegDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "PatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
@@ -84,8 +87,8 @@ class DatasetParams:
     level: int = 1
 
     # dataloader
-    num_workers: int = 4  # number of workers for dataloaders
-    batch_size: int = 8  # batch_size
+    num_workers: int = 1  # number of workers for dataloaders
+    batch_size: int = 4  # batch_size
 
     # for segmentation
     data_provider: str = "all"
