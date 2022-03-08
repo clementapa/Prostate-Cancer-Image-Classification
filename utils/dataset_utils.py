@@ -1,4 +1,3 @@
-
 import random
 
 import albumentations as albu
@@ -50,7 +49,9 @@ def return_random_patch(whole_slide, patch_dim, percentage_blank, level):
     return cropped_image.convert("RGB")
 
 
-def return_random_patch_with_mask(whole_slide, seg_slide, patch_dim, percentage_blank, level):
+def return_random_patch_with_mask(
+    whole_slide, seg_slide, patch_dim, percentage_blank, level
+):
     wsi_dimensions = whole_slide.dimensions
     random_location_x = random.randint(0, wsi_dimensions[0] - patch_dim)
     random_location_y = random.randint(0, wsi_dimensions[1] - patch_dim)

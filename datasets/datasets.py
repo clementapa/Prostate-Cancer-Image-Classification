@@ -45,7 +45,7 @@ class BaseDataset(Dataset):
 class PatchDataset(BaseDataset):
     def __init__(self, params, train=True, transform=None):
         super().__init__(params, train, transform)
-        
+
         self.transform = transforms.Compose(
             [
                 transforms.ToTensor(),
@@ -65,13 +65,16 @@ class PatchDataset(BaseDataset):
         wsi_image = openslide.OpenSlide(img_path)
         pil_imgs = [
             return_random_patch(
-                wsi_image, self.params.patch_size, self.params.percentage_blank, self.params.level
+                wsi_image,
+                self.params.patch_size,
+                self.params.percentage_blank,
+                self.params.level,
             )
             for _ in range(self.params.nb_samples)
         ]
         output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
 
-        return output_tensor, data['isup_grade']
+        return output_tensor, data["isup_grade"]
 
 
 class BaseSegDataset(Dataset):
@@ -132,7 +135,11 @@ class PatchSegDataset(BaseSegDataset):
         seg_gt = []
         for _ in range(self.params.nb_samples):
             pil_img, seg_img = return_random_patch_with_mask(
-                wsi_image, wsi_seg, self.params.patch_size, self.params.percentage_blank, self.params.level
+                wsi_image,
+                wsi_seg,
+                self.params.patch_size,
+                self.params.percentage_blank,
+                self.params.level,
             )
             if data["data_provider"] == "radboud":
                 seg_img = merge_cls(seg_img)
