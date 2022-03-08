@@ -35,10 +35,10 @@ class Hparams:
     tune_lr: bool = False  # tune the model on first run
     tune_batch_size: bool = False
     dev_run: bool = False
-    train: bool = True
+    train: bool = False
 
     # for inference and test
-    best_model: str = ""
+    best_model: str = "avid-bush-124"
 
 
 @dataclass
@@ -81,7 +81,7 @@ class DatasetParams:
     split_val: float = 0.1
     patch_size: int = 512
     percentage_blank: float = 0.5
-    nb_samples: int = 32
+    nb_samples: int = 64
 
     # dataloader
     num_workers: int = 4  # number of workers for dataloaders

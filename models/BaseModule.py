@@ -54,9 +54,9 @@ class BaseModule(LightningModule):
 
     def predict_step(self, batch, batch_idx):
 
-        x = batch
-        output = self(x)
-        output = torch.sigmoid(output)
+        x, _ = batch
+        output, _ = self(x)
+        output = output.argmax(dim=-1)
 
         return output
 

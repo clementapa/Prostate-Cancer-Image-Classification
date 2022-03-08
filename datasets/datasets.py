@@ -90,7 +90,18 @@ class BaseStaticDataset(Dataset):
             self.df = pd.read_csv(osp.join(params.root_dataset, "train" + ".csv"))
 
         else:
-            raise NotImplementedError(f"To implement!")
+            self.name_dataset = osp.basename(self.params.test_artifact).split(':')[0]
+            if not os.path.exists(os.path.join(self.params.path_patches, self.name_dataset)):
+                # check get artifact in agent_utils
+                artifact = wb_run.use_artifact(self.params.test_artifact)
+                datadir = artifact.download(root=self.params.path_patches)
+
+                path_to_zip_file = os.path.join(self.params.path_patches, self.name_dataset + '.zip')
+                with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
+                    zip_ref.extractall(os.path.join(datadir, self.name_dataset))
+            
+            self.df = pd.read_csv(osp.join(params.root_dataset, "test" + ".csv"))
+            # raise NotImplementedError(f"To implement!")
 
     def __len__(self):
         return len(self.df)
@@ -102,13 +113,24 @@ class BaseStaticDataset(Dataset):
 class StaticPatchDataset(BaseStaticDataset):
     def __init__(self, params, train=True, transform=None, wb_run=None):
         super().__init__(params, train, transform, wb_run)
-        self.transform = transforms.Compose(
-            [
-                transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-                ),
-            ]
-        )
+        self.train = train
+        if train:
+            self.transform = transforms.Compose(
+                [
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                    transforms.RandomHorizontalFlip(),
+                ]
+            )
+        else:
+            self.transform = transforms.Compose(
+                [
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                ]
+            )
 
     def __getitem__(self, idx):
 
@@ -117,7 +139,10 @@ class StaticPatchDataset(BaseStaticDataset):
         np_path = osp.join(self.params.path_patches, self.name_dataset, data['image_id'] + ".npy")
         np_array = np.load(open(np_path, "rb"))
 
-        label = data['isup_grade']
+        if self.train:
+            label = data['isup_grade']
+        else:
+            label = -1
         images_to_pick = [random.randint(0, np_array.shape[0]-1) for _ in range(self.params.nb_samples)]
         # output_tensor = torch.stack([self.transform((torch.from_numpy(np_img)/255.0).permute(2,1,0)) for np_img in np_array[:self.params.nb_samples]])
         
