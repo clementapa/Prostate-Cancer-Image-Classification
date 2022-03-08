@@ -38,7 +38,7 @@ class Hparams:
     train: bool = False
 
     # for inference and test
-    best_model: str = "avid-bush-124"
+    best_model: str = "major-monkey-142"
 
 
 @dataclass
@@ -85,7 +85,7 @@ class DatasetParams:
 
     # dataloader
     num_workers: int = 4  # number of workers for dataloaders
-    batch_size: int = 4  # batch_size
+    batch_size: int = 8  # batch_size
 
     # for segmentation
     data_provider: str = "karolinska"

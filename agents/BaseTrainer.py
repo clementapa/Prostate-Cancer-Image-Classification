@@ -1,4 +1,5 @@
 import csv
+import pandas as pd
 import pytorch_lightning as pl
 import torch
 import wandb
@@ -98,12 +99,13 @@ class BaseTrainer:
             self.pl_model, self.datamodule, ckpt_path=best_model)
         raw_predictions = torch.cat(raw_predictions, axis=0)
         y_pred = raw_predictions.detach().cpu().numpy()
-        predictions = zip(range(len(y_pred)), y_pred)
-        with open(f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv", "w") as pred:
-            csv_out = csv.writer(pred)
-            csv_out.writerow(['id', 'predicted'])
-            for row in predictions:
-                csv_out.writerow(row) 
+        ids = self.datamodule.dataset.df["image_id"].values
+
+        output_df = pd.DataFrame({"Id":{}, "Predicted":{}})
+        output_df['Id'] = ids
+        output_df['Predicted'] = y_pred
+
+        output_df.to_csv(f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv", index=False)
 
     def load_artifact(self, network_param, data_param):
         return
