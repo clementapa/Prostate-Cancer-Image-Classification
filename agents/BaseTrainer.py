@@ -127,11 +127,10 @@ class BaseTrainer:
             LearningRateMonitor(),
             StochasticWeightAveraging(),
             LogMetricsCallback(self.metric_param),
-            LogImagesPredictionsSegmentation(
+            LogImagesPredictions(
                 self.callbacks_param.log_freq_img,
                 self.callbacks_param.log_nb_img,
                 self.callbacks_param.log_nb_patches,
-                self.data_param.data_provider,
             ),
             EarlyStopping(monitor="val/loss", mode="min", patience=30),
         ]
