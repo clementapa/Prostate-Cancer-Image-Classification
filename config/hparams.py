@@ -99,15 +99,17 @@ class DatasetParams:
 class MetricParams:
 
     # list_metrics: List[str] = list_field(
-    #     "Accuracy", "AUROC", "F1", "Recall", "Precision"
+    #     "F1", "AUROC"
     # )
     list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "AUROC")
     # list_metrics: List[str] = list_field("IoU")
-    num_classes: int = 3
+    num_classes: int = 6
     pixel_wise_parameters: Dict[str, Any] = dict_field(
         dict(average="weighted", mdmc_average="global")
     )
     name_module: str = "MetricsModuleClassification"
+    average: str = "weighted"
+
 
 
 @dataclass
