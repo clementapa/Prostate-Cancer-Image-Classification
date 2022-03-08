@@ -19,9 +19,9 @@ from utils.logger import init_logger
 
 
 class BaseTrainer:
-    def __init__(self, config, run=None) -> None:
+    def __init__(self, config, logger=None, wb_run=None) -> None:
         self.config = config.hparams
-        self.wb_run = run
+        self.wb_logger = logger
         self.network_param = config.network_param
         self.metric_param = config.metric_param
         self.callbacks_param = config.callbacks_param
@@ -36,38 +36,38 @@ class BaseTrainer:
         self.datamodule = get_datamodule(config.data_param)
 
         logger.info("Loading Model module...")
-        self.pl_model = BaseModule(config.network_param, config.optim_param)
+        self.pl_model = BaseModule(config.network_param, config.optim_param, wb_run)
 
         if self.network_param.network_name != "Segmentation":
-            self.wb_run.watch(self.pl_model.model.mlp)
+            self.wb_logger.watch(self.pl_model.model.mlp)
         else:
-            self.wb_run.watch(self.pl_model.model)
+            self.wb_logger.watch(self.pl_model.model)
 
     def run(self):
         if self.config.tune_batch_size:
             trainer = pl.Trainer(
-                logger=self.wb_run,
+                logger=self.wb_logger,
                 gpus=self.config.gpu,
                 auto_scale_batch_size="power",
                 log_every_n_steps=1,
                 accelerator="auto",
-                default_root_dir=self.wb_run.save_dir,
+                default_root_dir=self.wb_logger.save_dir,
                 enable_progress_bar=self.config.enable_progress_bar,
             )
-            trainer.logger = self.wb_run
+            trainer.logger = self.wb_logger
             trainer.tune(self.pl_model, datamodule=self.datamodule)
 
         if self.config.tune_lr:
             trainer = pl.Trainer(
-                logger=self.wb_run,
+                logger=self.wb_logger,
                 gpus=self.config.gpu,
                 auto_lr_find=True,
                 log_every_n_steps=1,
                 accelerator="auto",
-                default_root_dir=self.wb_run.save_dir,
+                default_root_dir=self.wb_logger.save_dir,
                 enable_progress_bar=self.config.enable_progress_bar,
             )
-            trainer.logger = self.wb_run
+            trainer.logger = self.wb_logger
             trainer.tune(self.pl_model, datamodule=self.datamodule)
 
         if not self.config.debug:
@@ -77,7 +77,7 @@ class BaseTrainer:
             torch.backends.cudnn.benchmark = True
 
         trainer = pl.Trainer(
-            logger=self.wb_run,  # W&B integration
+            logger=self.wb_logger,  # W&B integration
             callbacks=self.get_callbacks(),
             gpus=self.config.gpu,  # use all available GPU's
             max_epochs=self.config.max_epochs,  # number of epochs
@@ -86,7 +86,7 @@ class BaseTrainer:
             amp_backend="apex",
             enable_progress_bar=self.config.enable_progress_bar,
         )
-        trainer.logger = self.wb_run
+        trainer.logger = self.wb_logger
         trainer.fit(self.pl_model, datamodule=self.datamodule)
 
     def predict(self):

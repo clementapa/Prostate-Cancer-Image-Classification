@@ -10,7 +10,7 @@ from models.losses.segmentation.dice import DiceLoss
 
 
 class BaseModule(LightningModule):
-    def __init__(self, network_param, optim_param):
+    def __init__(self, network_param, optim_param, wb_run=None):
         """method used to define our model parameters"""
         super(BaseModule, self).__init__()
 
@@ -27,7 +27,7 @@ class BaseModule(LightningModule):
         self.lr = optim_param.lr
 
         # model
-        self.model = get_net(network_param.network_name, network_param)
+        self.model = get_net(network_param.network_name, network_param, wb_run)
         # if network_param.weight_checkpoint is not None:
         #     self.model.load_state_dict(torch.load(
         #         network_param.weight_checkpoint)["state_dict"])
@@ -97,4 +97,4 @@ class BaseModule(LightningModule):
 class BaseModuleForInference(nn.Module):
     def __init__(self, params) -> None:
         super().__init__()
-        self.model = get_net(params.network_name, params)
+        self.model = get_net("Segmentation", params, None)

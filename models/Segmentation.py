@@ -9,7 +9,7 @@ class Segmentation(nn.Module):
     https://smp.readthedocs.io/en/latest/
     """
 
-    def __init__(self, params):
+    def __init__(self, params, wb_run=None):
         super().__init__()
         self.params = params
 

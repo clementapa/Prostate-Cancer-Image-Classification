@@ -1,3 +1,4 @@
+import os
 import timm
 import torch
 import torch.nn as nn
@@ -12,7 +13,7 @@ from utils.dataset_utils import seg_max_to_score
 
 
 class MMSg(nn.Module):
-    def __init__(self, params):
+    def __init__(self, params, wb_run=None):
         super().__init__()
         self.params = params
 
@@ -32,11 +33,12 @@ class MMSg(nn.Module):
 
         # load seg_model
         name_artifact = f"attributes_classification_celeba/test-dlmi/{params.wb_run_seg}:top-1"
-        path_to_model = get_artifact(f"{name_artifact}", "model")
+        artifact = wb_run.use_artifact(name_artifact)
+        path_to_model = artifact.download()
         # path_to_model = "/home/younesbelkada/Travail/MVA/DeepMedical/Prostate-Cancer-Image-Classification/artifacts/expert-surf-171:v7/epoch-19-val_loss=0.17.ckpt"
 
         base_module = BaseModuleForInference(params)
-        base_module.load_state_dict(torch.load(path_to_model)['state_dict'])
+        base_module.load_state_dict(torch.load(os.path.join(path_to_model, os.listdir(path_to_model)[0]))['state_dict'])
         self.seg_model = base_module.model
         # self.seg_model._requires_grad(False)
 

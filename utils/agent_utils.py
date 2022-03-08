@@ -6,13 +6,13 @@ from config.hparams import Parameters
 from datasets.datamodule import BaseDataModule
 
 
-def get_net(network_name, network_param):
+def get_net(network_name, network_param, wb_run):
     """
     Get Network Architecture based on arguments provided
     """
     mod = importlib.import_module(f"models.{network_name}")
     net = getattr(mod, network_name)
-    return net(network_param)
+    return net(network_param, wb_run)
 
 
 def get_dataset(dataset_name, dataset_param):
