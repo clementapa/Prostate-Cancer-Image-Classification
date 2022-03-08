@@ -107,7 +107,7 @@ class MetricParams:
     pixel_wise_parameters: Dict[str, Any] = dict_field(
         dict(average="weighted", mdmc_average="global")
     )
-    name_module: str = "MetricsModuleSegmentation"
+    name_module: str = "MetricsModuleClassification"
 
 
 @dataclass
