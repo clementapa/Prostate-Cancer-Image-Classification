@@ -18,28 +18,28 @@ class Baseline(nn.Module):
         self.features_extractor.reset_classifier(0)
         in_shape = self.features_extractor(torch.randn(1, 3, 224, 224)).shape[1]
 
-        self.bottleneck = nn.Sequential(
-            nn.Linear(in_shape, params.bottleneck_shape),
+        self.feature_selector = nn.Sequential(
+            nn.Linear(in_shape, 1),
             nn.Sigmoid()
         )
 
-        self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)
+        # self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)
+        self.mlp = MLP(in_shape, params)
 
     def forward(self, x):
         features = []
-        for batch in x:
-            # features.append(self.features_extractor(batch.permute(0, 3, 1, 2)))
-            # TODO fix the permute issue
-            feature = self.features_extractor(batch)
-            transformed_feature = self.bottleneck(feature)
-            features.append(transformed_feature)
-            # features.append(
-            #     self.features_extractor.forward_features(
-            #         batch.permute(0, 3, 1, 2)
-            #     ).squeeze()
-            # )
+        with torch.no_grad():
+            for batch in x:
+                # TODO fix the permute issue
+                feature = self.features_extractor(batch)
+                transformed_feature = self.feature_selector(feature)
+                features.append(transformed_feature)
+            most_relevant_patch = torch.argmax(torch.stack(features), dim=1)
         # bs, n_patches, h, w, c
-        features = torch.stack(features)
+        # features = torch.stack(features)
+        important_patches = x[torch.arange(x.size(0)), most_relevant_patch.squeeze()]
+        feature = self.features_extractor(important_patches)
 
-        output = self.mlp(rearrange(features, "b p d -> b (p d)"))
+        # output = self.mlp(rearrange(features, "b p d -> b (p d)"))
+        output = self.mlp(feature)
         return output
