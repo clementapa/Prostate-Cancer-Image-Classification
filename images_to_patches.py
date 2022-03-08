@@ -118,7 +118,7 @@ def main(patch_size, split, percentage_blank, level):
             patch_size * patch_size * 3
         ) <= percentage_blank  # remove patch with only blanks pixels
         non_white_patches = img[mask]
-        
+
         np.save(osp.join(patch_path, df["image_id"][i]), non_white_patches.numpy())
 
     zip_name = osp.join(
@@ -147,20 +147,28 @@ def main(patch_size, split, percentage_blank, level):
     )
 
     artifact.add_file(zip_name + ".zip")
-    wandb.log_artifact(artifact, aliases=["latest"])  
+    wandb.log_artifact(artifact, aliases=["latest"])
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Push an artifact to wandb")
-    parser.add_argument("--patch_size", required=True, type = int, help = "patch size ")
-    parser.add_argument("--split", required=True, type = str, help = "name of the split")
-    parser.add_argument("--percentage_blank", required=False, type = float, help = "percentage of blank pixels", default=0.5)
-    parser.add_argument("--level", required=False, type = int, help = "Level of tiff file", default=1)
+    parser.add_argument("--patch_size", required=True, type=int, help="patch size ")
+    parser.add_argument("--split", required=True, type=str, help="name of the split")
+    parser.add_argument(
+        "--percentage_blank",
+        required=False,
+        type=float,
+        help="percentage of blank pixels",
+        default=0.5,
+    )
+    parser.add_argument(
+        "--level", required=False, type=int, help="Level of tiff file", default=1
+    )
     args = parser.parse_args()
-    
+
     split = args.split
     patch_size = args.patch_size
     percentage_blank = args.percentage_blank
     level = args.level
-    
+
     main(patch_size, split, percentage_blank, level)
