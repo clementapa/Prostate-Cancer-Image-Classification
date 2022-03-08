@@ -7,6 +7,7 @@ from utils.agent_utils import get_net
 from models.Baseline import Baseline
 
 from models.losses.segmentation.dice import DiceLoss
+from models.losses.segmentation.customized_ce import C_Crossentropy
 
 
 class BaseModule(LightningModule):
@@ -15,8 +16,9 @@ class BaseModule(LightningModule):
         super(BaseModule, self).__init__()
 
         # loss function
-        self.loss = nn.CrossEntropyLoss()
+        # self.loss = nn.CrossEntropyLoss()
         # self.loss = DiceLoss()
+        self.loss = C_Crossentropy()
 
         # optimizer
         self.optim_param = optim_param
@@ -29,8 +31,8 @@ class BaseModule(LightningModule):
         #         network_param.weight_checkpoint)["state_dict"])
 
     def forward(self, x):
-        output = self.model(x)
-        return output
+        output, probas = self.model(x)
+        return output, probas
 
     def training_step(self, batch, batch_idx):
         """needs to return a loss from a single batch"""
@@ -102,9 +104,9 @@ class BaseModule(LightningModule):
     def _get_preds_loss_accuracy(self, batch):
         """convenience function since train/valid/test steps are similar"""
         x, y = batch
-        output = self(x)
+        output, probas = self(x)
 
-        loss = self.loss(output, y)
+        loss = self.loss(output, y, probas)
         logits = F.softmax(output, dim=0)
 
         return loss, logits

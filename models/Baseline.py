@@ -40,6 +40,8 @@ class Baseline(nn.Module):
         important_patches = x[torch.arange(x.size(0)), most_relevant_patch.squeeze()]
         feature = self.features_extractor(important_patches)
 
+        probas = self.feature_selector(feature)
+
         # output = self.mlp(rearrange(features, "b p d -> b (p d)"))
         output = self.mlp(feature)
-        return output
+        return output, probas
