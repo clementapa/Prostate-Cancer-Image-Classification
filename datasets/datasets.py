@@ -1,6 +1,9 @@
 import random
 import torch
 import openslide
+import pandas as pd
+import os.path as osp
+import os
 
 import numpy as np
 import torchvision.transforms as transforms
@@ -130,6 +133,74 @@ class PatchSegDataset(BaseSegDataset):
                 seg_img = merge_cls(seg_img)
             pil_imgs.append(pil_img)
             seg_gt.append(seg_img)
+        output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
+        seg_masks = torch.stack(seg_gt)
+        return output_tensor, seg_masks
+
+
+class BaseSegDatasetNew(Dataset):
+    """
+    A base dataset module to load the dataset for the challenge
+    """
+
+    def __init__(self, params, train=True, transform=None):
+        super().__init__()
+
+        self.params = params
+
+        if train:
+            self.df = pd.read_csv(
+                osp.join(self.params.root_dataset, "train.csv"))
+            self.subpath = osp.join('train', 'train')
+            self.subpath_masks = osp.join('train_label_masks', 'train_label_masks')
+
+            name = self.df["image_id"] + ".tiff"
+            mask = name.isin(os.listdir(osp.join(self.params.root_dataset, self.subpath_masks)))
+            self.df = self.df[mask].copy()
+
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, idx):
+        raise NotImplementedError(f"Should be implemented in derived class!")
+
+
+class PatchSegDatasetNew(BaseSegDatasetNew):
+    def __init__(self, params, train=True, transform=None):
+        super().__init__(params, train, transform)
+
+        self.transform = transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )
+
+    def __getitem__(self, idx):
+        data = dict(self.df.iloc[idx])
+
+        img_path = osp.join(self.params.root_dataset,
+                            self.subpath, data["image_id"] + ".tiff")
+        wsi_image = openslide.OpenSlide(img_path)
+
+        mask_path = img_path.replace("train", "train_label_masks")
+        wsi_seg = openslide.OpenSlide(mask_path)
+
+        pil_imgs = []
+        seg_gt = []
+        for _ in range(self.params.nb_samples):
+            pil_img, seg_img = return_random_patch_with_mask(
+                wsi_image, wsi_seg, self.params.patch_size, self.params.percentage_blank
+            )
+            if data['data_provider'] == "radboud":
+                seg_img = merge_cls(seg_img)
+            pil_imgs.append(pil_img)
+            seg_gt.append(seg_img)
+        
         output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
         seg_masks = torch.stack(seg_gt)
         return output_tensor, seg_masks

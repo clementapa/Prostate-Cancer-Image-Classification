@@ -73,21 +73,21 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "PatchSegDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "PatchSegDatasetNew"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
     split_val: float = 0.1
-    patch_size: int = 512
+    patch_size: int = 256
     percentage_blank: float = 0.5
-    nb_samples: int = 4
+    nb_samples: int = 8
 
     # dataloader
     num_workers: int = 4  # number of workers for dataloaders
-    batch_size: int = 4  # batch_size
+    batch_size: int = 8  # batch_size
 
     # for segmentation
-    data_provider: str = "karolinska"
+    data_provider: str = "all"
     # merge_cls: bool = True # Only for radboud
     image_size: int = 512
 
