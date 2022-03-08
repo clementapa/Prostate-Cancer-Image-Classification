@@ -78,7 +78,7 @@ class DatasetParams:
 
     # dataset
     split_val: float = 0.1
-    patch_size: int = 192
+    patch_size: int = 256
     percentage_blank: float = 0.5
     nb_samples: int = 8
     level: int = 1
