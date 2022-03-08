@@ -101,7 +101,7 @@ class MetricParams:
     # list_metrics: List[str] = list_field(
     #     "Accuracy", "AUROC", "F1", "Recall", "Precision"
     # )
-    list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "IoU")
+    list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "AUROC")
     # list_metrics: List[str] = list_field("IoU")
     num_classes: int = 3
     pixel_wise_parameters: Dict[str, Any] = dict_field(
