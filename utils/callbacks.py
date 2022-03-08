@@ -133,7 +133,7 @@ class AutoSaveModelCheckpoint(ModelCheckpoint):
                     # either this works, or I will have to remove the model with the alias first then log the next
                     version.delete()
         except:
-            print("error in del artifact to ingrore")
+            print("error in del artifact to ignore")
             return
 
     def on_exception(
@@ -262,11 +262,12 @@ class LogImagesPredictionsSegmentation(BaseLogImages):
     def log_images(self, name, batch, n, p, outputs):
 
         x, y = batch
-        images = x[:n, :p].detach().cpu()
+        # images = x[:n, :p].detach().cpu()
+        images = x[:n].detach().cpu()
         labels = y[:n].cpu()
         preds = outputs["logits"][:n].argmax(dim=1).cpu()
 
-        images = [make_grid(im) for im in images]
+        # images = [make_grid(im) for im in images]
         samples = []
 
         for i in range(len(images)):

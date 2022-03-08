@@ -4,7 +4,6 @@ import torch.nn.functional as F
 from pytorch_lightning import LightningModule
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from utils.agent_utils import get_net
-from models.Baseline import Baseline
 
 from models.losses.segmentation.dice import DiceLoss
 
@@ -15,8 +14,10 @@ class BaseModule(LightningModule):
         super(BaseModule, self).__init__()
 
         # loss function
-        # self.loss = nn.CrossEntropyLoss()
-        self.loss = DiceLoss()
+        if network_param.network_name == "Segmentation":
+            self.loss = DiceLoss()
+        else:
+            self.loss = nn.CrossEntropyLoss()
 
         # optimizer
         self.optim_param = optim_param
