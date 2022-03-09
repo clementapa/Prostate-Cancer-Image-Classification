@@ -51,7 +51,7 @@ class MMSg(nn.Module):
                 feature = self.features_extractor(batch)
                 seg_mask = self.seg_model(batch).argmax(dim=1)
 
-                score = seg_max_to_score(seg_mask, self.params.patch_size)
+                score = seg_max_to_score(seg_mask, seg_mask.shape[-1])
 
                 transformed_feature = self.feature_selector(torch.cat([feature, score], dim=-1))
                 features.append(transformed_feature)
