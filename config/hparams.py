@@ -76,7 +76,7 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "PatchDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "StaticPatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
@@ -93,6 +93,11 @@ class DatasetParams:
     # for segmentation
     data_provider: str = "all"
     image_size: int = 512
+
+    train_artifact: str = "attributes_classification_celeba/dlmi/train_256_1_0.5:v0"
+    # train_artifact: str = "attributes_classification_celeba/dlmi/train_192_1_0.5:v0"
+    test_artifact: str = "attributes_classification_celeba/dlmi/test_256_1_0.5:v0"
+    path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
 
 @dataclass
