@@ -58,7 +58,7 @@ class BaseModule(LightningModule):
 
         x = batch
         output = self(x)
-        output = torch.sigmoid(output)
+        output = output.argmax(dim=-1)
 
         return output
 
@@ -87,9 +87,9 @@ class BaseModule(LightningModule):
     def _get_preds_loss_accuracy(self, batch):
         """convenience function since train/valid/test steps are similar"""
         x, y = batch
-        output, probas = self(x)
+        output = self(x)
 
-        loss = self.loss(output, y, probas)
+        loss = self.loss(output, y)
         logits = F.softmax(output, dim=0)
 
         return loss, logits

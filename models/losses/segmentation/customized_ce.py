@@ -13,7 +13,8 @@ class C_Crossentropy(_Loss):
     def __init__(self):
         super().__init__()
 
-    def forward(self, y_pred: torch.Tensor, y_true: torch.Tensor, y_proba: torch.Tensor) -> torch.Tensor:
+    def forward(self, y_pred_tuple: tuple(torch.Tensor, torch.Tensor), y_true: torch.Tensor) -> torch.Tensor:
+        y_pred, y_proba = y_pred_tuple
         bce_term = nn.BCELoss()(y_proba, torch.ones_like(y_proba))
         ce_term = nn.CrossEntropyLoss()(y_pred, y_true)
         return bce_term + ce_term
