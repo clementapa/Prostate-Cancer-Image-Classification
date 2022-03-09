@@ -1,3 +1,4 @@
+import zipfile
 import random
 import torch
 import openslide
