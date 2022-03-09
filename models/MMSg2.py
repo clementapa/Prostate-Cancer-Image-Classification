@@ -45,7 +45,7 @@ class MMSg2(nn.Module):
             for batch in x:
                 seg_mask = self.seg_model(batch).argmax(dim=1)
                 score = seg_max_to_score(seg_mask, seg_mask.shape[-1])
-                top_k_patches.append(torch.topk(score[:, -1], 3, dim=-1).indices)
+                top_k_patches.append(torch.topk(score[:, -1], 10, dim=-1).indices)
                 scores.append(score)
             # most_relevant_patch = torch.argmax(torch.stack(scores), dim=1)
         # bs, n_patches, h, w, c
