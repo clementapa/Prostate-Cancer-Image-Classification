@@ -125,6 +125,11 @@ class CallbacksParams:
 
 
 @dataclass
+class PushArtifactParams:
+    split: str = "train"
+    level: int = 1
+
+@dataclass
 class Parameters:
     """base options."""
 
@@ -134,6 +139,7 @@ class Parameters:
     optim_param: OptimizerParams = OptimizerParams()
     metric_param: MetricParams = MetricParams()
     callbacks_param: CallbacksParams = CallbacksParams()
+    push_artifact_params: PushArtifactParams = PushArtifactParams()
 
     def __post_init__(self):
         """Post-initialization code"""
