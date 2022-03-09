@@ -27,7 +27,7 @@ class Hparams:
     # basic params
     seed_everything: Optional[int] = None  # seed for the whole run
     gpu: int = 0  # number or gpu
-    max_epochs: int = 30  # maximum number of epochs
+    max_epochs: int = 60  # maximum number of epochs
     weights_path: str = osp.join(os.getcwd(), "weights")
     enable_progress_bar: bool = True
 
@@ -49,7 +49,7 @@ class NetworkParams:
     artifact: str = ""
 
     # MLP parameters
-    dropout: float = 0.1
+    dropout: float = 0.0
     normalization: str = "BatchNorm1d"
     activation: str = "GELU"
 
