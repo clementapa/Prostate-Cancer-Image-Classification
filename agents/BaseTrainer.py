@@ -33,7 +33,7 @@ class BaseTrainer:
         self.load_artifact(config.network_param, config.data_param)
 
         logger.info("Loading Data module...")
-        self.datamodule = get_datamodule(config.data_param)
+        self.datamodule = get_datamodule(config.data_param, wb_run)
 
         logger.info("Loading Model module...")
         self.pl_model = BaseModule(config.network_param, config.optim_param, wb_run)
