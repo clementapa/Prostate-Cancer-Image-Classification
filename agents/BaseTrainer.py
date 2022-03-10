@@ -40,7 +40,7 @@ class BaseTrainer:
         self.pl_model = BaseModule(config.network_param, config.optim_param, wb_run)
 
         if self.network_param.network_name != "Segmentation":
-            self.wb_logger.watch(self.pl_model.model.mlp)
+            self.wb_logger.watch(self.pl_model.model.classifier)
         else:
             self.wb_logger.watch(self.pl_model.model)
 
