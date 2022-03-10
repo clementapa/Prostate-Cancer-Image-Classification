@@ -29,7 +29,12 @@ class MMSg(nn.Module):
         )
 
         # self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)
-        self.mlp = MLP(in_shape+4, params)
+        if self.params.classifier_name == "MLP":
+            self.classifier = MLP(in_shape+4, params)
+        elif self.params.classifier_name == "Linear":
+            self.classifier = nn.Linear(in_shape+4, 6)
+        else:
+            raise NotImplementedError("Classifier not implemented ! MLP or Linear")
 
         # load seg_model
         name_artifact = f"attributes_classification_celeba/test-dlmi/{params.wb_run_seg}:top-1"
@@ -71,7 +76,6 @@ class MMSg(nn.Module):
         scores_important_patches = scores[torch.arange(scores.size(0)), most_relevant_patch.squeeze()]
         probas = patch_scores[torch.arange(patch_scores.size(0)), most_relevant_patch.squeeze()]
         
-        # output = self.mlp(rearrange(features, "b p d -> b (p d)"))
-        output = self.mlp(torch.cat([features_important_patches, scores_important_patches, probas], dim=-1))
+        output = self.classifier(torch.cat([features_important_patches, scores_important_patches, probas], dim=-1))
         
         return (output, probas)

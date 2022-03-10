@@ -46,6 +46,8 @@ class Hparams:
 class NetworkParams:
     feature_extractor_name: str = "resnet34"
     network_name: str = "MMSg"
+    classifier_name: str = "Linear"
+    
     weight_checkpoints: str = ""
     artifact: str = ""
 
