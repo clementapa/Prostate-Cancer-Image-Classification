@@ -36,6 +36,8 @@ class MMSg2(nn.Module):
         # base_module.load_state_dict(torch.load(os.path.join(path_to_model, os.listdir(path_to_model)[0]), map_location=torch.device('cpu'))['state_dict'])
         base_module.load_state_dict(torch.load(os.path.join(path_to_model, os.listdir(path_to_model)[0]))['state_dict'])
         self.seg_model = base_module.model
+        for param in self.seg_model.parameters():
+            param.requires_grad = False
         # self.seg_model._requires_grad(False)
 
     def forward(self, x):
@@ -45,7 +47,7 @@ class MMSg2(nn.Module):
             for batch in x:
                 seg_mask = self.seg_model(batch).argmax(dim=1)
                 score = seg_max_to_score(seg_mask, seg_mask.shape[-1])
-                top_k_patches.append(torch.topk(score[:, -1], 10, dim=-1).indices)
+                top_k_patches.append(torch.topk(score[:, -1], x.shape[1]//2, dim=-1).indices)
                 scores.append(score)
             # most_relevant_patch = torch.argmax(torch.stack(scores), dim=1)
         # bs, n_patches, h, w, c

@@ -44,17 +44,29 @@ class BaseDataset(Dataset):
 
 
 class PatchDataset(BaseDataset):
-    def __init__(self, params, train=True, transform=None):
+    def __init__(self, params, train=True, transform=None, wb_run=None):
         super().__init__(params, train, transform)
 
-        self.transform = transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-                ),
-            ]
-        )
+        if train:
+            self.transform = transforms.Compose(
+                [
+                    transforms.ToTensor(),
+                    transforms.RandomHorizontalFlip(),
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                ]
+            )
+        else:
+            self.transform = transforms.Compose(
+                [
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                    
+                ]
+            )
 
     def __getitem__(self, idx):
         data = dict(self.df.iloc[idx])

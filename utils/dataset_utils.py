@@ -36,10 +36,14 @@ def return_random_patch(whole_slide, patch_dim, percentage_blank, level):
         (random_location_x, random_location_y), level, (patch_dim, patch_dim)
     )
     while (
-        np.sum(
+        (np.sum(
             np.any(np.array(cropped_image)[:, :, :-1] == [255.0, 255.0, 255.0], axis=-1)
         )
-        > percentage_blank * patch_dim * patch_dim
+        > percentage_blank * patch_dim * patch_dim) or
+        (np.sum(
+            np.any(np.array(cropped_image)[:, :, :-1] == [0.0, 0.0, 0.0], axis=-1)
+        )
+        > percentage_blank * patch_dim * patch_dim)
     ):
         random_location_x = random.randint(0, wsi_dimensions[0] - patch_dim)
         random_location_y = random.randint(0, wsi_dimensions[1] - patch_dim)

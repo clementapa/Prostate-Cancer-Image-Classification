@@ -44,7 +44,7 @@ class Hparams:
 @dataclass
 class NetworkParams:
     feature_extractor_name: str = "resnet34"
-    network_name: str = "MMSg2"
+    network_name: str = "MSgScore"
     weight_checkpoints: str = ""
     artifact: str = ""
 
@@ -76,13 +76,13 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "StaticPatchDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "PatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
     split_val: float = 0.1
     patch_size: int = 256
-    percentage_blank: float = 0.5
+    percentage_blank: float = 0.3
     nb_samples: int = 32
     level: int = 1
 

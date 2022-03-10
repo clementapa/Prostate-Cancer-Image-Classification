@@ -34,6 +34,8 @@ class MSgScore(nn.Module):
         base_module.load_state_dict(torch.load(os.path.join(path_to_model, os.listdir(path_to_model)[0]))['state_dict'])
         self.seg_model = base_module.model
         # self.seg_model._requires_grad(False)
+        for param in self.seg_model.parameters():
+            param.requires_grad = False
 
     def forward(self, x):
         scores = []
