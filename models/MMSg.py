@@ -23,13 +23,13 @@ class MMSg(nn.Module):
         self.features_extractor.reset_classifier(0)
         in_shape = self.features_extractor(torch.randn(1, 3, 224, 224)).shape[1]
 
-        self.feature_selector = nn.Sequential(
+        self.patch_selector = nn.Sequential(
             nn.Linear(in_shape+3, 1),
             nn.Sigmoid()
         )
 
         # self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)
-        self.mlp = MLP(in_shape+3, params)
+        self.mlp = MLP(in_shape+4, params)
 
         # load seg_model
         name_artifact = f"attributes_classification_celeba/test-dlmi/{params.wb_run_seg}:top-1"
@@ -44,29 +44,34 @@ class MMSg(nn.Module):
         # self.seg_model._requires_grad(False)
 
     def forward(self, x):
-        features = []
+        patch_scores = []
         scores = []
-        with torch.no_grad():
-            for batch in x:
-                feature = self.features_extractor(batch)
+        features = []
+        
+        for batch in x:
+            feature = self.features_extractor(batch)
+            
+            with torch.no_grad():
                 seg_mask = self.seg_model(batch).argmax(dim=1)
 
-                score = seg_max_to_score(seg_mask, seg_mask.shape[-1])
+            seg_score = seg_max_to_score(seg_mask, seg_mask.shape[-1])
+            patch_score = self.patch_selector(torch.cat([feature, seg_score], dim=-1))
 
-                transformed_feature = self.feature_selector(torch.cat([feature, score], dim=-1))
-                features.append(transformed_feature)
-                scores.append(score)
-            most_relevant_patch = torch.argmax(torch.stack(features), dim=1)
-        # bs, n_patches, h, w, c
-        # features = torch.stack(features)
+            patch_scores.append(patch_score)
+            scores.append(seg_score)
+            features.append(feature)
+
+        most_relevant_patch = torch.argmax(torch.stack(patch_scores), dim=1)
+
         scores = torch.stack(scores)
-        important_patches = x[torch.arange(x.size(0)), most_relevant_patch.squeeze()]
-        important_scores = scores[torch.arange(scores.size(0)), most_relevant_patch.squeeze()]
-
-        feature = self.features_extractor(important_patches)
-
-        probas = self.feature_selector(torch.cat([feature, important_scores], dim=-1))
-
+        features = torch.stack(features)
+        patch_scores = torch.stack(patch_scores)
+        
+        features_important_patches = features[torch.arange(scores.size(0)), most_relevant_patch.squeeze()]
+        scores_important_patches = scores[torch.arange(scores.size(0)), most_relevant_patch.squeeze()]
+        probas = patch_scores[torch.arange(patch_scores.size(0)), most_relevant_patch.squeeze()]
+        
         # output = self.mlp(rearrange(features, "b p d -> b (p d)"))
-        output = self.mlp(torch.cat([feature, important_scores], dim=-1))
+        output = self.mlp(torch.cat([features_important_patches, scores_important_patches, probas], dim=-1))
+        
         return (output, probas)

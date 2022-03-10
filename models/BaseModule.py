@@ -90,7 +90,11 @@ class BaseModule(LightningModule):
         output = self(x)
 
         loss = self.loss(output, y)
-        logits = F.softmax(output, dim=0)
+
+        if isinstance(output, tuple):
+            logits = F.softmax(output[0], dim=0)
+        else: 
+            logits = F.softmax(output, dim=0)
 
         return loss, logits
 
