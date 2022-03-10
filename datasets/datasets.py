@@ -142,7 +142,10 @@ class PatchSegDataset(BaseSegDataset):
                 self.params.percentage_blank,
                 self.params.level,
             )
-            if data["data_provider"] == "radboud" and self.params.data_provider == "all":
+            if (
+                data["data_provider"] == "radboud"
+                and self.params.data_provider == "all"
+            ):
                 seg_img = merge_cls(seg_img)
             pil_imgs.append(pil_img)
             seg_gt.append(seg_img)

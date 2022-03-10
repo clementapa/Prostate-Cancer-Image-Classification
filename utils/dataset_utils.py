@@ -12,6 +12,7 @@ def merge_cls(seg_img):
     seg_img[(seg_img >= 3)] = 2
     return seg_img
 
+
 def coll_fn(batch):
     y = torch.LongTensor([b[1] for b in batch])
     X = torch.stack([b[0] for b in batch])

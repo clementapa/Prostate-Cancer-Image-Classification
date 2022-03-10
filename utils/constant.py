@@ -19,7 +19,7 @@ DICT_COLORS = {
     },
     "radboud_merged": {0: "background or unknown", 1: "healthy", 2: "cancerous tissue"},
     "all": {0: "background or unknown", 1: "healthy", 2: "cancerous tissue"},
-    "all_6":{
+    "all_6": {
         0: "background or unknown",
         1: "stroma",
         2: "healthy",
@@ -30,4 +30,10 @@ DICT_COLORS = {
 }
 
 
-CLASSES_PER_PROVIDER = {"radboud": 6, "karolinska": 3, "radboud_merged": 3, "all": 3, "all_6":6}
+CLASSES_PER_PROVIDER = {
+    "radboud": 6,
+    "karolinska": 3,
+    "radboud_merged": 3,
+    "all": 3,
+    "all_6": 6,
+}
