@@ -85,10 +85,10 @@ class DatasetParams:
 
     # dataloader
     num_workers: int = 4  # number of workers for dataloaders
-    batch_size: int = 8  # batch_size
+    batch_size: int = 4  # batch_size
 
     # for segmentation
-    data_provider: str = "all"
+    data_provider: str = "radboud"
     image_size: int = 512
 
 
@@ -100,7 +100,7 @@ class MetricParams:
     # )
     list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "IoU")
     # list_metrics: List[str] = list_field("IoU")
-    num_classes: int = 3
+    num_classes: int = 6
     pixel_wise_parameters: Dict[str, Any] = dict_field(
         dict(average="weighted", mdmc_average="global")
     )
