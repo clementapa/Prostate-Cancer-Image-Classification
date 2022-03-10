@@ -10,11 +10,12 @@ __all__ = ["C_Crossentropy"]
 
 
 class C_Crossentropy(_Loss):
-    def __init__(self):
+    def __init__(self, alpha_=0.4):
         super().__init__()
+        self.alpha_ = 0.4
 
     def forward(self, y_pred_tuple: tuple([torch.Tensor, torch.Tensor]), y_true: torch.Tensor) -> torch.Tensor:
         y_pred, y_proba = y_pred_tuple
         bce_term = nn.BCELoss()(y_proba, torch.ones_like(y_proba))
         ce_term = nn.CrossEntropyLoss()(y_pred, y_true)
-        return 0.4*bce_term + ce_term
+        return self.alpha_*bce_term + ce_term

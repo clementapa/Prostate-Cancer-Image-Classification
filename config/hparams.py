@@ -59,6 +59,9 @@ class NetworkParams:
     # Seg Model param
     wb_run_seg: str = "expert-surf-171"
 
+    # C CE Loss
+    alpha: float = 0.4
+
 
 @dataclass
 class OptimizerParams:
