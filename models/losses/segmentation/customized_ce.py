@@ -17,4 +17,4 @@ class C_Crossentropy(_Loss):
         y_pred, y_proba = y_pred_tuple
         bce_term = nn.BCELoss()(y_proba, torch.ones_like(y_proba))
         ce_term = nn.CrossEntropyLoss()(y_pred, y_true)
-        return bce_term + ce_term
+        return 0.4*bce_term + ce_term
