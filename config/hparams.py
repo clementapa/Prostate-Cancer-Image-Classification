@@ -36,10 +36,11 @@ class Hparams:
     tune_batch_size: bool = False
     dev_run: bool = False
     train: bool = True
+    accumulate_grad_batches: int = 16
 
     # for inference and test
     best_model: str = "skilled-gorge-229"
-
+    
 
 @dataclass
 class NetworkParams:

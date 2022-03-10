@@ -86,6 +86,7 @@ class BaseTrainer:
             fast_dev_run=self.config.dev_run,
             amp_backend="apex",
             enable_progress_bar=self.config.enable_progress_bar,
+            accumulate_grad_batches=self.config.accumulate_grad_batches
         )
         trainer.logger = self.wb_logger
         trainer.fit(self.pl_model, datamodule=self.datamodule)
