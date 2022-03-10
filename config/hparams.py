@@ -80,7 +80,7 @@ class DatasetParams:
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
-    split_val: float = 0.1
+    split_val: float = 0.2
     patch_size: int = 256
     percentage_blank: float = 0.1
     nb_samples: int = 16
