@@ -28,6 +28,9 @@ class MMSg(nn.Module):
             nn.Sigmoid()
         )
 
+        self.norm = getattr(nn, params.normalization)
+        self.activation = getattr(nn, params.activation)
+
         # self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)
         if self.params.classifier_name == "MLP":
             self.classifier = MLP(in_shape+4, params)
@@ -35,8 +38,14 @@ class MMSg(nn.Module):
             self.classifier = nn.Linear(in_shape+4, 6)
         elif self.params.classifier_name == "Multiple Linear":
                 self.classifier = nn.Sequential(
+                                    nn.Linear(in_shape+4, in_shape+4),
+                                    self.norm(in_shape+4),
+                                    self.activation(),
+                                    nn.Dropout(params.dropout),
                                     nn.Linear(in_shape+4, (in_shape+4)//2),
-                                    getattr(nn, params.activation)(),
+                                    self.norm((in_shape+4)//2),
+                                    self.activation(),
+                                    nn.Dropout(params.dropout),
                                     nn.Linear((in_shape+4)//2, 6),
                                 )
         else:
