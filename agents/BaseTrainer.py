@@ -126,7 +126,7 @@ class BaseTrainer:
         callbacks = [
             RichProgressBar(),
             LearningRateMonitor(),
-            # StochasticWeightAveraging(),
+            StochasticWeightAveraging(),
             LogMetricsCallback(self.metric_param),
             LogImagesPredictions(
                 self.callbacks_param.log_freq_img,
