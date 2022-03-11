@@ -35,7 +35,7 @@ class Hparams:
     tune_lr: bool = False  # tune the model on first run
     tune_batch_size: bool = False
     dev_run: bool = False
-    train: bool = False
+    train: bool = True
     accumulate_grad_batches: int = 8
 
     # for inference and test
@@ -86,7 +86,7 @@ class DatasetParams:
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
-    split_val: float = 0.2
+    split_val: float = 0.1
     patch_size: int = 256
     percentage_blank: float = 0.1
     nb_samples: int = 20

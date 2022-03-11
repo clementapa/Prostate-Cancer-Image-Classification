@@ -24,7 +24,15 @@ class MMSg(nn.Module):
         in_shape = self.features_extractor(torch.randn(1, 3, 224, 224)).shape[1]
 
         self.patch_selector = nn.Sequential(
-            nn.Linear(in_shape+3, 1),
+            nn.Linear(in_shape+3, in_shape+3),
+            self.norm(in_shape+3),
+            self.activation(),
+            nn.Dropout(params.dropout),
+            nn.Linear(in_shape+3, (in_shape+3)//2),
+            self.norm((in_shape+3)//2),
+            self.activation(),
+            nn.Dropout(params.dropout),
+            nn.Linear((in_shape+3)//2, 1),
             nn.Sigmoid()
         )
 
