@@ -45,7 +45,7 @@ class Hparams:
 @dataclass
 class NetworkParams:
     feature_extractor_name: str = "resnet34"
-    network_name: str = "MMSg"
+    network_name: str = "MMSg3"
     classifier_name: str = "Linear"
 
     weight_checkpoints: str = ""
@@ -89,7 +89,7 @@ class DatasetParams:
     split_val: float = 0.2
     patch_size: int = 256
     percentage_blank: float = 0.1
-    nb_samples: int = 16
+    nb_samples: int = 18
     level: int = 1
 
     # dataloader
