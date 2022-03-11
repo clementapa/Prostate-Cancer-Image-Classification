@@ -59,8 +59,8 @@ def main():
 
     name_train_scores = df_train['image_id']+'_score.npy'
     name_test_scores = df_test['image_id']+'_score.npy'
-    X_train = np.array([np.mean(np.load(open(os.path.join(path_arrays_train, file), 'rb')), axis=0) for file in name_train_scores], axis=0)
-    X_test = np.array([np.mean(np.load(open(os.path.join(file, path_arrays_test), 'rb')), axis=0) for file in name_test_scores])
+    X_train = np.array([np.mean(np.load(open(os.path.join(path_arrays_train, file), 'rb')), axis=0) for file in name_train_scores])
+    X_test = np.array([np.mean(np.load(open(os.path.join(path_arrays_test, file), 'rb')), axis=0) for file in name_test_scores])
     y_train = [df_train[df_train["image_id"] == name.replace('_score.npy', '')]['isup_grade'].values[0] for name in name_train_scores]
     y_train = np.array(y_train)
 
