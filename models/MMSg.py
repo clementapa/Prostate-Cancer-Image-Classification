@@ -17,6 +17,9 @@ class MMSg(nn.Module):
         super().__init__()
         self.params = params
 
+        self.norm = getattr(nn, params.normalization)
+        self.activation = getattr(nn, params.activation)
+
         self.features_extractor = timm.create_model(
             self.params.feature_extractor_name, pretrained=True
         )
@@ -35,9 +38,6 @@ class MMSg(nn.Module):
             nn.Linear((in_shape+3)//2, 1),
             nn.Sigmoid()
         )
-
-        self.norm = getattr(nn, params.normalization)
-        self.activation = getattr(nn, params.activation)
 
         # self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)
         if self.params.classifier_name == "MLP":
