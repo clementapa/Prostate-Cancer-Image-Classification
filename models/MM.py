@@ -17,6 +17,9 @@ class MM(nn.Module):
         super().__init__()
         self.params = params
 
+        self.norm = getattr(nn, params.normalization)
+        self.activation = getattr(nn, params.activation)
+
         self.features_extractor = timm.create_model(
             self.params.feature_extractor_name, pretrained=True
         )
@@ -27,6 +30,7 @@ class MM(nn.Module):
         #     nn.Linear(in_shape, 1),
         #     nn.Sigmoid()
         # )
+
         self.patch_selector = nn.Sequential(
             nn.Linear(in_shape, in_shape),
             self.norm(in_shape),
