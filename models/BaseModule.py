@@ -8,6 +8,7 @@ from utils.agent_utils import get_net
 
 from models.losses.segmentation.dice import DiceLoss
 
+from models.losses.focal_loss import FocalLoss
 
 class BaseModule(LightningModule):
     def __init__(self, network_param, optim_param, wb_run=None):
@@ -20,8 +21,9 @@ class BaseModule(LightningModule):
         elif network_param.network_name == "MMSg":
             self.loss = C_Crossentropy(network_param.alpha)
         else:
-            self.loss = nn.CrossEntropyLoss()
-
+            # self.loss = nn.CrossEntropyLoss()
+            self.loss = FocalLoss()
+        
         # optimizer
         self.optim_param = optim_param
         self.lr = optim_param.lr

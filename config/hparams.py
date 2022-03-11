@@ -52,7 +52,7 @@ class NetworkParams:
     artifact: str = ""
 
     # MLP parameters
-    dropout: float = 0.5
+    dropout: float = 0.0
     normalization: str = "BatchNorm1d"
     activation: str = "ReLU"
 
@@ -127,7 +127,7 @@ class MetricParams:
 class CallbacksParams:
     log_freq_img: int = 1
     log_nb_img: int = 4
-    log_nb_patches: int = 4
+    log_nb_patches: int = 18
 
 
 @dataclass
