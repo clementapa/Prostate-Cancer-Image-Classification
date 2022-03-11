@@ -29,6 +29,8 @@ from utils.dataset_utils import seg_max_to_score
 
 
 def main(params, wb_run_seg, patch_size, split, percentage_blank, level):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
     wb_run = wandb.init(entity="attributes_classification_celeba", project="dlmi")
     name_artifact = f"attributes_classification_celeba/test-dlmi/{wb_run_seg}:top-1"
     artifact = wb_run.use_artifact(name_artifact)
@@ -36,7 +38,7 @@ def main(params, wb_run_seg, patch_size, split, percentage_blank, level):
 
     base_module = BaseModuleForInference(params)
     base_module.load_state_dict(torch.load(os.path.join(path_to_model, os.listdir(path_to_model)[0]))['state_dict'])
-    seg_model = base_module.model.cuda()
+    seg_model = base_module.model.to(device)
 
     transform = transforms.Compose(
                 [
@@ -66,8 +68,8 @@ def main(params, wb_run_seg, patch_size, split, percentage_blank, level):
         np_array = np.load(open(img_path, "rb"))
         non_white_patches = torch.from_numpy(np_array)
         with torch.no_grad():
-            seg_masks_batch_1 = seg_model(transform(non_white_patches.permute(0, 3, 2, 1)/255.0).cuda()[:16]).argmax(dim=1)
-            seg_masks_batch_2 = seg_model(transform(non_white_patches.permute(0, 3, 2, 1)/255.0).cuda()[16:]).argmax(dim=1)
+            seg_masks_batch_1 = seg_model(transform(non_white_patches.permute(0, 3, 2, 1)/255.0).to(device)[:16]).argmax(dim=1)
+            seg_masks_batch_2 = seg_model(transform(non_white_patches.permute(0, 3, 2, 1)/255.0).to(device)[16:]).argmax(dim=1)
             
             scores = [seg_max_to_score(seg_masks_batch_1, patch_size).cpu().numpy(), seg_max_to_score(seg_masks_batch_2, patch_size).cpu().numpy()]
             seg_scores = np.concatenate(scores, axis=0)
