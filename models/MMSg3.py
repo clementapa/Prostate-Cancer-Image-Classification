@@ -34,9 +34,7 @@ class MMSg3(nn.Module):
         self.seg_model = base_module.model
 
     def forward(self, x):
-        patch_scores = []
         scores = []
-        features = []
         
         for batch_patch in x:
         

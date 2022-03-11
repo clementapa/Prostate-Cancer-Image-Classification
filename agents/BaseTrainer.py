@@ -12,7 +12,7 @@ from pytorch_lightning.callbacks import (
 from utils.agent_utils import get_artifact, get_datamodule
 from utils.callbacks import (
     AutoSaveModelCheckpoint,
-    LogImagesPredictionsSegmentation,
+    LogImagesPredictionsSegmentationClassification,
     LogMetricsCallback,
     LogImagesPredictions,
 )
@@ -132,6 +132,12 @@ class BaseTrainer:
                 self.callbacks_param.log_freq_img,
                 self.callbacks_param.log_nb_img,
                 self.callbacks_param.log_nb_patches,
+            ),
+            LogImagesPredictionsSegmentationClassification(
+                self.callbacks_param.log_freq_img,
+                self.callbacks_param.log_nb_img,
+                self.callbacks_param.log_nb_patches,
+                self.data_param.data_provider
             ),
             EarlyStopping(monitor="val/loss", mode="min", patience=30),
         ]

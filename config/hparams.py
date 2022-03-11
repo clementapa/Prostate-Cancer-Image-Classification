@@ -125,7 +125,7 @@ class MetricParams:
 
 @dataclass
 class CallbacksParams:
-    log_freq_img: int = 5
+    log_freq_img: int = 1
     log_nb_img: int = 4
     log_nb_patches: int = 4
 
