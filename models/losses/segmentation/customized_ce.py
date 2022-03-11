@@ -12,7 +12,7 @@ __all__ = ["C_Crossentropy"]
 class C_Crossentropy(_Loss):
     def __init__(self, alpha_=0.4):
         super().__init__()
-        self.alpha_ = 0.4
+        self.alpha_ = self.alpha_
 
     def forward(self, y_pred_tuple: tuple([torch.Tensor, torch.Tensor]), y_true: torch.Tensor) -> torch.Tensor:
         y_pred, y_proba = y_pred_tuple
