@@ -23,8 +23,20 @@ class MM(nn.Module):
         self.features_extractor.reset_classifier(0)
         in_shape = self.features_extractor(torch.randn(1, 3, 224, 224)).shape[1]
 
+        # self.patch_selector = nn.Sequential(
+        #     nn.Linear(in_shape, 1),
+        #     nn.Sigmoid()
+        # )
         self.patch_selector = nn.Sequential(
-            nn.Linear(in_shape, 1),
+            nn.Linear(in_shape, in_shape),
+            self.norm(in_shape),
+            self.activation(),
+            nn.Dropout(params.dropout),
+            nn.Linear(in_shape, in_shape//2),
+            self.norm(in_shape//2),
+            self.activation(),
+            nn.Dropout(params.dropout),
+            nn.Linear(in_shape//2, 1),
             nn.Sigmoid()
         )
 
