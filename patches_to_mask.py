@@ -90,7 +90,7 @@ def main(params, wb_run_seg, patch_size, split, percentage_blank, level):
     # Push artifact
 
     artifact = wandb.Artifact(
-        name=os.path.basename(zip_name),
+        name=os.path.basename(f"{zip_name}_score"),
         type="dataset",
         metadata={
             "split": split,
@@ -98,7 +98,7 @@ def main(params, wb_run_seg, patch_size, split, percentage_blank, level):
             "percentage_blank": percentage_blank,
             "level": level,
         },
-        description=f" {split} dataset of images split by patches {patch_size}, level {level}, percentage_blank {percentage_blank} ",
+        description=f" {split} dataset of masks split by patches {patch_size}, level {level}, percentage_blank {percentage_blank} together with their score vectors",
     )
 
     artifact.add_file(zip_name + ".zip")
