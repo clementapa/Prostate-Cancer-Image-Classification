@@ -38,10 +38,10 @@ class MMSg(nn.Module):
             self.classifier = nn.Linear(in_shape+4, 6)
         elif self.params.classifier_name == "Multiple Linear":
                 self.classifier = nn.Sequential(
-                                    nn.Linear(in_shape+4, in_shape+4),
-                                    self.norm(in_shape+4),
-                                    self.activation(),
-                                    nn.Dropout(params.dropout),
+                                    # nn.Linear(in_shape+4, in_shape+4),
+                                    # self.norm(in_shape+4),
+                                    # self.activation(),
+                                    # nn.Dropout(params.dropout),
                                     nn.Linear(in_shape+4, (in_shape+4)//2),
                                     self.norm((in_shape+4)//2),
                                     self.activation(),
