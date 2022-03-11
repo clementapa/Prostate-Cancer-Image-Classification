@@ -281,7 +281,7 @@ class LogImagesPredictionsSegmentationClassification(Callback):
     def log_images(self, name, batch, n, p, outputs, seg_model):
 
         x, y = batch
-        images = x[:n,:p].detach().cpu()
+        images = x[:n,:p].detach()
         labels = y[:n].cpu()
 
         preds = outputs["logits"][:n].argmax(dim=1).cpu()
@@ -291,6 +291,8 @@ class LogImagesPredictionsSegmentationClassification(Callback):
             masks = seg_model(b).argmax(dim=1).cpu()
             batch_masks.append(masks)
         batch_masks = torch.stack(batch_masks)
+
+        images = images.cpu()
 
         samples = []
         for i in range(len(images)):
