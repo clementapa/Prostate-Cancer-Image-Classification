@@ -35,11 +35,11 @@ class Hparams:
     tune_lr: bool = False  # tune the model on first run
     tune_batch_size: bool = False
     dev_run: bool = False
-    train: bool = True
+    train: bool = False
     accumulate_grad_batches: int = 8
 
     # for inference and test
-    best_model: str = "skilled-gorge-229"
+    best_model: str = "pretty-eon-362"
     
 
 @dataclass
@@ -89,7 +89,7 @@ class DatasetParams:
     split_val: float = 0.2
     patch_size: int = 256
     percentage_blank: float = 0.1
-    nb_samples: int = 18
+    nb_samples: int = 20
     level: int = 1
 
     # dataloader
@@ -132,7 +132,7 @@ class CallbacksParams:
 
 @dataclass
 class PushArtifactParams:
-    split: str = "train"
+    split: str = "test"
     level: int = 1
 
 @dataclass

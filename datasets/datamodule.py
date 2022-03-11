@@ -26,7 +26,7 @@ class BaseDataModule(LightningDataModule):
         if stage in (None, "fit"):
             # Load dataset
             self.dataset = getattr(datasets, self.config.dataset_name)(
-                self.config, train=True,  wb_run=self.wb_run
+                self.config, train=True, wb_run=self.wb_run
             )
 
             val_length = int(len(self.dataset) * self.config.split_val)
@@ -35,7 +35,7 @@ class BaseDataModule(LightningDataModule):
 
         if stage == "predict":
             self.dataset = getattr(datasets, self.config.dataset_name)(
-                self.config, train=False
+                self.config, train=False, wb_run=self.wb_run
             )
 
     def train_dataloader(self):
@@ -65,6 +65,5 @@ class BaseDataModule(LightningDataModule):
             num_workers=self.config.num_workers,
             shuffle=False,
             collate_fn=self.collate_fn,
-            pin_memory=True,
         )
         return predict_loader

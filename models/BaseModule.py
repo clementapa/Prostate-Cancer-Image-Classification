@@ -58,9 +58,13 @@ class BaseModule(LightningModule):
 
     def predict_step(self, batch, batch_idx):
 
-        x = batch
+        x, _ = batch
         output = self(x)
-        output = output.argmax(dim=-1)
+
+        if isinstance(output, tuple):
+            output = output[0].argmax(dim=-1)
+        else: 
+            output = output.argmax(dim=-1)
 
         return output
 
