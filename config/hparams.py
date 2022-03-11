@@ -36,7 +36,7 @@ class Hparams:
     tune_batch_size: bool = False
     dev_run: bool = False
     train: bool = True
-    accumulate_grad_batches: int = 16
+    accumulate_grad_batches: int = 8
 
     # for inference and test
     best_model: str = "skilled-gorge-229"
@@ -52,7 +52,7 @@ class NetworkParams:
     artifact: str = ""
 
     # MLP parameters
-    dropout: float = 0.0
+    dropout: float = 0.5
     normalization: str = "BatchNorm1d"
     activation: str = "ReLU"
 

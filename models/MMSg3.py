@@ -19,17 +19,35 @@ class MMSg3(nn.Module):
 
         in_shape = params.nb_samples * 3
 
+        self.norm = getattr(nn, params.normalization)
+        self.activation = getattr(nn, params.activation)
+
         self.classifier = nn.Sequential(
                                 nn.Linear(in_shape, in_shape * 2),
-                                getattr(nn, params.activation)(),
+                                self.norm(2 * in_shape),
+                                self.activation(),
+                                nn.Dropout(params.dropout),
+
                                 nn.Linear(in_shape*2, in_shape * 4),
-                                getattr(nn, params.activation)(),
+                                self.norm(4 * in_shape),
+                                self.activation(),
+                                nn.Dropout(params.dropout),
+
                                 nn.Linear(in_shape*4, in_shape * 8),
-                                getattr(nn, params.activation)(),
+                                self.norm(8 * in_shape),
+                                self.activation(),
+                                nn.Dropout(params.dropout),
+                                
                                 nn.Linear(in_shape*8, in_shape * 16),
-                                getattr(nn, params.activation)(),
+                                self.norm(16 * in_shape),
+                                self.activation(),
+                                nn.Dropout(params.dropout),
+                                
                                 nn.Linear(in_shape*16, in_shape * 8),
-                                getattr(nn, params.activation)(),
+                                self.norm(8 * in_shape),
+                                self.activation(),
+                                nn.Dropout(params.dropout),
+
                                 nn.Linear(in_shape*8, 6),
                             )
 
