@@ -139,7 +139,7 @@ class BaseTrainer:
                 self.callbacks_param.log_nb_patches,
                 self.data_param.data_provider
             ),
-            EarlyStopping(monitor="val/loss", mode="min", patience=30),
+            # EarlyStopping(monitor="val/loss", mode="min", patience=30),
         ]
         monitor = "val/loss"
         mode = "min"

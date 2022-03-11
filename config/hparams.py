@@ -73,7 +73,7 @@ class OptimizerParams:
     weight_decay: float = 0.0
 
     # Scheduler
-    scheduler: bool = True
+    scheduler: bool = False
     warmup_epochs: int = 5
     max_epochs: int = 30
 
