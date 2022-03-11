@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 from sklearn.metrics import roc_auc_score
 from config.hparams import Parameters
 from utils.agent_utils import parse_params
@@ -64,12 +65,15 @@ def main():
     y_train = [df_train[df_train["image_id"] == name.replace('_score.npy', '')]['isup_grade'].values[0] for name in name_train_scores]
     y_train = np.array(y_train)
 
-    clf = LogisticRegression().fit(X_train, y_train)
 
-    y_train_pred = clf.predict(X_train)
-    auc_train = roc_auc_score(y_train, y_train_pred, multi_class="ovr")
+    clf = LogisticRegression(verbose=True, solver="liblinear").fit(X_train, y_train)
+    clf = SVC(verbose=True, probability=True).fit(X_train, y_train)
+
+    y_train_pred = clf.predict_proba(X_train)
+    auc_train = roc_auc_score(y_train, y_train_pred, average='macro', multi_class="ovr")
+    print(f"train ROC AUC: {auc_train}")
+
     y_test_pred = clf.predict(X_test)
-
 
 if __name__ == "__main__":
     main()
