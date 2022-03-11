@@ -37,7 +37,7 @@ def main(params, wb_run_seg, patch_size, split, percentage_blank, level):
     path_to_model = artifact.download()
 
     base_module = BaseModuleForInference(params)
-    base_module.load_state_dict(torch.load(os.path.join(path_to_model, os.listdir(path_to_model)[0]))['state_dict'])
+    base_module.load_state_dict(torch.load(os.path.join(path_to_model, os.listdir(path_to_model)[0]), map_location=device)['state_dict'])
     seg_model = base_module.model.to(device)
 
     transform = transforms.Compose(
