@@ -54,7 +54,7 @@ class NetworkParams:
     # MLP parameters
     dropout: float = 0.0
     normalization: str = "BatchNorm1d"
-    activation: str = "GELU"
+    activation: str = "ReLU"
 
     # Seg Model param
     wb_run_seg: str = "expert-surf-171"

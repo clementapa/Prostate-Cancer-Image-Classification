@@ -19,8 +19,19 @@ class MMSg3(nn.Module):
 
         in_shape = params.nb_samples * 3
 
-        self.classifier = nn.Linear(in_shape, 6)
-
+        self.classifier = nn.Sequential(
+                                nn.Linear(in_shape, in_shape * 2),
+                                getattr(nn, params.activation)(),
+                                nn.Linear(in_shape*2, in_shape * 4),
+                                getattr(nn, params.activation)(),
+                                nn.Linear(in_shape*4, in_shape * 8),
+                                getattr(nn, params.activation)(),
+                                nn.Linear(in_shape*8, in_shape * 16),
+                                getattr(nn, params.activation)(),
+                                nn.Linear(in_shape*16, in_shape * 8),
+                                getattr(nn, params.activation)(),
+                                nn.Linear(in_shape*8, 6),
+                            )
 
         # load seg_model
         name_artifact = f"attributes_classification_celeba/test-dlmi/{params.wb_run_seg}:top-1"
