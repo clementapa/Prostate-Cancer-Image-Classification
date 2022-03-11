@@ -150,7 +150,7 @@ class BaseTrainer:
         monitor = "val/auroc"
         mode = "max"
         wandb.define_metric(monitor, summary=mode)
-        save_top_k = 1
+        save_top_k = 5
         every_n_epochs = 1
         callbacks += [
             AutoSaveModelCheckpoint(  # ModelCheckpoint
