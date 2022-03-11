@@ -25,7 +25,7 @@ class Hparams:
     root_dir: str = os.getcwd()  # root_dir
 
     # basic params
-    seed_everything: Optional[int] = None  # seed for the whole run
+    seed_everything: Optional[int] = 4289  # seed for the whole run
     gpu: int = 0  # number or gpu
     max_epochs: int = 60  # maximum number of epochs
     weights_path: str = osp.join(os.getcwd(), "weights")
@@ -73,7 +73,7 @@ class OptimizerParams:
     weight_decay: float = 0.0
 
     # Scheduler
-    scheduler: bool = False
+    scheduler: bool = True
     warmup_epochs: int = 5
     max_epochs: int = 30
 

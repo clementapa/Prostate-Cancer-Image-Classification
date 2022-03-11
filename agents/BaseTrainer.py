@@ -143,7 +143,6 @@ class BaseTrainer:
         ]
         # monitor = "val/loss"
         monitor = "train/auroc"
-        name = monitor.replace('/', '_')
         mode = "max"
         wandb.define_metric(monitor, summary=mode)
         save_top_k = 1
@@ -156,7 +155,7 @@ class BaseTrainer:
                 monitor=monitor,
                 mode=mode,
                 # filename="epoch-{epoch:02d}-val_loss={val/loss:.2f}",
-                filename="epoch-{epoch:02d}-{name}={monitor:.2f}",
+                filename="epoch-{epoch:02d}-train_auroc={train/auroc:.2f}",
                 verbose=True,
                 dirpath=self.config.weights_path + f"/{str(wandb.run.name)}",
                 save_top_k=save_top_k,
