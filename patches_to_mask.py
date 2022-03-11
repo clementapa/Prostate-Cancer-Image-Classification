@@ -25,6 +25,7 @@ import wandb
 
 
 from models.BaseModule import BaseModuleForInference
+from utils.dataset_utils import seg_max_to_score
 
 
 def main(params, wb_run_seg, patch_size, split, percentage_blank, level):
@@ -61,89 +62,17 @@ def main(params, wb_run_seg, patch_size, split, percentage_blank, level):
         os.makedirs(patch_path)
 
     for i in tqdm(df.index):
-
-        img_path = osp.join(root_dataset, split, split, df["image_id"][i] + ".tiff")
-
-        # wsi_image = openslide.OpenSlide(img_path)
-
-        # wsi_dimensions = wsi_image.level_dimensions
-
-        # img = wsi_image.read_region(
-        #     wsi_dimensions[level], level, wsi_dimensions[level]
-        # )
-        img = imread(img_path, key=level)
-        # plt.imshow(img)
-        # plt.show()
-        img = torch.from_numpy(img)
-
-        # img_patched = patchify(img, (patch_size, patch_size), step=1)
-
-        # Square image
-        quantity_to_pad = abs(img.shape[0] - img.shape[1])
-        bool_temp = img.shape[1] < img.shape[0]
-        img = F.pad(
-            img,
-            pad=(
-                0,
-                0,
-                quantity_to_pad * bool_temp,
-                0,
-                quantity_to_pad * (1 - bool_temp),
-                0,
-            ),
-            mode="constant",
-            value=255,
-        ).unsqueeze(0)
-
-        assert img.shape[1] == img.shape[2]  # check that it is a square image
-
-        # process image to divide per patch
-        remaining_pixels = img.shape[1] % patch_size
-        if remaining_pixels != 0:
-            if (img.shape[1] + remaining_pixels) % patch_size == 0:
-                # padd
-                img = F.pad(
-                    img,
-                    pad=(
-                        0,
-                        0,
-                        remaining_pixels // 2,
-                        remaining_pixels // 2,
-                        remaining_pixels // 2,
-                        remaining_pixels // 2,
-                    ),
-                    mode="constant",
-                    value=255,
-                )
-            else:
-                # crop
-                img = img[
-                    :,
-                    0 : img.shape[1] - remaining_pixels,
-                    0 : img.shape[2] - remaining_pixels,
-                    :,
-                ]
-
-        # Divide image per patch
-        h = img.shape[1] // patch_size
-        w = img.shape[2] // patch_size
-        img = rearrange(
-            img,
-            "b (h p1) (w p2) c -> b (h w) p1 p2 c",
-            p1=patch_size,
-            p2=patch_size,
-            h=h,
-            w=w,
-        )
-        # Remove white patches
-        mask = (1.0 * (img >= 240)).sum(dim=(2, 3, 4)) / (
-            patch_size * patch_size * 3
-        ) <= percentage_blank  # remove patch with only blanks pixels
-        non_white_patches = img[mask]
-
+        img_path = osp.join("assets",  "dataset_patches", '_'.join([split, str(patch_size), str(1), str(percentage_blank)]), df["image_id"][i] + ".npy")
+        np_array = np.load(open(img_path, "rb"))
+        non_white_patches = torch.from_numpy(np_array)
         with torch.no_grad():
-            seg_masks = seg_model(transform(non_white_patches.permute(0, 3, 2, 1)/255.0).cuda()).argmax(dim=1)
-            np.save(osp.join(patch_path, df["image_id"][i]), seg_masks.cpu().numpy())
+            seg_masks_batch_1 = seg_model(transform(non_white_patches.permute(0, 3, 2, 1)/255.0).cuda()[:16]).argmax(dim=1)
+            seg_masks_batch_2 = seg_model(transform(non_white_patches.permute(0, 3, 2, 1)/255.0).cuda()[16:]).argmax(dim=1)
+            
+            scores = [seg_max_to_score(seg_masks_batch_1, patch_size).cpu().numpy(), seg_max_to_score(seg_masks_batch_2, patch_size).cpu().numpy()]
+            seg_scores = np.concatenate(scores, axis=0)
+            np.save(osp.join(patch_path, df["image_id"][i]), np.concatenate([seg_masks_batch_1.cpu().numpy(), seg_masks_batch_2.cpu().numpy()], axis=0))
+            np.save(osp.join(patch_path, df["image_id"][i]+'_score'), seg_scores)
         
 
     zip_name = osp.join(
