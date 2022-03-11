@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from pytorch_lightning import LightningModule
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from models.losses.segmentation.customized_ce import C_Crossentropy
+from models.losses.customized_ce import C_Crossentropy
 from utils.agent_utils import get_net
 
 from models.losses.segmentation.dice import DiceLoss

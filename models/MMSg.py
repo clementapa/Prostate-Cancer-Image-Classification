@@ -51,7 +51,7 @@ class MMSg(nn.Module):
                                     # self.activation(),
                                     # nn.Dropout(params.dropout),
                                     nn.Linear(in_shape+4, (in_shape+4)//2),
-                                    # self.norm((in_shape+4)//2),
+                                    self.norm((in_shape+4)//2),
                                     self.activation(),
                                     nn.Dropout(params.dropout),
                                     nn.Linear((in_shape+4)//2, 6),

@@ -4,7 +4,7 @@ from functools import partial
 import torch
 import torch.nn as nn
 from torch.nn.modules.loss import _Loss
-from .constants import BINARY_MODE, MULTICLASS_MODE, MULTILABEL_MODE
+from .segmentation.constants import BINARY_MODE, MULTICLASS_MODE, MULTILABEL_MODE
 
 __all__ = ["C_Crossentropy"]
 
