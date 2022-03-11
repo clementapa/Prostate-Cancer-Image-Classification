@@ -18,7 +18,7 @@ class BaseModule(LightningModule):
         # loss function
         if network_param.network_name == "Segmentation":
             self.loss = DiceLoss()
-        elif network_param.network_name == "MMSg":
+        elif network_param.network_name == "MMSg" or network_param.network_name == "MM":
             self.loss = C_Crossentropy(network_param.alpha)
         else:
             # self.loss = nn.CrossEntropyLoss()

@@ -45,7 +45,7 @@ class Hparams:
 @dataclass
 class NetworkParams:
     feature_extractor_name: str = "resnet34"
-    network_name: str = "MMSg"
+    network_name: str = "MM"
     classifier_name: str = "Multiple Linear"
 
     weight_checkpoints: str = ""

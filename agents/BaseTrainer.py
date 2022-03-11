@@ -139,17 +139,16 @@ class BaseTrainer:
                 self.callbacks_param.log_nb_img,
                 self.callbacks_param.log_nb_patches,
             ),
-            LogImagesPredictionsSegmentationClassification(
-                self.callbacks_param.log_freq_img,
-                self.callbacks_param.log_nb_img,
-                self.callbacks_param.log_nb_patches,
-                self.data_param.data_provider
-            ),
+            # LogImagesPredictionsSegmentationClassification(
+            #     self.callbacks_param.log_freq_img,
+            #     self.callbacks_param.log_nb_img,
+            #     self.callbacks_param.log_nb_patches,
+            #     self.data_param.data_provider
+            # ),
             # EarlyStopping(monitor="val/loss", mode="min", patience=30),
         ]
-        # monitor = "val/loss"
-        monitor = "train/auroc"
-        mode = "max"
+        monitor = "val/loss"
+        mode = "min"
         wandb.define_metric(monitor, summary=mode)
         save_top_k = 1
         every_n_epochs = 1
@@ -160,8 +159,8 @@ class BaseTrainer:
                 entity=self.config.wandb_entity,
                 monitor=monitor,
                 mode=mode,
-                # filename="epoch-{epoch:02d}-val_loss={val/loss:.2f}",
-                filename="epoch-{epoch:02d}-train_auroc={train/auroc:.2f}",
+                filename="epoch-{epoch:02d}-val_loss={val/loss:.2f}",
+                # filename="epoch-{epoch:02d}-train_auroc={train/auroc:.2f}",
                 verbose=True,
                 dirpath=self.config.weights_path + f"/{str(wandb.run.name)}",
                 save_top_k=save_top_k,
