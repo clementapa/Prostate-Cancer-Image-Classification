@@ -38,7 +38,7 @@ class Hparams:
     train: bool = True
 
     # for inference and test
-    best_model: str = "devoted-night-452"
+    best_model: str = "frosty-cherry-460"
 
 
 @dataclass
