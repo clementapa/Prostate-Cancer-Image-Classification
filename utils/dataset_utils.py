@@ -8,6 +8,7 @@ import openslide
 import torch
 import wandb
 
+from torch.utils.data.sampler import WeightedRandomSampler
 from albumentations.pytorch.transforms import ToTensorV2
 
 def get_artifact(artifact_name, output_path):
@@ -144,3 +145,14 @@ def get_training_augmentation(num_classes):
 def get_validation_augmentation(num_classes):
     test_transform = [ToTensorV2()]
     return albu.Compose(test_transform)
+
+def get_random_sampler(labels):
+    classes = np.unique(labels)
+    class_sample_count = np.array(
+        [len(np.where(labels == t)[0]) for t in classes]
+    )
+    weight = 1. / class_sample_count
+    samples_weight = np.array([weight[t] for t in labels])
+    samples_weight = torch.from_numpy(samples_weight)
+    samples_weight = samples_weight.double()
+    return WeightedRandomSampler(samples_weight, num_samples=len(samples_weight))

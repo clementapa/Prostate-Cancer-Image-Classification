@@ -1,7 +1,7 @@
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, random_split
 
-from utils.dataset_utils import coll_fn, coll_fn_seg
+from utils.dataset_utils import coll_fn, coll_fn_seg, get_random_sampler
 import datasets.datasets as datasets
 
 
@@ -14,6 +14,8 @@ class BaseDataModule(LightningDataModule):
 
         self.collate_fn = coll_fn
         self.wb_run = wb_run
+        self.sampler = None
+
 
     def prepare_data(self) -> None:
         return super().prepare_data()
@@ -29,6 +31,8 @@ class BaseDataModule(LightningDataModule):
             val_length = int(len(self.dataset) * self.config.split_val)
             lengths = [len(self.dataset) - val_length, val_length]
             self.train_dataset, self.val_dataset = random_split(self.dataset, lengths)
+            if self.config.random_sampler:
+                self.sampler = get_random_sampler(self.train_dataset.dataset.get_targets())
 
         if stage == "predict":
             self.dataset = getattr(datasets, self.config.dataset_name)(
@@ -38,10 +42,11 @@ class BaseDataModule(LightningDataModule):
     def train_dataloader(self):
         train_loader = DataLoader(
             self.train_dataset,
-            shuffle=True,
+            shuffle=False,
             batch_size=self.batch_size,
             num_workers=self.config.num_workers,
             collate_fn=self.collate_fn,
+            sampler=self.sampler,
         )
         return train_loader
 

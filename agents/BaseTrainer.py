@@ -41,7 +41,7 @@ class BaseTrainer:
         logger.info("Loading Model module...")
         self.pl_model = BaseModule(config.network_param, config.optim_param)
 
-        self.wandb_logger.watch(self.pl_model.model.mlp)
+        # self.wandb_logger.watch(self.pl_model.model.mlp)
 
     def run(self):
         if self.config.tune_batch_size:

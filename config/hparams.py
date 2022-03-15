@@ -35,7 +35,7 @@ class Hparams:
     tune_lr: bool = False  # tune the model on first run
     tune_batch_size: bool = False
     dev_run: bool = False
-    train: bool = False
+    train: bool = True
 
     # for inference and test
     best_model: str = "major-monkey-142"
@@ -43,8 +43,8 @@ class Hparams:
 
 @dataclass
 class NetworkParams:
-    feature_extractor_name: str = "resnet34"
-    network_name: str = "Baseline"
+    feature_extractor_name: str = "efficientnetv2_rw_s"
+    network_name: str = "SimpleModel"
     weight_checkpoints: str = ""
     artifact: str = ""
 
@@ -74,18 +74,22 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "StaticPatchDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "ConcatPatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
+    random_sampler: bool = True
 
     # dataset
-    split_val: float = 0.1
+    split_val: float = 0.15
     patch_size: int = 512
     percentage_blank: float = 0.5
-    nb_samples: int = 64
+    nb_samples: int = 36
+
+    # for concat dataset
+    resized_patch: int = 128
 
     # dataloader
-    num_workers: int = 4  # number of workers for dataloaders
-    batch_size: int = 8  # batch_size
+    num_workers: int = 1  # number of workers for dataloaders
+    batch_size: int = 1  # batch_size
 
     # for segmentation
     data_provider: str = "karolinska"
@@ -104,7 +108,7 @@ class MetricParams:
     # list_metrics: List[str] = list_field(
     #     "F1", "AUROC"
     # )
-    list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "AUROC")
+    list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1")
     # list_metrics: List[str] = list_field("IoU")
     num_classes: int = 6
     pixel_wise_parameters: Dict[str, Any] = dict_field(
@@ -117,7 +121,7 @@ class MetricParams:
 @dataclass
 class CallbacksParams:
     log_freq_img: int = 5
-    log_nb_img: int = 8
+    log_nb_img: int = 2
     log_nb_patches: int = 6
 
 

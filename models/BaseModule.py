@@ -1,3 +1,4 @@
+from numpy import isin
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -16,9 +17,9 @@ class BaseModule(LightningModule):
         super(BaseModule, self).__init__()
 
         # loss function
-        # self.loss = nn.CrossEntropyLoss()
+        self.loss = nn.CrossEntropyLoss()
         # self.loss = DiceLoss()
-        self.loss = C_Crossentropy()
+        # self.loss = C_Crossentropy()
 
         # optimizer
         self.optim_param = optim_param
@@ -31,8 +32,8 @@ class BaseModule(LightningModule):
         #         network_param.weight_checkpoint)["state_dict"])
 
     def forward(self, x):
-        output, probas = self.model(x)
-        return output, probas
+        output = self.model(x)
+        return output
 
     def training_step(self, batch, batch_idx):
         """needs to return a loss from a single batch"""
@@ -104,9 +105,11 @@ class BaseModule(LightningModule):
     def _get_preds_loss_accuracy(self, batch):
         """convenience function since train/valid/test steps are similar"""
         x, y = batch
-        output, probas = self(x)
+        output = self(x)
+        if isinstance(output, tuple):
+            output, probas = output
 
-        loss = self.loss(output, y, probas)
+        loss = self.loss(output, y)
         logits = F.softmax(output, dim=0)
 
         return loss, logits

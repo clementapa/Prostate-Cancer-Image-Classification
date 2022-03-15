@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch
 from einops import rearrange
 
-class Model(nn.Module):
+class SimpleModel(nn.Module):
     def __init__(self, params):
         super().__init__()
         self.params = params
@@ -14,14 +14,10 @@ class Model(nn.Module):
         self.features_extractor.reset_classifier(0)
         in_shape = self.features_extractor(torch.randn(1, 3, 384, 384)).shape[1]
 
-        self.classifier = nn.Linear(in_shape*self.params.nb_samples, 6)
-        #self.classifier = nn.Linear(in_shape, 6)
+        # self.classifier = nn.Linear(in_shape*self.params.nb_samples, 6)
+        self.classifier = nn.Linear(in_shape, 6)
 
     def forward(self, x):
-        features = []
-        for tiles in x:
-            feature = self.features_extractor(tiles.unsqueeze(0))
-            features.append(feature)
-        features = torch.stack(features)
-        output = self.classifier(rearrange(features, "p c d -> (p c d)"))
+        features = self.features_extractor(x)
+        output = self.classifier(features)
         return output
