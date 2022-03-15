@@ -44,4 +44,4 @@ class Baseline(nn.Module):
 
         # output = self.mlp(rearrange(features, "b p d -> b (p d)"))
         output = self.mlp(feature)
-        return output, probas
+        return (output, probas)

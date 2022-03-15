@@ -1,4 +1,5 @@
-import csv
+import csv, os
+import pandas as pd
 import pytorch_lightning as pl
 import torch
 import wandb
@@ -16,6 +17,7 @@ from utils.callbacks import (
     LogMetricsCallback,
     LogImagesPredictions,
 )
+from utils.dataset_utils import create_dir
 from utils.logger import init_logger
 
 
@@ -40,7 +42,7 @@ class BaseTrainer:
         logger.info("Loading Model module...")
         self.pl_model = BaseModule(config.network_param, config.optim_param)
 
-        self.wandb_logger.watch(self.pl_model.model.mlp)
+        # self.wandb_logger.watch(self.pl_model.model.mlp)
 
     def run(self):
         if self.config.tune_batch_size:
@@ -98,12 +100,14 @@ class BaseTrainer:
             self.pl_model, self.datamodule, ckpt_path=best_model)
         raw_predictions = torch.cat(raw_predictions, axis=0)
         y_pred = raw_predictions.detach().cpu().numpy()
-        predictions = zip(range(len(y_pred)), y_pred)
-        with open(f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv", "w") as pred:
-            csv_out = csv.writer(pred)
-            csv_out.writerow(['id', 'predicted'])
-            for row in predictions:
-                csv_out.writerow(row) 
+        ids = self.datamodule.dataset.df["image_id"].values
+
+        output_df = pd.DataFrame({"Id":{}, "Predicted":{}})
+        output_df['Id'] = ids
+        output_df['Predicted'] = y_pred
+        output_dir = "submissions"
+        create_dir(output_dir)
+        output_df.to_csv(os.path.join(output_dir, f"{self.config.best_model}{'-debug'*self.config.debug}.csv"), index=False)
 
     def load_artifact(self, network_param, data_param):
         return
@@ -152,4 +156,24 @@ class BaseTrainer:
             )
         ]  # our model checkpoint callback
 
+        monitor = "val/auroc"
+        mode = "max"
+        wandb.define_metric(monitor, summary=mode)
+        save_top_k = 1
+        every_n_epochs = 1
+        callbacks += [
+            AutoSaveModelCheckpoint(  # ModelCheckpoint
+                config=(self.network_param).__dict__,
+                project=self.config.wandb_project,
+                entity=self.config.wandb_entity,
+                monitor=monitor,
+                mode=mode,
+                filename="epoch-{epoch:02d}-val_auroc={val/auroc:.2f}",
+                verbose=True,
+                dirpath=self.config.weights_path + f"/{str(wandb.run.name)}",
+                save_top_k=save_top_k,
+                every_n_epochs=every_n_epochs,
+                auto_insert_metric_name=False,
+            )
+        ] 
         return callbacks
