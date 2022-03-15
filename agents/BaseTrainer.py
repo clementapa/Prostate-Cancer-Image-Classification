@@ -131,7 +131,7 @@ class BaseTrainer:
             ),
             EarlyStopping(monitor="val/loss", mode="min", patience=30),
         ]
-        monitor = "val/loss"
+        monitor = "val/auroc"
         mode = "min"
         wandb.define_metric(monitor, summary=mode)
         save_top_k = 1
@@ -143,7 +143,7 @@ class BaseTrainer:
                 entity=self.config.wandb_entity,
                 monitor=monitor,
                 mode=mode,
-                filename="epoch-{epoch:02d}-val_loss={val/loss:.2f}",
+                filename="epoch-{epoch:02d}-val_auroc={val/auroc:.2f}",
                 verbose=True,
                 dirpath=self.config.weights_path + f"/{str(wandb.run.name)}",
                 save_top_k=save_top_k,
