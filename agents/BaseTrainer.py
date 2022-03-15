@@ -156,24 +156,24 @@ class BaseTrainer:
             )
         ]  # our model checkpoint callback
 
-        # monitor = "val/auroc"
-        # mode = "max"
-        # wandb.define_metric(monitor, summary=mode)
-        # save_top_k = 1
-        # every_n_epochs = 1
-        # callbacks += [
-        #     AutoSaveModelCheckpoint(  # ModelCheckpoint
-        #         config=(self.network_param).__dict__,
-        #         project=self.config.wandb_project,
-        #         entity=self.config.wandb_entity,
-        #         monitor=monitor,
-        #         mode=mode,
-        #         filename="epoch-{epoch:02d}-val_auroc={val/auroc:.2f}",
-        #         verbose=True,
-        #         dirpath=self.config.weights_path + f"/{str(wandb.run.name)}",
-        #         save_top_k=save_top_k,
-        #         every_n_epochs=every_n_epochs,
-        #         auto_insert_metric_name=False,
-        #     )
-        # ] 
+        monitor = "val/auroc"
+        mode = "max"
+        wandb.define_metric(monitor, summary=mode)
+        save_top_k = 1
+        every_n_epochs = 1
+        callbacks += [
+            AutoSaveModelCheckpoint(  # ModelCheckpoint
+                config=(self.network_param).__dict__,
+                project=self.config.wandb_project,
+                entity=self.config.wandb_entity,
+                monitor=monitor,
+                mode=mode,
+                filename="epoch-{epoch:02d}-val_auroc={val/auroc:.2f}",
+                verbose=True,
+                dirpath=self.config.weights_path + f"/{str(wandb.run.name)}",
+                save_top_k=save_top_k,
+                every_n_epochs=every_n_epochs,
+                auto_insert_metric_name=False,
+            )
+        ] 
         return callbacks
