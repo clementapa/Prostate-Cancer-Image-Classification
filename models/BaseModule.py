@@ -26,7 +26,7 @@ class BaseModule(LightningModule):
         self.lr = optim_param.lr
 
         # model
-        self.model = get_net(network_param.network_name, network_param).half()
+        self.model = get_net(network_param.network_name, network_param)
         # if network_param.weight_checkpoint is not None:
         #     self.model.load_state_dict(torch.load(
         #         network_param.weight_checkpoint)["state_dict"])

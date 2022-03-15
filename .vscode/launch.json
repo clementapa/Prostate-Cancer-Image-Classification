@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "main.py",
             "console": "integratedTerminal",
-            "python": "/home/clement/anaconda3/envs/torch1.8/bin/python",
+            "python": "python3",
         }
     ]
 }

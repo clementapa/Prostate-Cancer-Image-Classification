@@ -103,6 +103,9 @@ class BaseStaticDataset(Dataset):
             
             self.df = pd.read_csv(osp.join(params.root_dataset, "test" + ".csv"))
             # raise NotImplementedError(f"To implement!")
+    
+    def get_targets(self):
+        return self.df['isup_grade'].values
 
     def __len__(self):
         return len(self.df)
@@ -118,10 +121,12 @@ class StaticPatchDataset(BaseStaticDataset):
         if train:
             self.transform = transforms.Compose(
                 [
+                    transforms.Resize((params.resized_patch, params.resized_patch)),
+                    transforms.RandomHorizontalFlip(),
+                    transforms.RandomVerticalFlip(),
                     transforms.Normalize(
                         mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
                     ),
-                    transforms.RandomHorizontalFlip(),
                 ]
             )
         else:
@@ -177,8 +182,7 @@ class ConcatPatchDataset(BaseStaticDataset):
                 ]
             )
     
-    def get_targets(self):
-        return self.df['isup_grade'].values
+    
 
     def __getitem__(self, idx):
 
