@@ -198,4 +198,4 @@ class ConcatPatchDataset(BaseStaticDataset):
         
         output_tensor = rearrange(output_tensor, "(n1 n2) c h w -> c (n1 h) (n2 w)", n1=self.params.nb_patches)
 
-        return output_tensor, label
+        return output_tensor.half(), label
