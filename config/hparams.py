@@ -43,7 +43,7 @@ class Hparams:
 
 @dataclass
 class NetworkParams:
-    feature_extractor_name: str = "efficientnetv2_rw_s"
+    feature_extractor_name: str = "vit_large_patch16_384"
     network_name: str = "SimpleModel"
     weight_checkpoints: str = ""
     artifact: str = ""
