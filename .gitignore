@@ -136,3 +136,4 @@ dmypy.json
 submissions/
 lightning_logs/
 .vscode/
+artifacts/*
