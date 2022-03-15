@@ -132,3 +132,6 @@ dmypy.json
 *.ckpt
 /wandb
 /mvadlmi
+/artifacts
+/lightning_logs
+/submissions
