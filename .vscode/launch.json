@@ -8,7 +8,7 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "patches_to_mask.py",
+            "program": "train_LogReg.py",
             "console": "integratedTerminal",
             "python": "python3",
         }
