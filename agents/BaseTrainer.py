@@ -1,4 +1,4 @@
-import csv
+import csv, os
 import pandas as pd
 import pytorch_lightning as pl
 import torch
@@ -17,6 +17,7 @@ from utils.callbacks import (
     LogMetricsCallback,
     LogImagesPredictions,
 )
+from utils.dataset_utils import create_dir
 from utils.logger import init_logger
 
 
@@ -104,8 +105,9 @@ class BaseTrainer:
         output_df = pd.DataFrame({"Id":{}, "Predicted":{}})
         output_df['Id'] = ids
         output_df['Predicted'] = y_pred
-
-        output_df.to_csv(f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv", index=False)
+        output_dir = "submissions"
+        create_dir(output_dir)
+        output_df.to_csv(os.path.join(output_dir, f"{'-debug'*self.config.debug}.csv"), index=False)
 
     def load_artifact(self, network_param, data_param):
         return
@@ -154,4 +156,24 @@ class BaseTrainer:
             )
         ]  # our model checkpoint callback
 
+        monitor = "val/auroc"
+        mode = "max"
+        wandb.define_metric(monitor, summary=mode)
+        save_top_k = 1
+        every_n_epochs = 1
+        callbacks += [
+            AutoSaveModelCheckpoint(  # ModelCheckpoint
+                config=(self.network_param).__dict__,
+                project=self.config.wandb_project,
+                entity=self.config.wandb_entity,
+                monitor=monitor,
+                mode=mode,
+                filename="epoch-{epoch:02d}-val_auroc={val/auroc:.2f}",
+                verbose=True,
+                dirpath=self.config.weights_path + f"/{str(wandb.run.name)}",
+                save_top_k=save_top_k,
+                every_n_epochs=every_n_epochs,
+                auto_insert_metric_name=False,
+            )
+        ] 
         return callbacks

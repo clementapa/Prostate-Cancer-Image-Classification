@@ -1,5 +1,5 @@
 import csv
-import os
+import os, errno
 import random
 
 import albumentations as albu
@@ -156,3 +156,10 @@ def get_random_sampler(labels):
     samples_weight = torch.from_numpy(samples_weight)
     samples_weight = samples_weight.double()
     return WeightedRandomSampler(samples_weight, num_samples=len(samples_weight))
+
+def create_dir(dir):
+    try:
+        os.makedirs(dir)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise

@@ -160,6 +160,7 @@ class ConcatPatchDataset(BaseStaticDataset):
                 [
                     transforms.Resize((params.resized_patch, params.resized_patch)),
                     transforms.RandomHorizontalFlip(),
+                    transforms.RandomVerticalFlip(),
                     transforms.Normalize(
                         mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
                     ),
@@ -195,6 +196,6 @@ class ConcatPatchDataset(BaseStaticDataset):
         output_tensor = torch.stack([self.transform((torch.from_numpy(np_img)/255.0).permute(2,1,0)) for np_img in np_array[images_to_pick]])
         # print(output_tensor.shape)
         
-        output_tensor = rearrange(output_tensor, "(n1 n2) c h w -> c (n1 h) (n2 w)", n1=6)
+        output_tensor = rearrange(output_tensor, "(n1 n2) c h w -> c (n1 h) (n2 w)", n1=self.params.nb_patches)
 
         return output_tensor, label
