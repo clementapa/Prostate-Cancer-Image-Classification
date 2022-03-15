@@ -107,7 +107,7 @@ class BaseTrainer:
         output_df['Predicted'] = y_pred
         output_dir = "submissions"
         create_dir(output_dir)
-        output_df.to_csv(os.path.join(output_dir, f"{'-debug'*self.config.debug}.csv"), index=False)
+        output_df.to_csv(os.path.join(output_dir, f"{self.config.best_model}{'-debug'*self.config.debug}.csv"), index=False)
 
     def load_artifact(self, network_param, data_param):
         return
