@@ -42,7 +42,7 @@ class BaseDataModule(LightningDataModule):
     def train_dataloader(self):
         train_loader = DataLoader(
             self.train_dataset,
-            shuffle=False,
+            shuffle=True,
             batch_size=self.batch_size,
             num_workers=self.config.num_workers,
             collate_fn=self.collate_fn,
