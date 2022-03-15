@@ -32,7 +32,7 @@ class BaseDataModule(LightningDataModule):
             lengths = [len(self.dataset) - val_length, val_length]
             self.train_dataset, self.val_dataset = random_split(self.dataset, lengths)
             if self.config.random_sampler:
-                self.sampler = get_random_sampler(self.train_dataset.dataset.get_targets())
+                self.sampler = get_random_sampler(self.train_dataset.dataset.get_targets()[self.train_dataset.indices])
 
         if stage == "predict":
             self.dataset = getattr(datasets, self.config.dataset_name)(
