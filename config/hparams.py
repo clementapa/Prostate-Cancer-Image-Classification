@@ -35,10 +35,10 @@ class Hparams:
     tune_lr: bool = False  # tune the model on first run
     tune_batch_size: bool = False
     dev_run: bool = False
-    train: bool = True
+    train: bool = False
 
     # for inference and test
-    best_model: str = "major-monkey-142"
+    best_model: str = "devoted-night-452"
 
 
 @dataclass
