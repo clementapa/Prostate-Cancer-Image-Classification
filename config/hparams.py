@@ -36,6 +36,7 @@ class Hparams:
     tune_batch_size: bool = False
     dev_run: bool = False
     train: bool = True
+    accumulate_grad_batches: int = 8
 
     # for inference and test
     best_model: str = "frosty-cherry-460"
@@ -43,7 +44,7 @@ class Hparams:
 
 @dataclass
 class NetworkParams:
-    feature_extractor_name: str = "vit_base_patch16_224"
+    feature_extractor_name: str = "tresnet_xl_448"
     network_name: str = "SimpleModel"
     weight_checkpoints: str = ""
     artifact: str = ""
