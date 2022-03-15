@@ -35,11 +35,11 @@ class Hparams:
     tune_lr: bool = False  # tune the model on first run
     tune_batch_size: bool = False
     dev_run: bool = False
-    train: bool = True
+    train: bool = False
     accumulate_grad_batches: int = 8
 
     # for inference and test
-    best_model: str = "frosty-cherry-460"
+    best_model: str = "true-oath-501"
 
 
 @dataclass
