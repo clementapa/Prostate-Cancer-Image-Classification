@@ -52,6 +52,7 @@ Need to apply data augmentation
     - equal reparition of classes in the validation (train_test_split sklearn attribut stratify)
 - [ ] Segmentation
     - [ ] possibility to chose data provider (radboud(6), karolinska (3) and all(3, merge radboud))
-- [ ] Ressayer les techniques de ML en utilisant le modèle de segmentation
+- [ ] Ressayer les techniques de ML en utilisant le modèle de segmentation (https://www.nature.com/articles/s41746-019-0112-2.pdf)
+- [ ] combiner concat patches (donne une mosaique de patch) -> segmentation -> segmentation + features pour classifier
 
 Bien faire attention à la taille des patchs qu'on prends et le level count quand on ouvre le tiff
