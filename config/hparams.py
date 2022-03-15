@@ -44,7 +44,7 @@ class Hparams:
 @dataclass
 class NetworkParams:
     feature_extractor_name: str = "vit_base_patch16_224"
-    network_name: str = "TDCNN"
+    network_name: str = "SimpleModel"
     weight_checkpoints: str = ""
     artifact: str = ""
 
@@ -74,7 +74,7 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "StaticPatchDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "ConcatPatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
     random_sampler: bool = True
 
