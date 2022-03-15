@@ -134,7 +134,7 @@ class BaseTrainer:
                 self.callbacks_param.log_nb_img,
                 self.callbacks_param.log_nb_patches,
             ),
-            EarlyStopping(monitor="val/loss", mode="min", patience=30),
+            # EarlyStopping(monitor="val/loss", mode="min", patience=30),
         ]
 
         monitor = "val/auroc"
