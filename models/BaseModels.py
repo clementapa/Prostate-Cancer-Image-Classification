@@ -3,14 +3,17 @@ import torch.nn as nn
 from models.classifier.MLP import MLP
 from utils.agent_utils import get_features_extractor
 
+
 class BaseTopPatchMethods(nn.Module):
     def __init__(self, params):
         super().__init__()
         self.params = params
 
         # get features extractor
-        self.features_extractor, self.feature_size = get_features_extractor(params.feature_extractor_name)
-        
+        self.features_extractor, self.feature_size = get_features_extractor(
+            params.feature_extractor_name
+        )
+
         self.norm = getattr(nn, params.normalization)
         self.activation = getattr(nn, params.activation)
 
@@ -32,7 +35,9 @@ class BaseTopPatchMethods(nn.Module):
                 nn.Linear((self.feature_size + 1) // 2, 6),
             )
         else:
-            raise NotImplementedError("Classifier not implemented ! MLP, Linear or Multiple Linear")
+            raise NotImplementedError(
+                "Classifier not implemented ! MLP, Linear or Multiple Linear"
+            )
 
     def forward(self, x):
         raise NotImplementedError("To implement in the derived classes !")

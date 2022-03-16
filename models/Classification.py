@@ -15,8 +15,10 @@ class Baseline(nn.Module):
         self.params = params
 
         # get features extractor
-        self.features_extractor, self.feature_size = get_features_extractor(params.feature_extractor_name)
-        
+        self.features_extractor, self.feature_size = get_features_extractor(
+            params.feature_extractor_name
+        )
+
         self.mlp = MLP(self.feature_size * params.nb_samples, params)
 
     def forward(self, x):
@@ -114,32 +116,22 @@ class TDCNN(nn.Module):
         # self.classifier = nn.Linear(feature_size*self.params.nb_samples, 6)
         # self.classifier = nn.Linear(feature_size, 6)
         self.conv_block = nn.Sequential(
-            nn.Conv2d(
-                feature_size, feature_size//2, 1 
-            ),
+            nn.Conv2d(feature_size, feature_size // 2, 1),
             nn.GELU(),
-            nn.Conv2d(
-                feature_size//2, feature_size//4, 1 
-            ),
+            nn.Conv2d(feature_size // 2, feature_size // 4, 1),
             nn.GELU(),
-            nn.Conv2d(
-                feature_size//4, feature_size//8, 1
-            ),
+            nn.Conv2d(feature_size // 4, feature_size // 8, 1),
             nn.GELU(),
-            nn.Conv2d(
-                feature_size//8, feature_size//16, 1
-            ),
+            nn.Conv2d(feature_size // 8, feature_size // 16, 1),
             nn.GELU(),
-            nn.Conv2d(
-                feature_size//16, feature_size//32, 1
-            ),
+            nn.Conv2d(feature_size // 16, feature_size // 32, 1),
         )
 
-        feature_size_mlp = self.conv_block(torch.randn(1, feature_size, 4, 4)).shape[1] * 4 * 4 
-
-        self.mlp = nn.Sequential(
-            nn.Linear(feature_size_mlp, 6)
+        feature_size_mlp = (
+            self.conv_block(torch.randn(1, feature_size, 4, 4)).shape[1] * 4 * 4
         )
+
+        self.mlp = nn.Sequential(nn.Linear(feature_size_mlp, 6))
 
     def forward(self, x):
         features = []
