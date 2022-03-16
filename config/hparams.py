@@ -104,7 +104,7 @@ class DatasetParams:
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 1
+    nb_samples: int = 16
 
     # dataloader
     num_workers: int = 1  # number of workers for dataloaders
