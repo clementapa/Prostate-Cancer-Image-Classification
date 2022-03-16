@@ -9,7 +9,7 @@ class SimpleModel(nn.Module):
         self.params = params
 
         self.features_extractor = timm.create_model(
-            self.params.feature_extractor_name, pretrained=True
+            self.params.feature_extractor_name, pretrained=False
         )
         self.features_extractor.reset_classifier(0)
         in_shape = self.features_extractor(torch.randn(1, 3, 384, 384)).shape[1]

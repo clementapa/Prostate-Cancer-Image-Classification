@@ -22,7 +22,7 @@ class BaseDataset(Dataset):
     A base dataset module to load the dataset for the challenge
     """
 
-    def __init__(self, params, train=True, transform=None):
+    def __init__(self, params, train=True, transform=None, wb_run=None):
         super().__init__()
 
         self.params = params
@@ -34,7 +34,9 @@ class BaseDataset(Dataset):
 
     def __len__(self):
         return len(self.X)
-
+    
+    def get_targets(self):
+        return np.array(self.y)
     def __getitem__(self, idx):
         raise NotImplementedError(f"Should be implemented in derived class!")
 
@@ -200,6 +202,51 @@ class ConcatPatchDataset(BaseStaticDataset):
         output_tensor = torch.stack([self.transform((torch.from_numpy(np_img)/255.0).permute(2,1,0)) for np_img in np_array[images_to_pick]])
         # print(output_tensor.shape)
         
+        output_tensor = rearrange(output_tensor, "(n1 n2) c h w -> c (n1 h) (n2 w)", n1=self.params.nb_patches)
+
+        return output_tensor, label
+
+class ConcatDynamicDataset(BaseDataset):
+    def __init__(self, params, train=True, transform=None,  wb_run=None):
+        super().__init__(params, train, transform, wb_run)
+        self.train = train
+
+        if train:
+            self.transform = transforms.Compose(
+                [
+                    transforms.Resize((params.resized_patch, params.resized_patch)),
+                    transforms.RandomHorizontalFlip(),
+                    transforms.RandomVerticalFlip(),
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                    
+                ]
+            )
+        else:
+            self.transform = transforms.Compose(
+                [
+                    transforms.Resize((params.resized_patch, params.resized_patch)),
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                ]
+            )
+
+    def __getitem__(self, idx):
+        img_path = self.X[idx]
+        label = self.y[idx]
+
+        wsi_image = openslide.OpenSlide(img_path)
+        pil_imgs = [
+            return_random_patch(
+                wsi_image, self.params.patch_size, self.params.percentage_blank
+            )
+            for _ in range(self.params.nb_samples)
+        ]
+        output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
         output_tensor = rearrange(output_tensor, "(n1 n2) c h w -> c (n1 h) (n2 w)", n1=self.params.nb_patches)
 
         return output_tensor, label
