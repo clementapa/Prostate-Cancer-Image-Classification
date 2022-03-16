@@ -104,7 +104,7 @@ class DatasetParams:
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 16
+    nb_samples: int = 1
 
     # dataloader
     num_workers: int = 1  # number of workers for dataloaders
@@ -114,6 +114,19 @@ class DatasetParams:
     # # train_artifact: str = "attributes_classification_celeba/dlmi/train_192_1_0.5:v0"
     # test_artifact: str = "attributes_classification_celeba/dlmi/test_256_1_0.5:v0"
 
+@dataclass
+class CallbacksParams:
+
+    # params log predictions
+    log_freq_img: int = 1
+    log_nb_img: int = 4
+    log_nb_patches: int = 18
+
+    # Early Stopping
+    early_stopping: bool = True
+    early_stopping_params: Dict[str, Any] = dict_field(
+        dict(monitor="val/loss", patience=50, mode="min", verbose=True)
+    )
 
 ##################################### Classification #############################################
 
@@ -168,7 +181,7 @@ class MetricClassificationParams:
         "Accuracy", "Recall", "Precision", "F1", "AUROC"
     )
     average: str = "weighted"
-    num_classes: int = 3
+    num_classes: int = 6
 
 
 ##################################### Segmentation #############################################
@@ -190,21 +203,6 @@ class MetricSegmentationParams:
 
     name_module: str = "MetricsModuleSegmentation"
     list_metrics: List[str] = list_field("IoU")
-
-
-@dataclass
-class CallbacksParams:
-
-    # params log predictions
-    log_freq_img: int = 1
-    log_nb_img: int = 4
-    log_nb_patches: int = 18
-
-    # Early Stopping
-    early_stopping: bool = True
-    early_stopping_params: Dict[str, Any] = dict_field(
-        dict(monitor="val/loss", patience=50, mode="min", verbose=True)
-    )
 
 
 @dataclass
