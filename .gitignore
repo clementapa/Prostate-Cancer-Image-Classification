@@ -129,9 +129,10 @@ dmypy.json
 .pyre/
 
 /assets
-*.ckpt
+/weights
 /wandb
 /mvadlmi
 /artifacts
 /lightning_logs
 /submissions
+/.vscode
