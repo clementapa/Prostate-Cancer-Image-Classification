@@ -8,9 +8,9 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "main.py",
+            "program": "train_LogReg.py",
             "console": "integratedTerminal",
-            "python": "/home/clement/anaconda3/envs/torch1.8/bin/python",
+            "python": "python3",
         }
     ]
 }
