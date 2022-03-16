@@ -62,7 +62,7 @@ def get_seg_model(params):
         os.path.join(path_to_model, os.listdir(path_to_model)[0]),
         map_location=torch.device("cpu"),
     )["state_dict"]
-    pth = {'.'.join(k.split('.')[1:]): v for k, v in pth.items()}
+    pth = {".".join(k.split(".")[1:]): v for k, v in pth.items()}
     model.load_state_dict(pth)
 
     return model
