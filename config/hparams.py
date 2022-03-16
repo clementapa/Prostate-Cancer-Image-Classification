@@ -85,7 +85,7 @@ class DatasetParams:
     split_val: float = 0.1
     nb_samples: int = 1 # FIXME
 
-    nb_patches: int = 4 # FIXME 
+    nb_patches: int = 4  # FIXME
     resized_patch: int = 256
 
     # dataloader
@@ -131,7 +131,7 @@ class NetworkClassificationParams:
 class NetworkClassif_WITH_SegParams:
     feature_extractor_name: str = "resnet34"
     network_name: str = "OnlySeg"
-    
+
     classifier_name: str = "Multiple Linear"
     # MLP parameters
     dropout: float = 0.0
@@ -248,7 +248,7 @@ class Parameters:
             raise NotImplementedError(
                 f"Mode {self.hparams.MODE} does not exist only Segmentation, Classification or Classif_WITH_Seg!"
             )
-        
+
         self.hparams.accumulate_grad_batches = self.optim_param.accumulate_grad_batches
 
     @classmethod

@@ -110,7 +110,7 @@ class TDCNN(nn.Module):
         self.features_extractor, self.feature_size = get_features_extractor(
             params.feature_extractor_name
         )
-        
+
         # self.classifier = nn.Linear(feature_size*self.params.nb_samples, 6)
         # self.classifier = nn.Linear(feature_size, 6)
         self.conv_block = nn.Sequential(
