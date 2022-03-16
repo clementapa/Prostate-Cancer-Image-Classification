@@ -24,8 +24,10 @@ def main():
         f"patch_size: {parameters.data_param.patch_size}",
     ]
     if parameters.hparams.MODE == "Segmentation":
-        tags += [f"provider: {parameters.network_param.data_provider}",
-                f"Backbone: {parameters.network_param.feature_extractor_name}"]
+        tags += [
+            f"provider: {parameters.network_param.data_provider}",
+            f"Backbone: {parameters.network_param.feature_extractor_name}",
+        ]
     elif parameters.hparams.MODE == "Classification":
         tags += [f"nb_sample: {parameters.data_param.nb_samples}"]
     else:
