@@ -78,7 +78,7 @@ class DatasetParams:
 
     # dataset
     split_val: float = 0.1
-    patch_size: int = 256
+    patch_size: int = 128
     percentage_blank: float = 0.5
     nb_samples: int = 8
     level: int = 1
@@ -88,7 +88,7 @@ class DatasetParams:
     batch_size: int = 4  # batch_size
 
     # for segmentation
-    data_provider: str = "radboud"
+    data_provider: str = "all"
     image_size: int = 512
 
 
@@ -100,7 +100,7 @@ class MetricParams:
     # )
     list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "IoU")
     # list_metrics: List[str] = list_field("IoU")
-    num_classes: int = 6
+    num_classes: int = 3
     pixel_wise_parameters: Dict[str, Any] = dict_field(
         dict(average="weighted", mdmc_average="global")
     )

@@ -13,7 +13,16 @@ class Segmentation(nn.Module):
         super().__init__()
         self.params = params
 
-        self.seg_model = smp.DeepLabV3Plus(
+        # self.seg_model = smp.DeepLabV3Plus(
+        #     encoder_name=params.feature_extractor_name,  # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
+        #     encoder_weights="imagenet",  # use `imagenet` pre-trained weights for encoder initialization
+        #     in_channels=3,  # model input channels (1 for gray-scale images, 3 for RGB, etc.)
+        #     classes=CLASSES_PER_PROVIDER[
+        #         params.data_provider
+        #     ],  # model output channels (number of classes in your dataset)
+        # )
+
+        self.seg_model = smp.Unet(
             encoder_name=params.feature_extractor_name,  # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
             encoder_weights="imagenet",  # use `imagenet` pre-trained weights for encoder initialization
             in_channels=3,  # model input channels (1 for gray-scale images, 3 for RGB, etc.)
