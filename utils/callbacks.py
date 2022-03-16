@@ -235,12 +235,10 @@ class LogImagesPredictions(BaseLogImages):
         labels = np.array(y[:n].cpu())
         preds = np.array(outputs["logits"][:n].argmax(dim=1).cpu())
 
-        images = [make_grid(im) for im in images]
         samples = []
-
         for i in range(len(images)):
 
-            bg_image = images[i].numpy().transpose((1, 2, 0))
+            bg_image = make_grid(images[i]).numpy().transpose((1, 2, 0))
             bg_image = STD * bg_image + MEAN
             bg_image = np.clip(bg_image, 0, 1)
 
@@ -253,6 +251,86 @@ class LogImagesPredictions(BaseLogImages):
         wandb.log({f"{name}/predictions": samples})
 
 
+class LogImagesPredictionsSegmentationClassification(Callback):
+    def __init__(self, log_freq_img, log_nb_img, log_nb_patches, data_provider) -> None:
+        super().__init__()
+        self.log_freq_img = log_freq_img
+        self.log_nb_img = log_nb_img
+        self.log_nb_patches = log_nb_patches
+
+        self.data_provider = data_provider
+
+    def on_validation_batch_end(
+        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
+    ):
+        """Called when the validation batch ends."""
+
+        if batch_idx == 0 and pl_module.current_epoch % self.log_freq_img == 0:
+            self.log_images(
+                "val",
+                batch,
+                self.log_nb_img,
+                self.log_nb_patches,
+                outputs,
+                pl_module.model.seg_model,
+            )
+
+    def on_train_batch_end(
+        self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
+    ):
+        """Called when the training batch ends."""
+
+        if batch_idx == 0 and pl_module.current_epoch % self.log_freq_img == 0:
+            self.log_images(
+                "train",
+                batch,
+                self.log_nb_img,
+                self.log_nb_patches,
+                outputs,
+                pl_module.model.seg_model,
+            )
+
+    def log_images(self, name, batch, n, p, outputs, seg_model):
+
+        x, y = batch
+        images = x[:n, :p].detach()
+        labels = y[:n].cpu()
+
+        preds = outputs["logits"][:n].argmax(dim=1).cpu()
+
+        batch_masks = []
+        for b in images:
+            masks = seg_model(b).argmax(dim=1).cpu()
+            batch_masks.append(masks)
+        batch_masks = torch.stack(batch_masks)
+
+        images = images.cpu()
+
+        samples = []
+        for i in range(len(images)):
+
+            bg_image = make_grid(images[i]).numpy().transpose((1, 2, 0))
+            bg_image = STD * bg_image + MEAN
+            bg_image = np.clip(bg_image, 0, 1)
+
+            prediction = make_grid(batch_masks[i].unsqueeze(1)).numpy()[0]
+
+            samples.append(
+                wandb.Image(
+                    bg_image,
+                    masks={
+                        "prediction": {
+                            "mask_data": prediction,
+                            "class_labels": DICT_COLORS[self.data_provider],
+                        },
+                    },
+                    caption=f"label: {labels[i]}, prediction: {preds[i]}",
+                )
+            )
+
+        wandb.log({f"{name}/predictions_seg": samples})
+
+
 class LogImagesPredictionsSegmentation(BaseLogImages):
     def __init__(self, log_freq_img, log_nb_img, log_nb_patches, data_provider) -> None:
         super().__init__(log_freq_img, log_nb_img, log_nb_patches)
@@ -262,12 +340,11 @@ class LogImagesPredictionsSegmentation(BaseLogImages):
     def log_images(self, name, batch, n, p, outputs):
 
         x, y = batch
-        # images = x[:n, :p].detach().cpu()
+
         images = x[:n].detach().cpu()
         labels = y[:n].cpu()
         preds = outputs["logits"][:n].argmax(dim=1).cpu()
 
-        # images = [make_grid(im) for im in images]
         samples = []
 
         for i in range(len(images)):
