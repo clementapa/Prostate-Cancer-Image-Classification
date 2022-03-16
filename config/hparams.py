@@ -97,7 +97,7 @@ class DatasetParams:
     batch_size: int = 4  # batch_size
 
     # for segmentation
-    data_provider: str = "radboud"
+    data_provider: str = "all"
     image_size: int = 512
 
     train_artifact: str = "attributes_classification_celeba/dlmi/train_256_1_0.5:v0"
