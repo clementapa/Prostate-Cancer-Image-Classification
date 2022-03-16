@@ -6,9 +6,11 @@ on:
   push:
     branches:
       - main
+      - segmentation
   pull_request:
     branches:
       - main
+      - segmentation
 
 jobs:
   run-linters:

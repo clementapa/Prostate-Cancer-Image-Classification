@@ -18,7 +18,7 @@ def main():
     wdb_config = parse_params(parameters)
 
     if parameters.hparams.train:
-        wandb.init(
+        wandb_run = wandb.init(
             # vars(parameters),  # FIXME use the full parameters
             config=wdb_config,
             project=parameters.hparams.wandb_project,
@@ -28,12 +28,15 @@ def main():
             tags=[
                 parameters.network_param.network_name,
                 parameters.data_param.dataset_name,
-                str(parameters.data_param.patch_size),
+                f"patch_size:{parameters.data_param.patch_size}",
                 parameters.optim_param.optimizer,
+                parameters.data_param.data_provider,
+                f"nb_sample:{parameters.data_param.nb_samples}",
+                parameters.network_param.classifier_name,
             ],
         )
 
-        wandb_run = WandbLogger(
+        wandb_logger = WandbLogger(
             config=wdb_config,  # vars(parameters),  # FIXME use the full parameters
             project=parameters.hparams.wandb_project,
             entity=parameters.hparams.wandb_entity,
@@ -41,10 +44,10 @@ def main():
             # save_dir=parameters.hparams.save_dir,
         )
 
-        agent = BaseTrainer(parameters, wandb_run)
+        agent = BaseTrainer(parameters, wandb_logger, wandb_run)
         agent.run()
     else:
-        wandb.init(
+        wandb_run = wandb.init(
             # vars(parameters),  # FIXME use the full parameters
             config=wdb_config,
             project=parameters.hparams.wandb_project,
@@ -52,7 +55,15 @@ def main():
             allow_val_change=True,
             job_type="test",
         )
-        agent = BaseTrainer(parameters)
+
+        wandb_logger = WandbLogger(
+            config=wdb_config,  # vars(parameters),  # FIXME use the full parameters
+            project=parameters.hparams.wandb_project,
+            entity=parameters.hparams.wandb_entity,
+            allow_val_change=True,
+            # save_dir=parameters.hparams.save_dir,
+        )
+        agent = BaseTrainer(parameters, wandb_logger, wb_run=wandb_run)
         agent.predict()
 
 

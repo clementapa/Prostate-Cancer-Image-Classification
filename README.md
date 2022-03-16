@@ -28,6 +28,7 @@ The grading process consists of finding and classifying cancer tissue into so-ca
 
 ## Interesting articles:
 - https://openreview.net/pdf?id=Hk2YYqssf
+- https://www.nature.com/articles/s41586-021-03922-4
 
 ## Data statistics:
 

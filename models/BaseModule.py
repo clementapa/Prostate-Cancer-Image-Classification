@@ -3,24 +3,31 @@ import torch.nn as nn
 import torch.nn.functional as F
 from pytorch_lightning import LightningModule
 from torch.optim.lr_scheduler import ReduceLROnPlateau
+from models.losses.segmentation.customized_ce import C_Crossentropy
 from utils.agent_utils import get_net
-from models.Baseline import Baseline
+
+from models.losses.segmentation.dice import DiceLoss
 
 
 class BaseModule(LightningModule):
-    def __init__(self, network_param, optim_param):
+    def __init__(self, network_param, optim_param, wb_run=None):
         """method used to define our model parameters"""
         super(BaseModule, self).__init__()
 
         # loss function
-        self.loss = nn.CrossEntropyLoss()
+        if network_param.network_name == "Segmentation":
+            self.loss = DiceLoss()
+        elif network_param.network_name == "MMSg":
+            self.loss = C_Crossentropy(network_param.alpha)
+        else:
+            self.loss = nn.CrossEntropyLoss()
 
         # optimizer
         self.optim_param = optim_param
         self.lr = optim_param.lr
 
         # model
-        self.model = get_net(network_param.network_name, network_param)
+        self.model = get_net(network_param.network_name, network_param, wb_run)
         # if network_param.weight_checkpoint is not None:
         #     self.model.load_state_dict(torch.load(
         #         network_param.weight_checkpoint)["state_dict"])
@@ -51,7 +58,7 @@ class BaseModule(LightningModule):
 
         x = batch
         output = self(x)
-        output = torch.sigmoid(output)
+        output = output.argmax(dim=-1)
 
         return output
 
@@ -83,6 +90,16 @@ class BaseModule(LightningModule):
         output = self(x)
 
         loss = self.loss(output, y)
-        logits = F.softmax(output, dim=0)
+
+        if isinstance(output, tuple):
+            logits = F.softmax(output[0], dim=0)
+        else:
+            logits = F.softmax(output, dim=0)
 
         return loss, logits
+
+
+class BaseModuleForInference(nn.Module):
+    def __init__(self, params) -> None:
+        super().__init__()
+        self.model = get_net("Segmentation", params, None)
