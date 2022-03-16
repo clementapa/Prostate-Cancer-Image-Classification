@@ -83,11 +83,11 @@ class DatasetParams:
     split_val: float = 0.15
     patch_size: int = 512
     percentage_blank: float = 0.5
-    nb_samples: int = 36
+    nb_samples: int = 16
 
     # for concat dataset
     resized_patch: int = 128
-    nb_patches: int = 6
+    nb_patches: int = 4
 
     # dataloader
     num_workers: int = 1  # number of workers for dataloaders
