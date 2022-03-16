@@ -124,7 +124,6 @@ class PatchSegDataset(BaseSegDataset):
     def __init__(self, params, train=True, transform=None):
         super().__init__(params, train, transform)
 
-        self.params = params
         self.transform = transforms.Compose(
             [
                 transforms.ToTensor(),
@@ -155,10 +154,7 @@ class PatchSegDataset(BaseSegDataset):
                 self.params.percentage_blank,
                 self.params.level,
             )
-            if (
-                data["data_provider"] == "radboud"
-                and self.params.data_provider == "all"
-            ):
+            if data["data_provider"] == "radboud":
                 seg_img = merge_cls(seg_img)
             pil_imgs.append(pil_img)
             seg_gt.append(seg_img)
