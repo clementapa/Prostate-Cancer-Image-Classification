@@ -83,7 +83,7 @@ class DatasetParams:
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 1 # FIXME
+    nb_samples: int = 1  # FIXME
 
     nb_patches: int = 4  # FIXME
     resized_patch: int = 256
