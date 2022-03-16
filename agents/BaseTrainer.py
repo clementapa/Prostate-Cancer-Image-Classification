@@ -42,7 +42,9 @@ class BaseTrainer:
         self.datamodule = get_datamodule(self.config.MODE, self.data_param)
 
         self.logger.info("Loading Model module...")
-        self.pl_model = BaseModule(self.config.MODE, self.network_param, self.optim_param, self.loss_param)
+        self.pl_model = BaseModule(
+            self.config.MODE, self.network_param, self.optim_param, self.loss_param
+        )
 
         if self.config.MODE == "Segmentation":
             self.wb_logger.watch(self.pl_model.model.seg_model)
@@ -126,8 +128,8 @@ class BaseTrainer:
         ]
 
         # Checkpoint
-        monitor = self.callbacks_param.checkpoint_params['monitor']
-        mode = self.callbacks_param.checkpoint_params['mode']
+        monitor = self.callbacks_param.checkpoint_params["monitor"]
+        mode = self.callbacks_param.checkpoint_params["mode"]
         self.logger.info(f"Checkpoint: monitor {monitor} {mode}")
 
         wandb.define_metric(monitor, summary=mode)
@@ -140,7 +142,11 @@ class BaseTrainer:
                 entity=self.config.wandb_entity,
                 monitor=monitor,
                 mode=mode,
-                filename="epoch-{epoch:02d}-"+monitor.replace("/", "_")+"={"+monitor+":.2f}",
+                filename="epoch-{epoch:02d}-"
+                + monitor.replace("/", "_")
+                + "={"
+                + monitor
+                + ":.2f}",
                 verbose=True,
                 dirpath=self.config.weights_path + f"/{str(wandb.run.name)}",
                 save_top_k=save_top_k,
@@ -148,32 +154,36 @@ class BaseTrainer:
                 auto_insert_metric_name=False,
             )
         ]  # our model checkpoint callback
-        
+
         # Early stopping
         if self.callbacks_param.early_stopping:
-            callbacks += [
-                EarlyStopping(self.callbacks_param.early_stopping_params)
-            ]
+            callbacks += [EarlyStopping(self.callbacks_param.early_stopping_params)]
 
-        # Metrics 
+        # Metrics
         if self.config.MODE == "Segmentation":
-            callbacks += [LogImagesSegmentation(
-                self.callbacks_param.log_freq_img,
-                self.callbacks_param.log_nb_img,
-                self.callbacks_param.log_nb_patches,
-                self.network_param.data_provider)
+            callbacks += [
+                LogImagesSegmentation(
+                    self.callbacks_param.log_freq_img,
+                    self.callbacks_param.log_nb_img,
+                    self.callbacks_param.log_nb_patches,
+                    self.network_param.data_provider,
+                )
             ]
         elif self.config.MODE == "Classification":
-            callbacks += [LogImagesClassification(
-                self.callbacks_param.log_freq_img,
-                self.callbacks_param.log_nb_img,
-                self.callbacks_param.log_nb_patches)
+            callbacks += [
+                LogImagesClassification(
+                    self.callbacks_param.log_freq_img,
+                    self.callbacks_param.log_nb_img,
+                    self.callbacks_param.log_nb_patches,
+                )
             ]
         elif self.config.MODE == "Classif_WITH_Seg":
-            callbacks += [LogImagesSegmentationClassification(
-                self.callbacks_param.log_freq_img,
-                self.callbacks_param.log_nb_img,
-                self.callbacks_param.log_nb_patches)
+            callbacks += [
+                LogImagesSegmentationClassification(
+                    self.callbacks_param.log_freq_img,
+                    self.callbacks_param.log_nb_img,
+                    self.callbacks_param.log_nb_patches,
+                )
             ]
 
         return callbacks

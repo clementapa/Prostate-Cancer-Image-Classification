@@ -294,6 +294,7 @@ class LogImagesSegmentation(BaseLogImages):
 
         wandb.log({f"{name}/predictions": samples})
 
+
 class LogImagesSegmentationClassification(Callback):
     def __init__(self, log_freq_img, log_nb_img, log_nb_patches, data_provider) -> None:
         super().__init__()

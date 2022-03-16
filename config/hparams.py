@@ -33,7 +33,7 @@ class Hparams:
     enable_progress_bar: bool = True
 
     # modes
-    tune_lr: bool = False 
+    tune_lr: bool = False
     tune_batch_size: bool = False
     dev_run: bool = False
     train: bool = True
@@ -41,15 +41,15 @@ class Hparams:
     # for inference and test
     best_model: str = "skilled-gorge-229"
 
-    # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Segmentation" 
+    # Segmentation, Classification & Classif_WITH_Seg
+    MODE: str = "Segmentation"
 
 
 @dataclass
 class OptimizerParams:
     """Optimization parameters"""
 
-    # Optimizer
+    # Optimizer
     optimizer: str = "Adam"  # Optimizer default vit: AdamW, default resnet50: Adam
     lr: float = 5e-4  # learning rate,               default = 5e-4
     min_lr: float = 5e-9  # min lr reached at the end of the cosine schedule
@@ -61,9 +61,7 @@ class OptimizerParams:
     scheduler: bool = True
     scheduler_name: str = "ReduceLROnPlateau"
     scheduler_params: Dict[str, Any] = dict_field(
-        dict(
-            mode="min", patience=5, min_lr=5e-6
-        )
+        dict(mode="min", patience=5, min_lr=5e-6)
     )
 
 
@@ -71,24 +69,19 @@ class OptimizerParams:
 class LossParams:
 
     name: str = "segmentation_models_pytorch.losses.DiceLoss"
-    params: Dict[str, Any] = dict_field(
-        dict(
-            mode="multiclass",
-            from_logits=True
-        )
-    )
+    params: Dict[str, Any] = dict_field(dict(mode="multiclass", from_logits=True))
 
     # name: str = "nn.CrossEntropyLos"
     # params: Dict[str, Any] = dict_field(
     #         dict(
-    #             reduction="mean", 
+    #             reduction="mean",
     #         )
     #     )
 
     # name: str = "models.losses.customized_ce.C_Crossentropy"
     # params: Dict[str, Any] = dict_field(
     #         dict(
-    #             alpha=0.4, 
+    #             alpha=0.4,
     #         )
     #     )
 
@@ -102,7 +95,7 @@ class DatasetParams:
     path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
     # Static or OFY = On-the-fly TODO
-    MODE: str = "Static" # doesnot implemented yet
+    MODE: str = "Static"  # doesnot implemented yet
 
     # Patches params
     patch_size: int = 256
@@ -122,8 +115,8 @@ class DatasetParams:
     # test_artifact: str = "attributes_classification_celeba/dlmi/test_256_1_0.5:v0"
 
 
-
 ##################################### Classification #############################################
+
 
 @dataclass
 class NetworkClassificationParams:
@@ -180,6 +173,7 @@ class MetricClassificationParams:
 
 ##################################### Segmentation #############################################
 
+
 @dataclass
 class NetworkSegmentationParams:
 
@@ -187,7 +181,7 @@ class NetworkSegmentationParams:
     feature_extractor_name: str = "resnet34"
     encoder_weights: str = "imagenet"
 
-    # karolinska, radboud, radboud_merged or all 
+    # karolinska, radboud, radboud_merged or all
     data_provider: str = "all"
 
 
@@ -196,7 +190,6 @@ class MetricSegmentationParams:
 
     name_module: str = "MetricsModuleSegmentation"
     list_metrics: List[str] = list_field("IoU")
-
 
 
 @dataclass
@@ -209,22 +202,18 @@ class CallbacksParams:
 
     # Checkpoint save
     checkpoint_params: Dict[str, Any] = dict_field(
-            dict(
-                monitor="val/auroc", 
-                mode="max",
-            )
+        dict(
+            monitor="val/auroc",
+            mode="max",
         )
+    )
 
     # Early Stopping
     early_stopping: bool = True
     early_stopping_params: Dict[str, Any] = dict_field(
-            dict(
-                monitor="val/loss", 
-                patience=50,
-                mode="min",
-                verbose=True
-            )
-        )
+        dict(monitor="val/loss", patience=50, mode="min", verbose=True)
+    )
+
 
 @dataclass
 class Parameters:
@@ -248,11 +237,10 @@ class Parameters:
         self.hparams.wandb_project = f"{'test-'*self.hparams.debug}dlmi"
 
         if self.hparams.MODE == "Segmentation":
-            
+
             self.network_param = NetworkSegmentationParams()
             self.metric_param = MetricSegmentationParams()
 
-            
             self.metric_param.num_classes = CLASSES_PER_PROVIDER[
                 self.network_param.data_provider
             ]
@@ -265,8 +253,10 @@ class Parameters:
             self.network_param = NetworkClassif_WITH_SegParams()
             self.metric_param = MetricClassificationParams()
         else:
-            raise NotImplementedError(f'Mode {self.hparams.MODE} does not exist only Segmentation, Classification or Classif_WITH_Seg!')
-        
+            raise NotImplementedError(
+                f"Mode {self.hparams.MODE} does not exist only Segmentation, Classification or Classif_WITH_Seg!"
+            )
+
         self.hparams.accumulate_grad_batches = self.optim_param.accumulate_grad_batches
 
         # self.network_param.nb_samples = self.data_param.nb_samples

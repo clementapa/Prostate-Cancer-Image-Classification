@@ -17,7 +17,7 @@ class Segmentation(nn.Module):
             encoder_name=params.feature_extractor_name,  # choose encoder, e.g. mobilenet_v2 or efficientnet-b7
             encoder_weights=params.encoder_weights,  # use `imagenet` pre-trained weights for encoder initialization
             in_channels=3,  # model input channels (1 for gray-scale images, 3 for RGB, etc.)
-            classes=params.num_classes  # model output channels (number of classes in your dataset)
+            classes=params.num_classes,  # model output channels (number of classes in your dataset)
         )
 
     def forward(self, x):

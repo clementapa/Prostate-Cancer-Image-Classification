@@ -6,6 +6,7 @@ from utils.agent_utils import get_net, import_class
 
 from models.Segmentation import Segmentation
 
+
 class BaseModule(LightningModule):
     def __init__(self, mode, network_param, optim_param, loss_param):
         """method used to define our model parameters"""
@@ -67,9 +68,9 @@ class BaseModule(LightningModule):
 
         if self.optim_param.scheduler:
             scheduler = {
-                "scheduler": getattr(torch.optim.lr_scheduler, self.optim_param.scheduler_name)(
-                    optimizer, **self.optim_param.scheduler_params
-                ),
+                "scheduler": getattr(
+                    torch.optim.lr_scheduler, self.optim_param.scheduler_name
+                )(optimizer, **self.optim_param.scheduler_params),
                 "monitor": "val/loss",
             }
 
