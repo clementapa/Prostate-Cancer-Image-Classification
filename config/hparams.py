@@ -98,13 +98,13 @@ class DatasetParams:
     MODE: str = "Static"  # doesnot implemented yet
 
     # Patches params
-    patch_size: int = 382
+    patch_size: int = 384
     percentage_blank: float = 0.5
     level: int = 0
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 16
+    nb_samples: int = 1
 
     # dataloader
     num_workers: int = 1  # number of workers for dataloaders
@@ -168,7 +168,7 @@ class MetricClassificationParams:
         "Accuracy", "Recall", "Precision", "F1", "AUROC"
     )
     average: str = "weighted"
-    num_classes: int = 6
+    num_classes: int = 3
 
 
 ##################################### Segmentation #############################################
