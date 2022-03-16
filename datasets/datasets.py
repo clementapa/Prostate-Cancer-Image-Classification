@@ -121,7 +121,7 @@ class BaseSegDataset(Dataset):
 
 
 class PatchSegDataset(BaseSegDataset):
-    def __init__(self, params, train=True, transform=None):
+    def __init__(self, params, train=True, transform=None, wb_run=None):
         super().__init__(params, train, transform)
 
         self.params = params

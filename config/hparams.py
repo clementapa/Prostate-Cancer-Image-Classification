@@ -45,8 +45,8 @@ class Hparams:
 @dataclass
 class NetworkParams:
     feature_extractor_name: str = "resnet34"
-    network_name: str = "MM"
-    classifier_name: str = "Multiple Linear"
+    network_name: str = "Segmentation"
+    classifier_name: str = "None"
 
     weight_checkpoints: str = ""
     artifact: str = ""
@@ -82,14 +82,14 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "StaticPatchDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "PatchSegDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
     split_val: float = 0.1
     patch_size: int = 128
     percentage_blank: float = 0.5
-    nb_samples: int = 18
+    nb_samples: int = 8
     level: int = 1
 
     # dataloader
@@ -109,18 +109,12 @@ class DatasetParams:
 @dataclass
 class MetricParams:
 
-    # list_metrics: List[str] = list_field(
-    #     "F1", "AUROC"
-    # )
-    list_metrics: List[str] = list_field(
-        "Accuracy", "Recall", "Precision", "F1", "AUROC"
-    )
-    # list_metrics: List[str] = list_field("IoU")
+    list_metrics: List[str] = list_field("IoU")
     num_classes: int = 3
     pixel_wise_parameters: Dict[str, Any] = dict_field(
         dict(average="weighted", mdmc_average="global")
     )
-    name_module: str = "MetricsModuleClassification"
+    name_module: str = "MetricsModuleSegmentation"
     average: str = "weighted"
 
 
