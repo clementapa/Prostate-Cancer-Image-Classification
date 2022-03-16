@@ -35,7 +35,7 @@ class Hparams:
     tune_lr: bool = False  # tune the model on first run
     tune_batch_size: bool = False
     dev_run: bool = False
-    train: bool = False
+    train: bool = True
     accumulate_grad_batches: int = 8
 
     # for inference and test
@@ -44,7 +44,7 @@ class Hparams:
 
 @dataclass
 class NetworkParams:
-    feature_extractor_name: str = "tresnet_xl_448"
+    feature_extractor_name: str = "efficientnetv2_rw_s"
     network_name: str = "SimpleModel"
     weight_checkpoints: str = ""
     artifact: str = ""
@@ -83,11 +83,11 @@ class DatasetParams:
     split_val: float = 0.15
     patch_size: int = 512
     percentage_blank: float = 0.5
-    nb_samples: int = 16
+    nb_samples: int = 4
 
     # for concat dataset
-    resized_patch: int = 128
-    nb_patches: int = 4
+    resized_patch: int = 256
+    nb_patches: int = 2
 
     # dataloader
     num_workers: int = 1  # number of workers for dataloaders
