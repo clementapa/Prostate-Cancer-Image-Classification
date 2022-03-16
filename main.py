@@ -18,11 +18,11 @@ def main():
     wdb_config = parse_params(parameters)
 
     tags = [
-        parameters.hparams.MODE, 
+        parameters.hparams.MODE,
         parameters.network_param.network_name,
         parameters.data_param.dataset_name,
-        f"patch_size: {parameters.data_param.patch_size}"
-        ]
+        f"patch_size: {parameters.data_param.patch_size}",
+    ]
     if parameters.hparams.MODE == "Segmentation":
         tags += [f"provider: {parameters.network_param.data_provider}"]
     elif parameters.hparams.MODE == "Classification":
@@ -37,11 +37,11 @@ def main():
             entity=parameters.hparams.wandb_entity,
             allow_val_change=True,
             job_type="train",
-            tags=tags
+            tags=tags,
         )
 
         wandb_logger = WandbLogger(
-            config=wdb_config, 
+            config=wdb_config,
             project=parameters.hparams.wandb_project,
             entity=parameters.hparams.wandb_entity,
             allow_val_change=True,

@@ -6,7 +6,7 @@ import torch.nn as nn
 from einops import rearrange
 from models.BaseModule import BaseModuleForInference
 from models.Segmentation import Segmentation
-import wandb 
+import wandb
 
 from models.MLP import MLP
 from utils.agent_utils import get_artifact
