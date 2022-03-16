@@ -1,7 +1,8 @@
+import errno
 import importlib
 import os
-import wandb
 
+import wandb
 from config.hparams import Parameters
 from datasets.datamodule import BaseDataModule
 
@@ -65,3 +66,11 @@ def import_class(name, instantiate=None):
         else:
             return imported_class
     raise Exception("Class {} can be imported".format(import_class))
+
+
+def create_dir(dir):
+    try:
+        os.makedirs(dir)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise

@@ -2,38 +2,27 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from pytorch_lightning import LightningModule
-from torch.optim.lr_scheduler import ReduceLROnPlateau
-from models.losses.customized_ce import C_Crossentropy
-from utils.agent_utils import get_net
+from utils.agent_utils import get_net, import_class
 
-from models.losses.segmentation.dice import DiceLoss
-
-from models.losses.focal_loss import FocalLoss
-
+from models.Segmentation import Segmentation
 
 class BaseModule(LightningModule):
-    def __init__(self, network_param, optim_param, wb_run=None):
+    def __init__(self, mode, network_param, optim_param, loss_param):
         """method used to define our model parameters"""
         super(BaseModule, self).__init__()
 
         # loss function
-        if network_param.network_name == "Segmentation":
-            self.loss = DiceLoss()
-        elif network_param.network_name == "MMSg" or network_param.network_name == "MM":
-            self.loss = C_Crossentropy(network_param.alpha)
-        else:
-            # self.loss = nn.CrossEntropyLoss()
-            self.loss = FocalLoss()
+        self.loss = import_class(loss_param.name, instantiate=loss_param.params)
 
         # optimizer
         self.optim_param = optim_param
         self.lr = optim_param.lr
 
         # model
-        self.model = get_net(network_param.network_name, network_param, wb_run)
-        # if network_param.weight_checkpoint is not None:
-        #     self.model.load_state_dict(torch.load(
-        #         network_param.weight_checkpoint)["state_dict"])
+        if mode == "Segmentation":
+            self.model = Segmentation(network_param)
+        else:
+            self.model = get_net(network_param.network_name, network_param)
 
     def forward(self, x):
         output = self.model(x)
@@ -41,21 +30,21 @@ class BaseModule(LightningModule):
 
     def training_step(self, batch, batch_idx):
         """needs to return a loss from a single batch"""
-        loss, logits = self._get_preds_loss_accuracy(batch)
+        loss, softmax = self._get_preds_loss_accuracy(batch)
 
         # Log loss
         self.log("train/loss", loss)
 
-        return {"loss": loss, "logits": logits.detach()}
+        return {"loss": loss, "softmax": softmax.detach()}
 
     def validation_step(self, batch, batch_idx):
         """used for logging metrics"""
-        loss, logits = self._get_preds_loss_accuracy(batch)
+        loss, softmax = self._get_preds_loss_accuracy(batch)
 
         # Log loss
         self.log("val/loss", loss)
 
-        return {"logits": logits}
+        return {"softmax": softmax}
 
     def predict_step(self, batch, batch_idx):
 
@@ -77,12 +66,9 @@ class BaseModule(LightningModule):
         )
 
         if self.optim_param.scheduler:
-            # scheduler = LinearWarmupCosineAnnealingLR(
-            #     optimizer, warmup_epochs=self.optim_param.warmup_epochs, max_epochs=self.optim_param.max_epochs
-            # )
             scheduler = {
-                "scheduler": ReduceLROnPlateau(
-                    optimizer, mode="min", patience=5, min_lr=5e-6
+                "scheduler": getattr(torch.optim.lr_scheduler, self.optim_param.scheduler_name)(
+                    optimizer, **self.optim_param.scheduler_params
                 ),
                 "monitor": "val/loss",
             }
@@ -99,11 +85,11 @@ class BaseModule(LightningModule):
         loss = self.loss(output, y)
 
         if isinstance(output, tuple):
-            logits = F.softmax(output[0], dim=0)
+            softmax = F.softmax(output[0], dim=0)
         else:
-            logits = F.softmax(output, dim=0)
+            softmax = F.softmax(output, dim=0)
 
-        return loss, logits
+        return loss, softmax
 
 
 class BaseModuleForInference(nn.Module):

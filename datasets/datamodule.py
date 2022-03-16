@@ -6,14 +6,13 @@ import datasets.datasets as datasets
 
 
 class BaseDataModule(LightningDataModule):
-    def __init__(self, dataset_param, wb_run=None):
+    def __init__(self, mode, dataset_param):
         super().__init__()
 
         self.config = dataset_param
         self.batch_size = self.config.batch_size
-        self.wb_run = wb_run
 
-        if "seg" in dataset_param.dataset_name.lower():
+        if "seg" in mode.lower():
             self.collate_fn = coll_fn_seg
         else:
             self.collate_fn = coll_fn
@@ -26,7 +25,7 @@ class BaseDataModule(LightningDataModule):
         if stage in (None, "fit"):
             # Load dataset
             self.dataset = getattr(datasets, self.config.dataset_name)(
-                self.config, train=True, wb_run=self.wb_run
+                self.config, train=True
             )
 
             val_length = int(len(self.dataset) * self.config.split_val)
@@ -35,7 +34,7 @@ class BaseDataModule(LightningDataModule):
 
         if stage == "predict":
             self.dataset = getattr(datasets, self.config.dataset_name)(
-                self.config, train=False, wb_run=self.wb_run
+                self.config, train=False
             )
 
     def train_dataloader(self):

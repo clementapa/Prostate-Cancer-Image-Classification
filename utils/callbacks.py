@@ -174,7 +174,7 @@ class LogMetricsCallback(Callback):
         """Called when the train batch ends."""
 
         _, y = batch
-        self.metrics_module_train.update_metrics(outputs["logits"], y)
+        self.metrics_module_train.update_metrics(outputs["softmax"], y)
 
     def on_train_epoch_end(self, trainer, pl_module):
         """Called when the train epoch ends."""
@@ -187,7 +187,7 @@ class LogMetricsCallback(Callback):
         """Called when the validation batch ends."""
 
         _, y = batch
-        self.metrics_module_validation.update_metrics(outputs["logits"], y)
+        self.metrics_module_validation.update_metrics(outputs["softmax"], y)
 
     def on_validation_epoch_end(self, trainer, pl_module):
         """Called when the validation epoch ends."""
@@ -224,7 +224,7 @@ class BaseLogImages(Callback):
         raise NotImplementedError(f"Should be implemented in derived class!")
 
 
-class LogImagesPredictions(BaseLogImages):
+class LogImagesClassification(BaseLogImages):
     def __init__(self, log_freq_img, log_nb_img, log_nb_patches) -> None:
         super().__init__(log_freq_img, log_nb_img, log_nb_patches)
 
@@ -233,7 +233,7 @@ class LogImagesPredictions(BaseLogImages):
         x, y = batch
         images = x[:n, :p].detach().cpu()
         labels = np.array(y[:n].cpu())
-        preds = np.array(outputs["logits"][:n].argmax(dim=1).cpu())
+        preds = np.array(outputs["softmax"][:n].argmax(dim=1).cpu())
 
         samples = []
         for i in range(len(images)):
@@ -251,7 +251,50 @@ class LogImagesPredictions(BaseLogImages):
         wandb.log({f"{name}/predictions": samples})
 
 
-class LogImagesPredictionsSegmentationClassification(Callback):
+class LogImagesSegmentation(BaseLogImages):
+    def __init__(self, log_freq_img, log_nb_img, log_nb_patches, data_provider) -> None:
+        super().__init__(log_freq_img, log_nb_img, log_nb_patches)
+
+        self.data_provider = data_provider
+
+    def log_images(self, name, batch, n, p, outputs):
+
+        x, y = batch
+
+        images = x[:n].detach().cpu()
+        labels = y[:n].cpu()
+        preds = outputs["softmax"][:n].argmax(dim=1).cpu()
+
+        samples = []
+
+        for i in range(len(images)):
+
+            bg_image = images[i].numpy().transpose((1, 2, 0))
+            bg_image = STD * bg_image + MEAN
+            bg_image = np.clip(bg_image, 0, 1)
+
+            prediction = np.array(preds[i])
+            true_mask = np.array(labels[i])
+
+            samples.append(
+                wandb.Image(
+                    bg_image,
+                    masks={
+                        "prediction": {
+                            "mask_data": prediction,
+                            "class_labels": DICT_COLORS[self.data_provider],
+                        },
+                        "ground_truth": {
+                            "mask_data": true_mask,
+                            "class_labels": DICT_COLORS[self.data_provider],
+                        },
+                    },
+                )
+            )
+
+        wandb.log({f"{name}/predictions": samples})
+
+class LogImagesSegmentationClassification(Callback):
     def __init__(self, log_freq_img, log_nb_img, log_nb_patches, data_provider) -> None:
         super().__init__()
         self.log_freq_img = log_freq_img
@@ -296,7 +339,7 @@ class LogImagesPredictionsSegmentationClassification(Callback):
         images = x[:n, :p].detach()
         labels = y[:n].cpu()
 
-        preds = outputs["logits"][:n].argmax(dim=1).cpu()
+        preds = outputs["softmax"][:n].argmax(dim=1).cpu()
 
         batch_masks = []
         for b in images:
@@ -329,47 +372,3 @@ class LogImagesPredictionsSegmentationClassification(Callback):
             )
 
         wandb.log({f"{name}/predictions_seg": samples})
-
-
-class LogImagesPredictionsSegmentation(BaseLogImages):
-    def __init__(self, log_freq_img, log_nb_img, log_nb_patches, data_provider) -> None:
-        super().__init__(log_freq_img, log_nb_img, log_nb_patches)
-
-        self.data_provider = data_provider
-
-    def log_images(self, name, batch, n, p, outputs):
-
-        x, y = batch
-
-        images = x[:n].detach().cpu()
-        labels = y[:n].cpu()
-        preds = outputs["logits"][:n].argmax(dim=1).cpu()
-
-        samples = []
-
-        for i in range(len(images)):
-
-            bg_image = images[i].numpy().transpose((1, 2, 0))
-            bg_image = STD * bg_image + MEAN
-            bg_image = np.clip(bg_image, 0, 1)
-
-            prediction = np.array(preds[i])
-            true_mask = np.array(labels[i])
-
-            samples.append(
-                wandb.Image(
-                    bg_image,
-                    masks={
-                        "prediction": {
-                            "mask_data": prediction,
-                            "class_labels": DICT_COLORS[self.data_provider],
-                        },
-                        "ground_truth": {
-                            "mask_data": true_mask,
-                            "class_labels": DICT_COLORS[self.data_provider],
-                        },
-                    },
-                )
-            )
-
-        wandb.log({f"{name}/predictions": samples})

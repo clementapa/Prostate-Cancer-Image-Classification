@@ -1,19 +1,20 @@
 import os
+
 import timm
 import torch
 import torch.nn as nn
-
+import wandb
 from einops import rearrange
-from models.BaseModule import BaseModuleForInference
-from models.Segmentation import Segmentation
-
-from models.MLP import MLP
 from utils.agent_utils import get_artifact
 from utils.dataset_utils import seg_max_to_score
 
+from models.BaseModule import BaseModuleForInference
+from models.MLP import MLP
+from models.Segmentation import Segmentation
+
 
 class MMSg(nn.Module):
-    def __init__(self, params, wb_run=None):
+    def __init__(self, params):
         super().__init__()
         self.params = params
 
@@ -43,7 +44,7 @@ class MMSg(nn.Module):
         name_artifact = (
             f"attributes_classification_celeba/test-dlmi/{params.wb_run_seg}:top-1"
         )
-        artifact = wb_run.use_artifact(name_artifact)
+        artifact = wandb.use_artifact(name_artifact)
         path_to_model = artifact.download()
         # path_to_model = "/home/younesbelkada/Travail/MVA/DeepMedical/Prostate-Cancer-Image-Classification/artifacts/expert-surf-171:v7/epoch-19-val_loss=0.17.ckpt"
 

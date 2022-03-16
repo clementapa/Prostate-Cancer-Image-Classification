@@ -13,7 +13,7 @@ from utils.dataset_utils import seg_max_to_score
 
 
 class MM(nn.Module):
-    def __init__(self, params, wb_run=None):
+    def __init__(self, params):
         super().__init__()
         self.params = params
 
