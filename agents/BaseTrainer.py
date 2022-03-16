@@ -48,6 +48,8 @@ class BaseTrainer:
 
         if self.config.MODE == "Segmentation":
             self.wb_logger.watch(self.pl_model.model.seg_model)
+        else:
+            self.wb_logger.watch(self.pl_model.model)
 
     def run(self):
         if self.config.tune_batch_size:

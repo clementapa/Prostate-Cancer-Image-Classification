@@ -42,7 +42,7 @@ class Hparams:
     best_model: str = "skilled-gorge-229"
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Classification"
+    MODE: str = "Segmentation"
 
 
 @dataclass
@@ -69,7 +69,7 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "ConcatPatchDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "PatchSegDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
     path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
@@ -77,19 +77,19 @@ class DatasetParams:
     MODE: str = "Static"  # doesnot implemented yet
 
     # Patches params
-    patch_size: int = 256
+    patch_size: int = 384
     percentage_blank: float = 0.5
-    level: int = 0
+    level: int = 1
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 16 # FIXME
+    nb_samples: int = 1 # FIXME
 
     nb_patches: int = 4 # FIXME 
     resized_patch: int = 256
 
     # dataloader
-    num_workers: int = 1  # number of workers for dataloaders
+    num_workers: int = 2  # number of workers for dataloaders
     batch_size: int = 4  # batch_size
 
     train_artifact: str = "attributes_classification_celeba/dlmi/train_256_1_0.5:v0"
@@ -178,7 +178,7 @@ class MetricClassificationParams:
 class NetworkSegmentationParams:
 
     network_name: str = "DeepLabV3Plus"
-    feature_extractor_name: str = "resnet34"
+    feature_extractor_name: str = "resnet152"
     encoder_weights: str = "imagenet"
 
     # karolinska, radboud, radboud_merged or all
