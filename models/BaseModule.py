@@ -24,7 +24,7 @@ class BaseModule(LightningModule):
         # model
         if mode == "Segmentation":
             self.model = Segmentation(network_param)
-        elif self.mode == "Classification":
+        elif mode == "Classification":
             self.model = getattr(Classification, network_param.network_name)(
                 network_param
             )

@@ -11,7 +11,6 @@ class Segmentation(nn.Module):
 
     def __init__(self, params):
         super().__init__()
-        self.params = params
 
         self.seg_model = getattr(smp, params.network_name)(
             encoder_name=params.feature_extractor_name,  # choose encoder, e.g. mobilenet_v2 or efficientnet-b7

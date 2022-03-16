@@ -6,18 +6,17 @@ import timm
 import wandb
 from config.hparams import Parameters
 from datasets.datamodule import BaseDataModule
-from models.BaseModule import BaseModuleForInference
 
 import torch
 
 
-def get_net(network_name, network_param, wb_run):
+def get_net(network_name, network_param):
     """
     Get Network Architecture based on arguments provided
     """
     mod = importlib.import_module(f"models.{network_name}")
     net = getattr(mod, network_name)
-    return net(network_param, wb_run)
+    return net(network_param)
 
 
 def get_dataset(dataset_name, dataset_param):
@@ -29,11 +28,11 @@ def get_dataset(dataset_name, dataset_param):
     return dataset(dataset_param)
 
 
-def get_datamodule(data_param, wb_run=None):
+def get_datamodule(mode, data_param):
     """
     Fetch Datamodule Function Pointer
     """
-    return BaseDataModule(data_param, wb_run)
+    return BaseDataModule(mode, data_param)
 
 
 def get_artifact(name: str, type: str) -> str:
@@ -57,12 +56,13 @@ def get_seg_model(params):
     )
     artifact = wandb.use_artifact(name_artifact)
 
-    model = get_net("Segmentation", params)
+    model = get_net("Segmentation", params.seg_param)
     path_to_model = artifact.download()
     pth = torch.load(
         os.path.join(path_to_model, os.listdir(path_to_model)[0]),
         map_location=torch.device("cpu"),
     )["state_dict"]
+    pth = {'.'.join(k.split('.')[1:]): v for k, v in pth.items()}
     model.load_state_dict(pth)
 
     return model

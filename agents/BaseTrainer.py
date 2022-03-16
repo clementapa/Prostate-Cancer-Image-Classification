@@ -188,6 +188,7 @@ class BaseTrainer:
                     self.callbacks_param.log_freq_img,
                     self.callbacks_param.log_nb_img,
                     self.callbacks_param.log_nb_patches,
+                    self.network_param.seg_param.data_provider,
                 )
             ]
 

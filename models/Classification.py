@@ -87,14 +87,13 @@ class SimpleModel(nn.Module):
         super().__init__()
         self.params = params
 
-        self.features_extractor = timm.create_model(
-            self.params.feature_extractor_name, pretrained=True
+        # get features extractor
+        self.features_extractor, self.feature_size = get_features_extractor(
+            params.feature_extractor_name
         )
-        self.features_extractor.reset_classifier(0)
-        feature_size = self.features_extractor(torch.randn(1, 3, 384, 384)).shape[1]
 
-        # self.classifier = nn.Linear(feature_size*self.params.nb_samples, 6)
-        self.classifier = nn.Linear(feature_size, 6)
+        # self.classifier = nn.Linear(self.feature_size*self.params.nb_samples, 6)
+        self.classifier = nn.Linear(self.feature_size, 6)
 
     def forward(self, x):
         features = self.features_extractor(x)
@@ -107,31 +106,30 @@ class TDCNN(nn.Module):
         super().__init__()
         self.params = params
 
-        self.features_extractor = timm.create_model(
-            self.params.feature_extractor_name, pretrained=True
+        # get features extractor
+        self.features_extractor, self.feature_size = get_features_extractor(
+            params.feature_extractor_name
         )
-        self.features_extractor.reset_classifier(0)
-        feature_size = self.features_extractor(torch.randn(1, 3, 224, 224)).shape[1]
-
+        
         # self.classifier = nn.Linear(feature_size*self.params.nb_samples, 6)
         # self.classifier = nn.Linear(feature_size, 6)
         self.conv_block = nn.Sequential(
-            nn.Conv2d(feature_size, feature_size // 2, 1),
+            nn.Conv2d(self.feature_size, self.feature_size // 2, 1),
             nn.GELU(),
-            nn.Conv2d(feature_size // 2, feature_size // 4, 1),
+            nn.Conv2d(self.feature_size // 2, self.feature_size // 4, 1),
             nn.GELU(),
-            nn.Conv2d(feature_size // 4, feature_size // 8, 1),
+            nn.Conv2d(self.feature_size // 4, self.feature_size // 8, 1),
             nn.GELU(),
-            nn.Conv2d(feature_size // 8, feature_size // 16, 1),
+            nn.Conv2d(self.feature_size // 8, self.feature_size // 16, 1),
             nn.GELU(),
-            nn.Conv2d(feature_size // 16, feature_size // 32, 1),
+            nn.Conv2d(self.feature_size // 16, self.feature_size // 32, 1),
         )
 
-        feature_size_mlp = (
-            self.conv_block(torch.randn(1, feature_size, 4, 4)).shape[1] * 4 * 4
+        self.feature_size_mlp = (
+            self.conv_block(torch.randn(1, self.feature_size, 4, 4)).shape[1] * 4 * 4
         )
 
-        self.mlp = nn.Sequential(nn.Linear(feature_size_mlp, 6))
+        self.mlp = nn.Sequential(nn.Linear(self.feature_size_mlp, 6))
 
     def forward(self, x):
         features = []

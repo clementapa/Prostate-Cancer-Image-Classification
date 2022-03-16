@@ -12,7 +12,7 @@ class BaseDataModule(LightningDataModule):
         self.config = dataset_param
         self.batch_size = self.config.batch_size
 
-        if "seg" in mode.lower():
+        if mode == "Segmentation":
             self.collate_fn = coll_fn_seg
         else:
             self.collate_fn = coll_fn

@@ -42,7 +42,7 @@ class Hparams:
     best_model: str = "skilled-gorge-229"
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Classif_WITH_Seg"
+    MODE: str = "Classification"
 
 
 @dataclass
@@ -66,27 +66,6 @@ class OptimizerParams:
 
 
 @dataclass
-class LossParams:
-
-    # name: str = "segmentation_models_pytorch.losses.DiceLoss"
-    # params: Dict[str, Any] = dict_field(dict(mode="multiclass", from_logits=True))
-
-    name: str = "nn.CrossEntropyLos"
-    params: Dict[str, Any] = dict_field(
-        dict(
-            reduction="mean",
-        )
-    )
-
-    # name: str = "models.losses.customized_ce.C_Crossentropy"
-    # params: Dict[str, Any] = dict_field(
-    #         dict(
-    #             alpha=0.4,
-    #         )
-    #     )
-
-
-@dataclass
 class DatasetParams:
     """Dataset Parameters"""
 
@@ -104,7 +83,10 @@ class DatasetParams:
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 1
+    nb_samples: int = 16 # FIXME
+
+    nb_patches: int = 4 # FIXME 
+    resized_patch: int = 256
 
     # dataloader
     num_workers: int = 1  # number of workers for dataloaders
@@ -113,6 +95,21 @@ class DatasetParams:
     train_artifact: str = "attributes_classification_celeba/dlmi/train_256_1_0.5:v0"
     # train_artifact: str = "attributes_classification_celeba/dlmi/train_192_1_0.5:v0"
     test_artifact: str = "attributes_classification_celeba/dlmi/test_256_1_0.5:v0"
+
+
+@dataclass
+class CallbacksParams:
+
+    # params log predictions
+    log_freq_img: int = 1
+    log_nb_img: int = 4
+    log_nb_patches: int = 18
+
+    # Early Stopping
+    early_stopping: bool = True
+    early_stopping_params: Dict[str, Any] = dict_field(
+        dict(monitor="val/loss", patience=50, mode="min", verbose=True)
+    )
 
 
 ##################################### Classification #############################################
@@ -133,9 +130,9 @@ class NetworkClassificationParams:
 @dataclass
 class NetworkClassif_WITH_SegParams:
     feature_extractor_name: str = "resnet34"
-    network_name: str = "MM"
+    network_name: str = "OnlySeg"
+    
     classifier_name: str = "Multiple Linear"
-
     # MLP parameters
     dropout: float = 0.0
     normalization: str = "BatchNorm1d"
@@ -143,6 +140,24 @@ class NetworkClassif_WITH_SegParams:
 
     # Seg Model param
     wb_run_seg: str = "expert-surf-171"
+
+
+@dataclass
+class LossClassificationParams:
+
+    name: str = "torch.nn.CrossEntropyLoss"
+    params: Dict[str, Any] = dict_field(
+        dict(
+            reduction="mean",
+        )
+    )
+
+    # name: str = "models.losses.customized_ce.C_Crossentropy"
+    # params: Dict[str, Any] = dict_field(
+    #         dict(
+    #             alpha=0.4,
+    #         )
+    #     )
 
 
 @dataclass
@@ -171,25 +186,17 @@ class NetworkSegmentationParams:
 
 
 @dataclass
+class LossSegmentationParams:
+
+    name: str = "segmentation_models_pytorch.losses.DiceLoss"
+    params: Dict[str, Any] = dict_field(dict(mode="multiclass", from_logits=True))
+
+
+@dataclass
 class MetricSegmentationParams:
 
     name_module: str = "MetricsModuleSegmentation"
     list_metrics: List[str] = list_field("IoU")
-
-
-@dataclass
-class CallbacksParams:
-
-    # params log predictions
-    log_freq_img: int = 1
-    log_nb_img: int = 4
-    log_nb_patches: int = 18
-
-    # Early Stopping
-    early_stopping: bool = True
-    early_stopping_params: Dict[str, Any] = dict_field(
-        dict(monitor="val/loss", patience=50, mode="min", verbose=True)
-    )
 
 
 @dataclass
@@ -199,7 +206,6 @@ class Parameters:
     hparams: Hparams = Hparams()
     data_param: DatasetParams = DatasetParams()
     optim_param: OptimizerParams = OptimizerParams()
-    loss_param: LossParams = LossParams()
     callbacks_param: CallbacksParams = CallbacksParams()
 
     def __post_init__(self):
@@ -222,24 +228,28 @@ class Parameters:
             ]
             self.network_param.num_classes = self.metric_param.num_classes
 
+            self.loss_param = LossSegmentationParams()
+
         elif self.hparams.MODE == "Classification":
             self.network_param = NetworkClassificationParams()
             self.metric_param = MetricClassificationParams()
+            self.loss_param = LossClassificationParams()
+
         elif self.hparams.MODE == "Classif_WITH_Seg":
             self.network_param = NetworkClassif_WITH_SegParams()
             self.metric_param = MetricClassificationParams()
+            self.loss_param = LossClassificationParams()
+
+            self.network_param.seg_param = NetworkSegmentationParams()
+            self.network_param.seg_param.num_classes = CLASSES_PER_PROVIDER[
+                self.network_param.seg_param.data_provider
+            ]
         else:
             raise NotImplementedError(
                 f"Mode {self.hparams.MODE} does not exist only Segmentation, Classification or Classif_WITH_Seg!"
             )
-
+        
         self.hparams.accumulate_grad_batches = self.optim_param.accumulate_grad_batches
-
-        # self.network_param.nb_samples = self.data_param.nb_samples
-        # self.network_param.data_provider = self.data_param.data_provider
-        # self.data_param.feature_extractor_name = (
-        #     self.network_param.feature_extractor_name
-        # )
 
     @classmethod
     def parse(cls):

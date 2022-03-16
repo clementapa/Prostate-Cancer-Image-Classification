@@ -9,6 +9,8 @@ import pandas as pd
 import torch
 import torchvision.transforms as transforms
 import wandb
+from einops import rearrange
+
 from torch.utils.data import Dataset
 from utils.constant import CLASSES_PER_PROVIDER
 from utils.dataset_utils import (
