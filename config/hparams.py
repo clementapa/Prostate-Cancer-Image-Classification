@@ -98,13 +98,13 @@ class DatasetParams:
     MODE: str = "Static"  # doesnot implemented yet
 
     # Patches params
-    patch_size: int = 256
+    patch_size: int = 382
     percentage_blank: float = 0.5
     level: int = 0
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 1
+    nb_samples: int = 16
 
     # dataloader
     num_workers: int = 1  # number of workers for dataloaders
@@ -121,8 +121,8 @@ class DatasetParams:
 @dataclass
 class NetworkClassificationParams:
     feature_extractor_name: str = "resnet34"
-    network_name: str = "MM"
-    classifier_name: str = "Multiple Linear"
+    network_name: str = "Segmentation"
+    classifier_name: str = "None"
 
     weight_checkpoints: str = ""
     artifact: str = ""
