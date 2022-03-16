@@ -86,6 +86,7 @@ class BaseTrainer:
             fast_dev_run=self.config.dev_run,
             amp_backend="apex",
             enable_progress_bar=self.config.enable_progress_bar,
+            accumulate_grad_batches=self.config.accumulate_grad_batches
         )
         trainer.logger = self.wandb_logger
         trainer.fit(self.pl_model, datamodule=self.datamodule)
@@ -133,28 +134,8 @@ class BaseTrainer:
                 self.callbacks_param.log_nb_img,
                 self.callbacks_param.log_nb_patches,
             ),
-            EarlyStopping(monitor="val/loss", mode="min", patience=30),
+            # EarlyStopping(monitor="val/loss", mode="min", patience=30),
         ]
-        monitor = "val/loss"
-        mode = "min"
-        wandb.define_metric(monitor, summary=mode)
-        save_top_k = 1
-        every_n_epochs = 1
-        callbacks += [
-            AutoSaveModelCheckpoint(  # ModelCheckpoint
-                config=(self.network_param).__dict__,
-                project=self.config.wandb_project,
-                entity=self.config.wandb_entity,
-                monitor=monitor,
-                mode=mode,
-                filename="epoch-{epoch:02d}-val_loss={val/loss:.2f}",
-                verbose=True,
-                dirpath=self.config.weights_path + f"/{str(wandb.run.name)}",
-                save_top_k=save_top_k,
-                every_n_epochs=every_n_epochs,
-                auto_insert_metric_name=False,
-            )
-        ]  # our model checkpoint callback
 
         monitor = "val/auroc"
         mode = "max"
