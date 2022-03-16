@@ -162,7 +162,7 @@ class BaseTrainer:
 
         # Early stopping
         if self.callbacks_param.early_stopping:
-            callbacks += [EarlyStopping(self.callbacks_param.early_stopping_params)]
+            callbacks += [EarlyStopping(**self.callbacks_param.early_stopping_params)]
 
         # Metrics
         if self.config.MODE == "Segmentation":
