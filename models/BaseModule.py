@@ -3,11 +3,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 from pytorch_lightning import LightningModule
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from models.losses.segmentation.customized_ce import C_Crossentropy
+from models.losses.customized_ce import C_Crossentropy
 from utils.agent_utils import get_net
 
 from models.losses.segmentation.dice import DiceLoss
 
+from models.losses.focal_loss import FocalLoss
 
 class BaseModule(LightningModule):
     def __init__(self, network_param, optim_param, wb_run=None):
@@ -17,11 +18,12 @@ class BaseModule(LightningModule):
         # loss function
         if network_param.network_name == "Segmentation":
             self.loss = DiceLoss()
-        elif network_param.network_name == "MMSg":
+        elif network_param.network_name == "MMSg" or network_param.network_name == "MM":
             self.loss = C_Crossentropy(network_param.alpha)
         else:
-            self.loss = nn.CrossEntropyLoss()
-
+            # self.loss = nn.CrossEntropyLoss()
+            self.loss = FocalLoss()
+        
         # optimizer
         self.optim_param = optim_param
         self.lr = optim_param.lr
@@ -56,9 +58,13 @@ class BaseModule(LightningModule):
 
     def predict_step(self, batch, batch_idx):
 
-        x = batch
+        x, _ = batch
         output = self(x)
-        output = output.argmax(dim=-1)
+
+        if isinstance(output, tuple):
+            output = output[0].argmax(dim=-1)
+        else: 
+            output = output.argmax(dim=-1)
 
         return output
 

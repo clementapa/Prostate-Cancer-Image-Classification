@@ -25,7 +25,7 @@ class Hparams:
     root_dir: str = os.getcwd()  # root_dir
 
     # basic params
-    seed_everything: Optional[int] = None  # seed for the whole run
+    seed_everything: Optional[int] = 4289  # seed for the whole run
     gpu: int = 0  # number or gpu
     max_epochs: int = 60  # maximum number of epochs
     weights_path: str = osp.join(os.getcwd(), "weights")
@@ -45,14 +45,14 @@ class Hparams:
 @dataclass
 class NetworkParams:
     feature_extractor_name: str = "resnet34"
-    network_name: str = "MMSg3"
-    classifier_name: str = "Linear"
+    network_name: str = "MM"
+    classifier_name: str = "Multiple Linear"
 
     weight_checkpoints: str = ""
     artifact: str = ""
 
     # MLP parameters
-    dropout: float = 0.5
+    dropout: float = 0.0
     normalization: str = "BatchNorm1d"
     activation: str = "ReLU"
 
@@ -86,7 +86,7 @@ class DatasetParams:
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
 
     # dataset
-    split_val: float = 0.2
+    split_val: float = 0.1
     patch_size: int = 256
     percentage_blank: float = 0.5
     nb_samples: int = 18
@@ -128,12 +128,12 @@ class MetricParams:
 class CallbacksParams:
     log_freq_img: int = 1
     log_nb_img: int = 4
-    log_nb_patches: int = 4
+    log_nb_patches: int = 18
 
 
 @dataclass
 class PushArtifactParams:
-    split: str = "train"
+    split: str = "test"
     level: int = 1
 
 

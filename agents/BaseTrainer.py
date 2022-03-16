@@ -17,7 +17,7 @@ from utils.callbacks import (
     LogImagesPredictions,
 )
 from utils.logger import init_logger
-
+import os, errno
 
 class BaseTrainer:
     def __init__(self, config, logger=None, wb_run=None) -> None:
@@ -108,10 +108,13 @@ class BaseTrainer:
         output_df["Id"] = ids
         output_df["Predicted"] = y_pred
 
-        output_df.to_csv(
-            f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv",
-            index=False,
-        )
+        try:
+            os.makedirs('submissions')
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+        
+        output_df.to_csv(f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv", index=False)
 
     def load_artifact(self, network_param, data_param):
         return
@@ -137,18 +140,18 @@ class BaseTrainer:
                 self.callbacks_param.log_nb_img,
                 self.callbacks_param.log_nb_patches,
             ),
-            LogImagesPredictionsSegmentationClassification(
-                self.callbacks_param.log_freq_img,
-                self.callbacks_param.log_nb_img,
-                self.callbacks_param.log_nb_patches,
-                self.data_param.data_provider,
-            ),
-            EarlyStopping(monitor="val/loss", mode="min", patience=30),
+            # LogImagesPredictionsSegmentationClassification(
+            #     self.callbacks_param.log_freq_img,
+            #     self.callbacks_param.log_nb_img,
+            #     self.callbacks_param.log_nb_patches,
+            #     self.data_param.data_provider
+            # ),
+            # EarlyStopping(monitor="val/loss", mode="min", patience=30),
         ]
-        monitor = "val/loss"
-        mode = "min"
+        monitor = "val/auroc"
+        mode = "max"
         wandb.define_metric(monitor, summary=mode)
-        save_top_k = 1
+        save_top_k = 5
         every_n_epochs = 1
         callbacks += [
             AutoSaveModelCheckpoint(  # ModelCheckpoint
@@ -157,7 +160,8 @@ class BaseTrainer:
                 entity=self.config.wandb_entity,
                 monitor=monitor,
                 mode=mode,
-                filename="epoch-{epoch:02d}-val_loss={val/loss:.2f}",
+                filename="epoch-{epoch:02d}-val_auroc={val/auroc:.2f}",
+                # filename="epoch-{epoch:02d}-train_auroc={train/auroc:.2f}",
                 verbose=True,
                 dirpath=self.config.weights_path + f"/{str(wandb.run.name)}",
                 save_top_k=save_top_k,

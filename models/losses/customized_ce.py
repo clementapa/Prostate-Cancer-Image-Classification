@@ -4,7 +4,7 @@ from functools import partial
 import torch
 import torch.nn as nn
 from torch.nn.modules.loss import _Loss
-from .constants import BINARY_MODE, MULTICLASS_MODE, MULTILABEL_MODE
+from .segmentation.constants import BINARY_MODE, MULTICLASS_MODE, MULTILABEL_MODE
 
 __all__ = ["C_Crossentropy"]
 
@@ -12,7 +12,7 @@ __all__ = ["C_Crossentropy"]
 class C_Crossentropy(_Loss):
     def __init__(self, alpha_=0.4):
         super().__init__()
-        self.alpha_ = 0.4
+        self.alpha_ = alpha_
 
     def forward(
         self, y_pred_tuple: tuple([torch.Tensor, torch.Tensor]), y_true: torch.Tensor
