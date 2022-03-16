@@ -314,3 +314,51 @@ class StaticPatchDataset(BaseStaticDataset):
         )
 
         return output_tensor, label
+
+class ConcatPatchDataset(BaseStaticDataset):
+    def __init__(self, params, train=True, transform=None, wb_run=None):
+        super().__init__(params, train, transform, wb_run)
+        self.train = train
+        if train:
+            self.transform = transforms.Compose(
+                [
+                    transforms.Resize((params.resized_patch, params.resized_patch)),
+                    transforms.RandomHorizontalFlip(),
+                    transforms.RandomVerticalFlip(),
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                    
+                ]
+            )
+        else:
+            self.transform = transforms.Compose(
+                [
+                    transforms.Resize((params.resized_patch, params.resized_patch)),
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                ]
+            )
+    
+    
+
+    def __getitem__(self, idx):
+
+        data = dict(self.df.iloc[idx])
+
+        np_path = osp.join(self.params.path_patches, self.name_dataset, data['image_id'] + ".npy")
+        np_array = np.load(open(np_path, "rb"))
+
+        if self.train:
+            label = data['isup_grade']
+        else:
+            label = -1
+        images_to_pick = [random.randint(0, np_array.shape[0]-1) for _ in range(self.params.nb_samples)]
+        
+        output_tensor = torch.stack([self.transform((torch.from_numpy(np_img)/255.0).permute(2,1,0)) for np_img in np_array[images_to_pick]])
+        # print(output_tensor.shape)
+        
+        output_tensor = rearrange(output_tensor, "(n1 n2) c h w -> c (n1 h) (n2 w)", n1=self.params.nb_patches)
+
+        return output_tensor, label

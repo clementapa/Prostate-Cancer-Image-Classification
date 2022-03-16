@@ -5,6 +5,8 @@ from pytorch_lightning import LightningModule
 from utils.agent_utils import get_net, import_class
 
 from models.Segmentation import Segmentation
+import models.Classification as Classification
+import models.ClassifWithSeg as ClassifWithSeg
 
 
 class BaseModule(LightningModule):
@@ -22,8 +24,11 @@ class BaseModule(LightningModule):
         # model
         if mode == "Segmentation":
             self.model = Segmentation(network_param)
+        elif self.mode == "Classification":
+            self.model = getattr(Classification, network_param.network_name)(network_param)
         else:
-            self.model = get_net(network_param.network_name, network_param)
+            self.model = getattr(ClassifWithSeg, network_param.network_name)(network_param)
+
 
     def forward(self, x):
         output = self.model(x)
@@ -91,9 +96,3 @@ class BaseModule(LightningModule):
             softmax = F.softmax(output, dim=0)
 
         return loss, softmax
-
-
-class BaseModuleForInference(nn.Module):
-    def __init__(self, params) -> None:
-        super().__init__()
-        self.model = get_net("Segmentation", params, None)

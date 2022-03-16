@@ -42,7 +42,7 @@ class Hparams:
     best_model: str = "skilled-gorge-229"
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Segmentation"
+    MODE: str = "Classif_WITH_Seg"
 
 
 @dataclass
@@ -68,15 +68,15 @@ class OptimizerParams:
 @dataclass
 class LossParams:
 
-    name: str = "segmentation_models_pytorch.losses.DiceLoss"
-    params: Dict[str, Any] = dict_field(dict(mode="multiclass", from_logits=True))
+    # name: str = "segmentation_models_pytorch.losses.DiceLoss"
+    # params: Dict[str, Any] = dict_field(dict(mode="multiclass", from_logits=True))
 
-    # name: str = "nn.CrossEntropyLos"
-    # params: Dict[str, Any] = dict_field(
-    #         dict(
-    #             reduction="mean",
-    #         )
-    #     )
+    name: str = "nn.CrossEntropyLos"
+    params: Dict[str, Any] = dict_field(
+            dict(
+                reduction="mean",
+            )
+        )
 
     # name: str = "models.losses.customized_ce.C_Crossentropy"
     # params: Dict[str, Any] = dict_field(
@@ -90,7 +90,7 @@ class LossParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "PatchSegDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "ConcatPatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
     path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
@@ -110,9 +110,9 @@ class DatasetParams:
     num_workers: int = 1  # number of workers for dataloaders
     batch_size: int = 4  # batch_size
 
-    # train_artifact: str = "attributes_classification_celeba/dlmi/train_256_1_0.5:v0"
-    # # train_artifact: str = "attributes_classification_celeba/dlmi/train_192_1_0.5:v0"
-    # test_artifact: str = "attributes_classification_celeba/dlmi/test_256_1_0.5:v0"
+    train_artifact: str = "attributes_classification_celeba/dlmi/train_256_1_0.5:v0"
+    # train_artifact: str = "attributes_classification_celeba/dlmi/train_192_1_0.5:v0"
+    test_artifact: str = "attributes_classification_celeba/dlmi/test_256_1_0.5:v0"
 
 
 ##################################### Classification #############################################
@@ -121,22 +121,14 @@ class DatasetParams:
 @dataclass
 class NetworkClassificationParams:
     feature_extractor_name: str = "resnet34"
-    network_name: str = "MM"
+    network_name: str = "SimpleModel"
     classifier_name: str = "Multiple Linear"
-
-    weight_checkpoints: str = ""
-    artifact: str = ""
 
     # MLP parameters
     dropout: float = 0.0
     normalization: str = "BatchNorm1d"
     activation: str = "ReLU"
 
-    # Seg Model param
-    wb_run_seg: str = "expert-surf-171"
-
-    # C CE Loss
-    alpha: float = 0.4
 
 
 @dataclass
@@ -145,9 +137,6 @@ class NetworkClassif_WITH_SegParams:
     network_name: str = "MM"
     classifier_name: str = "Multiple Linear"
 
-    weight_checkpoints: str = ""
-    artifact: str = ""
-
     # MLP parameters
     dropout: float = 0.0
     normalization: str = "BatchNorm1d"
@@ -156,8 +145,6 @@ class NetworkClassif_WITH_SegParams:
     # Seg Model param
     wb_run_seg: str = "expert-surf-171"
 
-    # C CE Loss
-    alpha: float = 0.4
 
 
 @dataclass
@@ -229,7 +216,6 @@ class Parameters:
         self.hparams.wandb_project = f"{'test-'*self.hparams.debug}dlmi"
 
         if self.hparams.MODE == "Segmentation":
-
             self.network_param = NetworkSegmentationParams()
             self.metric_param = MetricSegmentationParams()
 

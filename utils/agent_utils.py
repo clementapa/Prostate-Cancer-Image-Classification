@@ -1,11 +1,14 @@
 import errno
 import importlib
 import os
+import timm
 
 import wandb
 from config.hparams import Parameters
 from datasets.datamodule import BaseDataModule
+from models.BaseModule import BaseModuleForInference
 
+import torch
 
 def get_net(network_name, network_param, wb_run):
     """
@@ -44,6 +47,33 @@ def get_artifact(name: str, type: str) -> str:
         return file_path
     else:
         return None
+
+
+def get_seg_model(params):
+    # load seg_model
+    name_artifact = (
+        f"attributes_classification_celeba/test-dlmi/{params.wb_run_seg}:top-1"
+    )
+    artifact = wandb.use_artifact(name_artifact)
+    
+    model = get_net("Segmentation", params)
+    path_to_model = artifact.download()
+    pth = torch.load(os.path.join(path_to_model, os.listdir(path_to_model)[0]), map_location=torch.device('cpu'))[
+            "state_dict"
+        ]
+    model.load_state_dict(pth)
+
+    return model
+
+
+def get_features_extractor(feature_extractor_name):
+    features_extractor = timm.create_model(
+        feature_extractor_name, pretrained=True
+    )
+    features_extractor.reset_classifier(0)
+    features_size = features_extractor(torch.randn(1, 3, 224, 224)).shape[1]
+
+    return features_extractor, features_size
 
 
 def parse_params(parameters: Parameters) -> dict:
