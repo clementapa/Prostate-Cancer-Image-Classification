@@ -126,8 +126,13 @@ class BaseTrainer:
         ]
 
         # Checkpoint
-        monitor = self.callbacks_param.checkpoint_params['monitor']
-        mode = self.callbacks_param.checkpoint_params['mode']
+        if self.config.MODE == "Segmentation":
+            monitor = "val/iou"
+            mode="max"
+        else:
+            monitor = "val/auroc"
+            mode="max"
+        
         self.logger.info(f"Checkpoint: monitor {monitor} {mode}")
 
         wandb.define_metric(monitor, summary=mode)

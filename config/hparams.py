@@ -207,14 +207,6 @@ class CallbacksParams:
     log_nb_img: int = 4
     log_nb_patches: int = 18
 
-    # Checkpoint save
-    checkpoint_params: Dict[str, Any] = dict_field(
-            dict(
-                monitor="val/auroc", 
-                mode="max",
-            )
-        )
-
     # Early Stopping
     early_stopping: bool = True
     early_stopping_params: Dict[str, Any] = dict_field(
