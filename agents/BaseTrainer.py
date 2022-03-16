@@ -86,7 +86,7 @@ class BaseTrainer:
             fast_dev_run=self.config.dev_run,
             amp_backend="apex",
             enable_progress_bar=self.config.enable_progress_bar,
-            accumulate_grad_batches=self.config.accumulate_grad_batches
+            accumulate_grad_batches=self.config.accumulate_grad_batches,
         )
         trainer.logger = self.wb_logger
         trainer.fit(self.pl_model, datamodule=self.datamodule)
@@ -98,16 +98,20 @@ class BaseTrainer:
         best_model = get_artifact(best_path, type="model")
 
         raw_predictions = trainer.predict(
-            self.pl_model, self.datamodule, ckpt_path=best_model)
+            self.pl_model, self.datamodule, ckpt_path=best_model
+        )
         raw_predictions = torch.cat(raw_predictions, axis=0)
         y_pred = raw_predictions.detach().cpu().numpy()
         ids = self.datamodule.dataset.df["image_id"].values
 
-        output_df = pd.DataFrame({"Id":{}, "Predicted":{}})
-        output_df['Id'] = ids
-        output_df['Predicted'] = y_pred
+        output_df = pd.DataFrame({"Id": {}, "Predicted": {}})
+        output_df["Id"] = ids
+        output_df["Predicted"] = y_pred
 
-        output_df.to_csv(f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv", index=False)
+        output_df.to_csv(
+            f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv",
+            index=False,
+        )
 
     def load_artifact(self, network_param, data_param):
         return
@@ -137,7 +141,7 @@ class BaseTrainer:
                 self.callbacks_param.log_freq_img,
                 self.callbacks_param.log_nb_img,
                 self.callbacks_param.log_nb_patches,
-                self.data_param.data_provider
+                self.data_param.data_provider,
             ),
             EarlyStopping(monitor="val/loss", mode="min", patience=30),
         ]

@@ -93,10 +93,11 @@ class BaseModule(LightningModule):
 
         if isinstance(output, tuple):
             logits = F.softmax(output[0], dim=0)
-        else: 
+        else:
             logits = F.softmax(output, dim=0)
 
         return loss, logits
+
 
 class BaseModuleForInference(nn.Module):
     def __init__(self, params) -> None:

@@ -6,7 +6,7 @@ import datasets.datasets as datasets
 
 
 class BaseDataModule(LightningDataModule):
-    def __init__(self, dataset_param,  wb_run=None):
+    def __init__(self, dataset_param, wb_run=None):
         super().__init__()
 
         self.config = dataset_param
@@ -26,7 +26,7 @@ class BaseDataModule(LightningDataModule):
         if stage in (None, "fit"):
             # Load dataset
             self.dataset = getattr(datasets, self.config.dataset_name)(
-                self.config, train=True,  wb_run=self.wb_run
+                self.config, train=True, wb_run=self.wb_run
             )
 
             val_length = int(len(self.dataset) * self.config.split_val)

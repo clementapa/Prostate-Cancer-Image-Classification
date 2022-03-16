@@ -13,7 +13,7 @@ def merge_cls(seg_img):
     seg_img[(seg_img >= 3)] = 2
     return seg_img
 
-  
+
 def coll_fn(batch):
     y = torch.LongTensor([b[1] for b in batch])
     X = torch.stack([b[0] for b in batch])
@@ -39,16 +39,14 @@ def return_random_patch(whole_slide, patch_dim, percentage_blank, level):
 
     # Another preprocessing to remove the black pixels...
 
-    cropped_image_array = np.array(cropped_image)[:, :, :-1] 
+    cropped_image_array = np.array(cropped_image)[:, :, :-1]
     mask = np.all(cropped_image_array == [0, 0, 0], axis=2)
     cropped_image_array[mask] = [255.0, 255.0, 255.0]
     cropped_image = Image.fromarray(cropped_image_array)
 
     while (
-        (np.sum(
-            np.any(np.array(cropped_image) == [255.0, 255.0, 255.0], axis=-1)
-        )
-        > percentage_blank * patch_dim * patch_dim) 
+        np.sum(np.any(np.array(cropped_image) == [255.0, 255.0, 255.0], axis=-1))
+        > percentage_blank * patch_dim * patch_dim
     ):
         random_location_x = random.randint(0, wsi_dimensions[0] - patch_dim)
         random_location_y = random.randint(0, wsi_dimensions[1] - patch_dim)
@@ -56,7 +54,7 @@ def return_random_patch(whole_slide, patch_dim, percentage_blank, level):
             (random_location_x, random_location_y), level, (patch_dim, patch_dim)
         )
 
-        cropped_image_array = np.array(cropped_image)[:, :, :-1] 
+        cropped_image_array = np.array(cropped_image)[:, :, :-1]
         mask = np.all(cropped_image_array == [0, 0, 0], axis=2)
         cropped_image_array[mask] = [255.0, 255.0, 255.0]
         cropped_image = Image.fromarray(cropped_image_array)
@@ -111,7 +109,7 @@ def get_validation_augmentation(num_classes):
 
 
 def seg_max_to_score(seg_mask, patch_size):
-    score_0 = torch.where(seg_mask==0, 1.0, 0.0).sum(axis=-1).sum(axis=-1)
-    score_1 = torch.where(seg_mask==1, 1.0, 0.0).sum(axis=-1).sum(axis=-1)
-    score_2 = torch.where(seg_mask==2, 1.0, 0.0).sum(axis=-1).sum(axis=-1)
-    return torch.stack([score_0, score_1, score_2], dim=-1)/(patch_size*patch_size)
+    score_0 = torch.where(seg_mask == 0, 1.0, 0.0).sum(axis=-1).sum(axis=-1)
+    score_1 = torch.where(seg_mask == 1, 1.0, 0.0).sum(axis=-1).sum(axis=-1)
+    score_2 = torch.where(seg_mask == 2, 1.0, 0.0).sum(axis=-1).sum(axis=-1)
+    return torch.stack([score_0, score_1, score_2], dim=-1) / (patch_size * patch_size)

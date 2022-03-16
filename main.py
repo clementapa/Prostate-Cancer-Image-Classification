@@ -32,7 +32,7 @@ def main():
                 parameters.optim_param.optimizer,
                 parameters.data_param.data_provider,
                 f"nb_sample:{parameters.data_param.nb_samples}",
-                parameters.network_param.classifier_name
+                parameters.network_param.classifier_name,
             ],
         )
 

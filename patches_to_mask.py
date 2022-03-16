@@ -29,7 +29,7 @@ from utils.dataset_utils import seg_max_to_score
 
 
 def main(params, wb_run_seg, patch_size, split, percentage_blank, level):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     wb_run = wandb.init(entity="attributes_classification_celeba", project="dlmi")
     name_artifact = f"attributes_classification_celeba/test-dlmi/{wb_run_seg}:top-1"
@@ -37,17 +37,20 @@ def main(params, wb_run_seg, patch_size, split, percentage_blank, level):
     path_to_model = artifact.download()
 
     base_module = BaseModuleForInference(params)
-    base_module.load_state_dict(torch.load(os.path.join(path_to_model, os.listdir(path_to_model)[0]), map_location=device)['state_dict'])
+    base_module.load_state_dict(
+        torch.load(
+            os.path.join(path_to_model, os.listdir(path_to_model)[0]),
+            map_location=device,
+        )["state_dict"]
+    )
     seg_model = base_module.model.to(device)
 
     transform = transforms.Compose(
-                [
-                    transforms.Normalize(
-                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-                    ),
-                    transforms.RandomHorizontalFlip(),
-                ]
-            )
+        [
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            transforms.RandomHorizontalFlip(),
+        ]
+    )
 
     root_dataset = osp.join(os.getcwd(), "assets", "mvadlmi")
 
@@ -64,18 +67,35 @@ def main(params, wb_run_seg, patch_size, split, percentage_blank, level):
         os.makedirs(patch_path)
 
     for i in tqdm(df.index):
-        img_path = osp.join("assets",  "dataset_patches", '_'.join([split, str(patch_size), str(1), str(percentage_blank)]), df["image_id"][i] + ".npy")
+        img_path = osp.join(
+            "assets",
+            "dataset_patches",
+            "_".join([split, str(patch_size), str(1), str(percentage_blank)]),
+            df["image_id"][i] + ".npy",
+        )
         np_array = np.load(open(img_path, "rb"))
         non_white_patches = torch.from_numpy(np_array)
         with torch.no_grad():
-            seg_masks_batch_1 = seg_model(transform(non_white_patches.permute(0, 3, 2, 1)/255.0).to(device)[:16]).argmax(dim=1)
-            seg_masks_batch_2 = seg_model(transform(non_white_patches.permute(0, 3, 2, 1)/255.0).to(device)[16:]).argmax(dim=1)
-            
-            scores = [seg_max_to_score(seg_masks_batch_1, patch_size).cpu().numpy(), seg_max_to_score(seg_masks_batch_2, patch_size).cpu().numpy()]
+            seg_masks_batch_1 = seg_model(
+                transform(non_white_patches.permute(0, 3, 2, 1) / 255.0).to(device)[:16]
+            ).argmax(dim=1)
+            seg_masks_batch_2 = seg_model(
+                transform(non_white_patches.permute(0, 3, 2, 1) / 255.0).to(device)[16:]
+            ).argmax(dim=1)
+
+            scores = [
+                seg_max_to_score(seg_masks_batch_1, patch_size).cpu().numpy(),
+                seg_max_to_score(seg_masks_batch_2, patch_size).cpu().numpy(),
+            ]
             seg_scores = np.concatenate(scores, axis=0)
-            np.save(osp.join(patch_path, df["image_id"][i]), np.concatenate([seg_masks_batch_1.cpu().numpy(), seg_masks_batch_2.cpu().numpy()], axis=0))
-            np.save(osp.join(patch_path, df["image_id"][i]+'_score'), seg_scores)
-        
+            np.save(
+                osp.join(patch_path, df["image_id"][i]),
+                np.concatenate(
+                    [seg_masks_batch_1.cpu().numpy(), seg_masks_batch_2.cpu().numpy()],
+                    axis=0,
+                ),
+            )
+            np.save(osp.join(patch_path, df["image_id"][i] + "_score"), seg_scores)
 
     zip_name = osp.join(
         osp.join(

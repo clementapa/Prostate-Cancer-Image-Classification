@@ -231,7 +231,7 @@ class LogImagesPredictions(BaseLogImages):
     def log_images(self, name, batch, n, p, outputs):
 
         x, y = batch
-        images = x[:n,:p].detach().cpu()
+        images = x[:n, :p].detach().cpu()
         labels = np.array(y[:n].cpu())
         preds = np.array(outputs["logits"][:n].argmax(dim=1).cpu())
 
@@ -266,7 +266,14 @@ class LogImagesPredictionsSegmentationClassification(Callback):
         """Called when the validation batch ends."""
 
         if batch_idx == 0 and pl_module.current_epoch % self.log_freq_img == 0:
-            self.log_images("val", batch, self.log_nb_img, self.log_nb_patches, outputs, pl_module.model.seg_model)
+            self.log_images(
+                "val",
+                batch,
+                self.log_nb_img,
+                self.log_nb_patches,
+                outputs,
+                pl_module.model.seg_model,
+            )
 
     def on_train_batch_end(
         self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx
@@ -275,17 +282,22 @@ class LogImagesPredictionsSegmentationClassification(Callback):
 
         if batch_idx == 0 and pl_module.current_epoch % self.log_freq_img == 0:
             self.log_images(
-                "train", batch, self.log_nb_img, self.log_nb_patches, outputs, pl_module.model.seg_model
+                "train",
+                batch,
+                self.log_nb_img,
+                self.log_nb_patches,
+                outputs,
+                pl_module.model.seg_model,
             )
 
     def log_images(self, name, batch, n, p, outputs, seg_model):
 
         x, y = batch
-        images = x[:n,:p].detach()
+        images = x[:n, :p].detach()
         labels = y[:n].cpu()
 
         preds = outputs["logits"][:n].argmax(dim=1).cpu()
-        
+
         batch_masks = []
         for b in images:
             masks = seg_model(b).argmax(dim=1).cpu()
@@ -312,7 +324,7 @@ class LogImagesPredictionsSegmentationClassification(Callback):
                             "class_labels": DICT_COLORS[self.data_provider],
                         },
                     },
-                    caption=f"label: {labels[i]}, prediction: {preds[i]}"
+                    caption=f"label: {labels[i]}, prediction: {preds[i]}",
                 )
             )
 

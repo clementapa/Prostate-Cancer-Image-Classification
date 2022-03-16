@@ -40,7 +40,7 @@ class Hparams:
 
     # for inference and test
     best_model: str = "skilled-gorge-229"
-    
+
 
 @dataclass
 class NetworkParams:
@@ -112,7 +112,9 @@ class MetricParams:
     # list_metrics: List[str] = list_field(
     #     "F1", "AUROC"
     # )
-    list_metrics: List[str] = list_field("Accuracy", "Recall", "Precision", "F1", "AUROC")
+    list_metrics: List[str] = list_field(
+        "Accuracy", "Recall", "Precision", "F1", "AUROC"
+    )
     # list_metrics: List[str] = list_field("IoU")
     num_classes: int = 6
     pixel_wise_parameters: Dict[str, Any] = dict_field(
@@ -120,7 +122,6 @@ class MetricParams:
     )
     name_module: str = "MetricsModuleClassification"
     average: str = "weighted"
-
 
 
 @dataclass
@@ -134,6 +135,7 @@ class CallbacksParams:
 class PushArtifactParams:
     split: str = "train"
     level: int = 1
+
 
 @dataclass
 class Parameters:
