@@ -10,6 +10,7 @@ from models.losses.segmentation.dice import DiceLoss
 
 from models.losses.focal_loss import FocalLoss
 
+
 class BaseModule(LightningModule):
     def __init__(self, network_param, optim_param, wb_run=None):
         """method used to define our model parameters"""
@@ -23,7 +24,7 @@ class BaseModule(LightningModule):
         else:
             # self.loss = nn.CrossEntropyLoss()
             self.loss = FocalLoss()
-        
+
         # optimizer
         self.optim_param = optim_param
         self.lr = optim_param.lr
@@ -63,7 +64,7 @@ class BaseModule(LightningModule):
 
         if isinstance(output, tuple):
             output = output[0].argmax(dim=-1)
-        else: 
+        else:
             output = output.argmax(dim=-1)
 
         return output

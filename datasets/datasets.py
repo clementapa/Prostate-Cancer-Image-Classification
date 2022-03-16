@@ -11,10 +11,13 @@ import torchvision.transforms as transforms
 import wandb
 from torch.utils.data import Dataset
 from utils.constant import CLASSES_PER_PROVIDER
-from utils.dataset_utils import (get_training_augmentation,
-                                 get_validation_augmentation, merge_cls,
-                                 return_random_patch,
-                                 return_random_patch_with_mask)
+from utils.dataset_utils import (
+    get_training_augmentation,
+    get_validation_augmentation,
+    merge_cls,
+    return_random_patch,
+    return_random_patch_with_mask,
+)
 
 
 class BaseDataset(Dataset):
@@ -28,12 +31,10 @@ class BaseDataset(Dataset):
         self.params = params
 
         if train:
-            self.df = pd.read_csv(
-                osp.join(self.params.root_dataset, "train.csv"))
+            self.df = pd.read_csv(osp.join(self.params.root_dataset, "train.csv"))
             self.subpath = osp.join("train", "train")
         else:
-            self.df = pd.read_csv(
-                osp.join(self.params.root_dataset, "test.csv"))
+            self.df = pd.read_csv(osp.join(self.params.root_dataset, "test.csv"))
             self.subpath = osp.join("test", "test")
 
     def __len__(self):
@@ -84,8 +85,7 @@ class PatchDataset(BaseDataset):
             )
             for _ in range(self.params.nb_samples)
         ]
-        output_tensor = torch.stack(
-            [self.transform(pil_img) for pil_img in pil_imgs])
+        output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
 
         return output_tensor, data["isup_grade"]
 
@@ -101,16 +101,13 @@ class BaseSegDataset(Dataset):
         self.params = params
 
         if train:
-            self.df = pd.read_csv(
-                osp.join(self.params.root_dataset, "train.csv"))
+            self.df = pd.read_csv(osp.join(self.params.root_dataset, "train.csv"))
             self.subpath = osp.join("train", "train")
-            self.subpath_masks = osp.join(
-                "train_label_masks", "train_label_masks")
+            self.subpath_masks = osp.join("train_label_masks", "train_label_masks")
 
             name = self.df["image_id"] + ".tiff"
             mask = name.isin(
-                os.listdir(
-                    osp.join(self.params.root_dataset, self.subpath_masks))
+                os.listdir(osp.join(self.params.root_dataset, self.subpath_masks))
             )
             self.df = self.df[mask].copy()
 
@@ -162,8 +159,7 @@ class PatchSegDataset(BaseSegDataset):
             pil_imgs.append(pil_img)
             seg_gt.append(seg_img)
 
-        output_tensor = torch.stack(
-            [self.transform(pil_img) for pil_img in pil_imgs])
+        output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
         seg_masks = torch.stack(seg_gt)
         return output_tensor, seg_masks
 
@@ -200,8 +196,7 @@ class SegDataset(BaseSegDataset):
             (self.params.image_size, self.params.image_size)
         )
         resized_mask = np.array(
-            wsi_seg.get_thumbnail(
-                (self.params.image_size, self.params.image_size))
+            wsi_seg.get_thumbnail((self.params.image_size, self.params.image_size))
         )[:, :, 0].T
 
         # resized_mask = torch.as_tensor(
@@ -228,9 +223,10 @@ class BaseStaticDataset(Dataset):
         self.params = params
 
         if train:
-            self.name_dataset = osp.basename(
-                self.params.train_artifact).split(':')[0]
-            if not os.path.exists(os.path.join(self.params.path_patches, self.name_dataset)):
+            self.name_dataset = osp.basename(self.params.train_artifact).split(":")[0]
+            if not os.path.exists(
+                os.path.join(self.params.path_patches, self.name_dataset)
+            ):
                 # check get artifact in agent_utils
                 artifact = wandb.run.use_artifact(self.params.train_artifact)
                 datadir = artifact.download(root=self.params.path_patches)
@@ -253,13 +249,12 @@ class BaseStaticDataset(Dataset):
                 datadir = artifact.download(root=self.params.path_patches)
 
                 path_to_zip_file = os.path.join(
-                    self.params.path_patches, self.name_dataset + '.zip')
-                with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
-                    zip_ref.extractall(os.path.join(
-                        datadir, self.name_dataset))
+                    self.params.path_patches, self.name_dataset + ".zip"
+                )
+                with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+                    zip_ref.extractall(os.path.join(datadir, self.name_dataset))
 
-            self.df = pd.read_csv(
-                osp.join(params.root_dataset, "test" + ".csv"))
+            self.df = pd.read_csv(osp.join(params.root_dataset, "test" + ".csv"))
             # raise NotImplementedError(f"To implement!")
 
     def __len__(self):
@@ -295,8 +290,9 @@ class StaticPatchDataset(BaseStaticDataset):
 
         data = dict(self.df.iloc[idx])
 
-        np_path = osp.join(self.params.path_patches,
-                           self.name_dataset, data['image_id'] + ".npy")
+        np_path = osp.join(
+            self.params.path_patches, self.name_dataset, data["image_id"] + ".npy"
+        )
         np_array = np.load(open(np_path, "rb"))
 
         if self.train:
@@ -306,10 +302,15 @@ class StaticPatchDataset(BaseStaticDataset):
 
         # images_to_pick = [random.randint(0, np_array.shape[0]-1) for _ in range(self.params.nb_samples)] # tirage avec remise
 
-        images_to_pick = random.sample([i for i in range(
-            self.params.nb_samples)], self.params.nb_samples)  # tirage sans remise
+        images_to_pick = random.sample(
+            [i for i in range(self.params.nb_samples)], self.params.nb_samples
+        )  # tirage sans remise
 
-        output_tensor = torch.stack([self.transform((torch.from_numpy(
-            np_img)/255.0).permute(2, 1, 0)) for np_img in np_array[images_to_pick]])
+        output_tensor = torch.stack(
+            [
+                self.transform((torch.from_numpy(np_img) / 255.0).permute(2, 1, 0))
+                for np_img in np_array[images_to_pick]
+            ]
+        )
 
         return output_tensor, label

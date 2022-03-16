@@ -19,6 +19,7 @@ from utils.callbacks import (
 from utils.logger import init_logger
 import os, errno
 
+
 class BaseTrainer:
     def __init__(self, config, logger=None, wb_run=None) -> None:
         self.config = config.hparams
@@ -109,12 +110,15 @@ class BaseTrainer:
         output_df["Predicted"] = y_pred
 
         try:
-            os.makedirs('submissions')
+            os.makedirs("submissions")
         except OSError as e:
             if e.errno != errno.EEXIST:
                 raise
-        
-        output_df.to_csv(f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv", index=False)
+
+        output_df.to_csv(
+            f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv",
+            index=False,
+        )
 
     def load_artifact(self, network_param, data_param):
         return

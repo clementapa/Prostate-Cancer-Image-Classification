@@ -27,16 +27,16 @@ class MMSg(nn.Module):
         in_shape = self.features_extractor(torch.randn(1, 3, 224, 224)).shape[1]
 
         self.patch_selector = nn.Sequential(
-            nn.Linear(in_shape+3, in_shape+3),
-            self.norm(in_shape+3),
+            nn.Linear(in_shape + 3, in_shape + 3),
+            self.norm(in_shape + 3),
             self.activation(),
             nn.Dropout(params.dropout),
-            nn.Linear(in_shape+3, (in_shape+3)//2),
-            self.norm((in_shape+3)//2),
+            nn.Linear(in_shape + 3, (in_shape + 3) // 2),
+            self.norm((in_shape + 3) // 2),
             self.activation(),
             nn.Dropout(params.dropout),
-            nn.Linear((in_shape+3)//2, 1),
-            nn.Sigmoid()
+            nn.Linear((in_shape + 3) // 2, 1),
+            nn.Sigmoid(),
         )
 
         # self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)
@@ -45,17 +45,17 @@ class MMSg(nn.Module):
         elif self.params.classifier_name == "Linear":
             self.classifier = nn.Linear(in_shape + 4, 6)
         elif self.params.classifier_name == "Multiple Linear":
-                self.classifier = nn.Sequential(
-                                    # nn.Linear(in_shape+4, in_shape+4),
-                                    # self.norm(in_shape+4),
-                                    # self.activation(),
-                                    # nn.Dropout(params.dropout),
-                                    nn.Linear(in_shape+4, (in_shape+4)//2),
-                                    self.norm((in_shape+4)//2),
-                                    self.activation(),
-                                    nn.Dropout(params.dropout),
-                                    nn.Linear((in_shape+4)//2, 6),
-                                )
+            self.classifier = nn.Sequential(
+                # nn.Linear(in_shape+4, in_shape+4),
+                # self.norm(in_shape+4),
+                # self.activation(),
+                # nn.Dropout(params.dropout),
+                nn.Linear(in_shape + 4, (in_shape + 4) // 2),
+                self.norm((in_shape + 4) // 2),
+                self.activation(),
+                nn.Dropout(params.dropout),
+                nn.Linear((in_shape + 4) // 2, 6),
+            )
         else:
             raise NotImplementedError("Classifier not implemented ! MLP or Linear")
 
@@ -67,10 +67,15 @@ class MMSg(nn.Module):
         path_to_model = artifact.download()
         # path_to_model = "/home/younesbelkada/Travail/MVA/DeepMedical/Prostate-Cancer-Image-Classification/artifacts/expert-surf-171:v7/epoch-19-val_loss=0.17.ckpt"
 
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         base_module = BaseModuleForInference(params)
-        base_module.load_state_dict(torch.load(os.path.join(path_to_model, os.listdir(path_to_model)[0]), map_location=device)['state_dict'])
+        base_module.load_state_dict(
+            torch.load(
+                os.path.join(path_to_model, os.listdir(path_to_model)[0]),
+                map_location=device,
+            )["state_dict"]
+        )
         self.seg_model = base_module.model
         # self.seg_model._requires_grad(False)
 

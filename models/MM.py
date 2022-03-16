@@ -36,12 +36,12 @@ class MM(nn.Module):
             self.norm(in_shape),
             self.activation(),
             nn.Dropout(params.dropout),
-            nn.Linear(in_shape, in_shape//2),
-            self.norm(in_shape//2),
+            nn.Linear(in_shape, in_shape // 2),
+            self.norm(in_shape // 2),
             self.activation(),
             nn.Dropout(params.dropout),
-            nn.Linear(in_shape//2, 1),
-            nn.Sigmoid()
+            nn.Linear(in_shape // 2, 1),
+            nn.Sigmoid(),
         )
 
         self.norm = getattr(nn, params.normalization)
@@ -49,31 +49,31 @@ class MM(nn.Module):
 
         # self.mlp = MLP(params.bottleneck_shape * params.nb_samples, params)
         if self.params.classifier_name == "MLP":
-            self.classifier = MLP(in_shape+1, params)
+            self.classifier = MLP(in_shape + 1, params)
         elif self.params.classifier_name == "Linear":
-            self.classifier = nn.Linear(in_shape+1, 6)
+            self.classifier = nn.Linear(in_shape + 1, 6)
         elif self.params.classifier_name == "Multiple Linear":
-                self.classifier = nn.Sequential(
-                                    # nn.Linear(in_shape+4, in_shape+4),
-                                    # self.norm(in_shape+4),
-                                    # self.activation(),
-                                    # nn.Dropout(params.dropout),
-                                    nn.Linear(in_shape+1, (in_shape+1)//2),
-                                    # self.norm((in_shape+4)//2),
-                                    self.activation(),
-                                    nn.Dropout(params.dropout),
-                                    nn.Linear((in_shape+1)//2, 6),
-                                )
+            self.classifier = nn.Sequential(
+                # nn.Linear(in_shape+4, in_shape+4),
+                # self.norm(in_shape+4),
+                # self.activation(),
+                # nn.Dropout(params.dropout),
+                nn.Linear(in_shape + 1, (in_shape + 1) // 2),
+                # self.norm((in_shape+4)//2),
+                self.activation(),
+                nn.Dropout(params.dropout),
+                nn.Linear((in_shape + 1) // 2, 6),
+            )
         else:
             raise NotImplementedError("Classifier not implemented ! MLP or Linear")
 
     def forward(self, x):
         patch_scores = []
         features = []
-        
+
         for batch in x:
             feature = self.features_extractor(batch)
-            
+
             patch_score = self.patch_selector(feature)
 
             patch_scores.append(patch_score)
@@ -83,10 +83,16 @@ class MM(nn.Module):
 
         features = torch.stack(features)
         patch_scores = torch.stack(patch_scores)
-        
-        features_important_patches = features[torch.arange(x.size(0)), most_relevant_patch.squeeze()]
-        probas = patch_scores[torch.arange(patch_scores.size(0)), most_relevant_patch.squeeze()]
-        
-        output = self.classifier(torch.cat([features_important_patches, probas], dim=-1))
-        
+
+        features_important_patches = features[
+            torch.arange(x.size(0)), most_relevant_patch.squeeze()
+        ]
+        probas = patch_scores[
+            torch.arange(patch_scores.size(0)), most_relevant_patch.squeeze()
+        ]
+
+        output = self.classifier(
+            torch.cat([features_important_patches, probas], dim=-1)
+        )
+
         return (output, probas)
