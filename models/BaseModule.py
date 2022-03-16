@@ -25,10 +25,13 @@ class BaseModule(LightningModule):
         if mode == "Segmentation":
             self.model = Segmentation(network_param)
         elif self.mode == "Classification":
-            self.model = getattr(Classification, network_param.network_name)(network_param)
+            self.model = getattr(Classification, network_param.network_name)(
+                network_param
+            )
         else:
-            self.model = getattr(ClassifWithSeg, network_param.network_name)(network_param)
-
+            self.model = getattr(ClassifWithSeg, network_param.network_name)(
+                network_param
+            )
 
     def forward(self, x):
         output = self.model(x)

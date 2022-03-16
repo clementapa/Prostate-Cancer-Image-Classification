@@ -11,7 +11,9 @@ class TopPatchWithSeg(BaseTopPatchMethods):
     def __init__(self, params):
         super().__init__(self, params)
 
-        self.patch_selector = nn.Sequential(nn.Linear(self.in_shape + 3, 1), nn.Sigmoid())
+        self.patch_selector = nn.Sequential(
+            nn.Linear(self.in_shape + 3, 1), nn.Sigmoid()
+        )
 
         # load seg_model
         self.seg_model = get_seg_model(params)
@@ -58,11 +60,14 @@ class TopPatchWithSeg(BaseTopPatchMethods):
 
         return (output, probas)
 
+
 class TopKPatchWithSeg(BaseTopPatchMethods):
     def __init__(self, params):
         super().__init__(self, params)
 
-        self.patch_selector = nn.Sequential(nn.Linear(self.in_shape + 3, 1), nn.Sigmoid())
+        self.patch_selector = nn.Sequential(
+            nn.Linear(self.in_shape + 3, 1), nn.Sigmoid()
+        )
 
         # load seg_model
         self.seg_model = get_seg_model(params)
@@ -96,12 +101,12 @@ class TopKPatchWithSeg(BaseTopPatchMethods):
 class OnlySeg(nn.Module):
     def __init__(self, params):
         super().__init__()
-        
+
         self.classifier = nn.Sequential(nn.Linear(3, 3), nn.ReLU(), nn.Linear(3, 6))
 
         # load seg_model
         self.seg_model = get_seg_model(params)
-    
+
     def forward(self, x):
         scores = []
         with torch.no_grad():
@@ -114,6 +119,7 @@ class OnlySeg(nn.Module):
         scores = torch.stack(scores).mean(dim=1)
         output = self.classifier(scores)
         return output
+
 
 class OnlySeg2(nn.Module):
     def __init__(self, params):
@@ -149,7 +155,7 @@ class OnlySeg2(nn.Module):
             nn.Dropout(params.dropout),
             nn.Linear(in_shape * 8, 6),
         )
-    
+
     def forward(self, x):
         scores = []
 

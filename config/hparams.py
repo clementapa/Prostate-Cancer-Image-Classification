@@ -73,10 +73,10 @@ class LossParams:
 
     name: str = "nn.CrossEntropyLos"
     params: Dict[str, Any] = dict_field(
-            dict(
-                reduction="mean",
-            )
+        dict(
+            reduction="mean",
         )
+    )
 
     # name: str = "models.losses.customized_ce.C_Crossentropy"
     # params: Dict[str, Any] = dict_field(
@@ -130,7 +130,6 @@ class NetworkClassificationParams:
     activation: str = "ReLU"
 
 
-
 @dataclass
 class NetworkClassif_WITH_SegParams:
     feature_extractor_name: str = "resnet34"
@@ -144,7 +143,6 @@ class NetworkClassif_WITH_SegParams:
 
     # Seg Model param
     wb_run_seg: str = "expert-surf-171"
-
 
 
 @dataclass
