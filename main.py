@@ -22,16 +22,20 @@ def main():
         parameters.network_param.network_name,
         parameters.data_param.dataset_name,
         f"patch_size: {parameters.data_param.patch_size}",
+        f"Backbone: {parameters.network_param.feature_extractor_name}"
     ]
     if parameters.hparams.MODE == "Segmentation":
         tags += [
-            f"provider: {parameters.network_param.data_provider}",
-            f"Backbone: {parameters.network_param.feature_extractor_name}",
+            f"provider: {parameters.network_param.data_provider}"
         ]
     elif parameters.hparams.MODE == "Classification":
-        tags += [f"nb_sample: {parameters.data_param.nb_samples}"]
+        tags += [
+            f"nb_sample: {parameters.data_param.nb_samples}"
+            ]
     else:
-        tags += [f"nb_sample: {parameters.data_param.nb_samples}"]
+        tags += [
+            f"nb_sample: {parameters.data_param.nb_samples}"
+            ]
 
     if parameters.hparams.train:
         wandb_run = wandb.init(

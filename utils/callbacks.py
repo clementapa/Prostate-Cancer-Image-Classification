@@ -4,6 +4,9 @@ from typing import Any, Dict, Optional
 import numpy as np
 import torch
 import wandb
+from math import sqrt
+from einops import rearrange
+
 from pytorch_lightning.callbacks import Callback, ModelCheckpoint
 from pytorch_lightning.utilities import rank_zero_info
 from pytorch_lightning.utilities.types import _METRIC, _PATH, STEP_OUTPUT
@@ -317,6 +320,7 @@ class LogImagesSegmentationClassification(Callback):
                 self.log_nb_patches,
                 outputs,
                 pl_module.model.seg_model,
+                pl_module.network_param
             )
 
     def on_train_batch_end(
@@ -332,11 +336,22 @@ class LogImagesSegmentationClassification(Callback):
                 self.log_nb_patches,
                 outputs,
                 pl_module.model.seg_model,
+                pl_module.network_param
             )
 
-    def log_images(self, name, batch, n, p, outputs, seg_model):
+    def log_images(self, name, batch, n, p, outputs, seg_model, params):
 
         x, y = batch
+
+        if len(x.shape) != 5:
+            x = rearrange(
+                x, 
+                "b c (h p1) (w p2) -> b (h w) c p1 p2", 
+                h=int(sqrt(params.nb_samples)), 
+                p1=params.patch_size,
+                p2=params.patch_size,
+                )        
+        
         images = x[:n, :p].detach()
         labels = y[:n].cpu()
 

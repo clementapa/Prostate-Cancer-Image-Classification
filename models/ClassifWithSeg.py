@@ -1,8 +1,11 @@
 import torch
 import torch.nn as nn
 from einops import rearrange
-from utils.agent_utils import get_seg_model
+from utils.agent_utils import get_seg_model, get_features_extractor, get_classif_model
 from utils.dataset_utils import seg_max_to_score
+import torchvision.transforms as transforms
+
+from math import sqrt
 
 from models.BaseModels import BaseTopPatchMethods
 
@@ -125,6 +128,9 @@ class OnlySeg2(nn.Module):
     def __init__(self, params):
         super().__init__()
 
+        # load seg_model
+        self.seg_model = get_seg_model(params)
+
         self.params = params
 
         in_shape = params.nb_samples * 3
@@ -173,4 +179,53 @@ class OnlySeg2(nn.Module):
 
         output = self.classifier(scores)
 
+        return output
+
+
+class SimpleModelWithSeg(nn.Module):
+    def __init__(self, params):
+        super().__init__()
+
+        self.params = params
+
+        # load seg_model
+        self.seg_model = get_seg_model(params)
+        for param in self.seg_model.parameters():
+            param.requires_grad = False
+
+        # get features extractor
+        self.features_extractor, self.feature_size = get_features_extractor(
+            params.feature_extractor_name
+        )
+        self.classifier = nn.Sequential(
+                                        nn.Linear(3+self.feature_size, 3), 
+                                        nn.ReLU(), 
+                                        nn.Linear(3, 6)
+                                        )
+
+        self.transform = transforms.Compose(
+            [
+                transforms.Resize((params.resized_img, params.resized_img))
+            ]
+        )
+    
+    def forward(self, x):
+        scores = []
+        with torch.no_grad():
+            images_to_patches = rearrange(
+                x, 
+                "b c (h p1) (w p2) -> b (h w) c p1 p2", 
+                h=int(sqrt(self.params.nb_samples)), 
+                p1=self.params.patch_size,
+                p2=self.params.patch_size,
+                )    
+            for batch in images_to_patches:
+                seg_mask = self.seg_model(batch).argmax(dim=1)
+                score = seg_max_to_score(seg_mask, seg_mask.shape[-1])
+                scores.append(score)
+        
+        features = self.features_extractor(self.transform(x))
+        scores = torch.stack(scores).mean(dim=1)
+        features_with_scores = torch.cat([features, scores], dim=1)
+        output = self.classifier(features_with_scores)
         return output

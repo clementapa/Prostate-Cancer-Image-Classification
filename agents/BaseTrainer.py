@@ -152,7 +152,7 @@ class BaseTrainer:
         self.logger.info(f"Checkpoint: monitor {monitor} {mode}")
 
         wandb.define_metric(monitor, summary=mode)
-        save_top_k = 5
+        save_top_k = 2
         every_n_epochs = 1
         callbacks += [
             AutoSaveModelCheckpoint(  # ModelCheckpoint

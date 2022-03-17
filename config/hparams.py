@@ -1,15 +1,15 @@
 import os
 import random
 from dataclasses import dataclass
+from math import sqrt
 from os import path as osp
 from typing import Any, ClassVar, Dict, List, Optional
-from simple_parsing.helpers import Serializable, choice, dict_field, list_field
 
 import pytorch_lightning as pl
 import simple_parsing
 import torch
 import torch.optim
-
+from simple_parsing.helpers import Serializable, choice, dict_field, list_field
 from utils.constant import CLASSES_PER_PROVIDER
 
 ################################## Global parameters ##################################
@@ -42,7 +42,7 @@ class Hparams:
     best_model: str = "skilled-gorge-229"
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Classification"
+    MODE: str = "Classif_WITH_Seg"
 
 
 @dataclass
@@ -84,10 +84,9 @@ class DatasetParams:
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 36  # FIXME
+    nb_samples: int = 36
 
-    nb_patches: int = 6  # FIXME
-    resized_patch: int = 256
+    resized_img: int = 768
 
     # dataloader
     num_workers: int = 2  # number of workers for dataloaders
@@ -120,17 +119,17 @@ class NetworkClassificationParams:
 
 @dataclass
 class NetworkClassif_WITH_SegParams:
-    feature_extractor_name: str = "resnet34"
-    network_name: str = "OnlySeg"
+    feature_extractor_name: str = "tresnet_xl_448"
+    network_name: str = "SimpleModelWithSeg"
 
-    classifier_name: str = "Multiple Linear"
-    # MLP parameters
-    dropout: float = 0.0
-    normalization: str = "BatchNorm1d"
-    activation: str = "ReLU"
+    # classifier_name: str = "Multiple Linear"
+    # # MLP parameters
+    # dropout: float = 0.0
+    # normalization: str = "BatchNorm1d"
+    # activation: str = "ReLU"
 
     # Seg Model param
-    wb_run_seg: str = "expert-surf-171"
+    wb_run_seg: str = "drawn-dream-632"
 
 
 @dataclass
@@ -235,6 +234,12 @@ class Parameters:
             self.network_param.seg_param.num_classes = CLASSES_PER_PROVIDER[
                 self.network_param.seg_param.data_provider
             ]
+
+            if self.data_param.dataset_name == "ConcatPatchDataset":
+                assert str(sqrt(self.data_param.nb_samples))[-1] == '0', f"{self.data_param.nb_samples} has to be squared root"
+                self.network_param.nb_samples = self.data_param.nb_samples
+                self.network_param.patch_size = self.data_param.patch_size
+                self.network_param.resized_img = self.data_param.resized_img
         else:
             raise NotImplementedError(
                 f"Mode {self.hparams.MODE} does not exist only Segmentation, Classification or Classif_WITH_Seg!"

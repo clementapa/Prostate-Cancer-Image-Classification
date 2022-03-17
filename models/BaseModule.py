@@ -13,6 +13,8 @@ class BaseModule(LightningModule):
         """method used to define our model parameters"""
         super(BaseModule, self).__init__()
 
+        self.network_param = network_param
+
         # loss function
         self.loss = import_class(loss_param.name, instantiate=loss_param.params)
 
