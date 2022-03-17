@@ -107,7 +107,7 @@ class BaseTrainer:
             self._static_patches("test")
 
         trainer = pl.Trainer(gpus=self.config.gpu)
-        best_path = f"attributes_classification_celeba/{self.config.wandb_project}/{self.config.best_model}:top-1"
+        best_path = f"attributes_classification_celeba/{self.config.wandb_project}/{self.config.best_model}:top-{self.config.top}"
         best_model = get_artifact(best_path, type="model")
 
         raw_predictions = trainer.predict(

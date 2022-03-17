@@ -40,6 +40,7 @@ class Hparams:
 
     # for inference and test
     best_model: str = "feasible-shape-757"
+    top: int = 1
 
     # Segmentation, Classification & Classif_WITH_Seg
     MODE: str = "Classification"
