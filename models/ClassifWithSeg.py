@@ -181,11 +181,14 @@ class ClassifAndSeg(nn.Module):
     def __init__(self, params):
         super().__init__()
 
-        self.classifier = nn.Sequential(nn.Linear(515, 3), nn.ReLU(), nn.Linear(3, 6))
 
         # load seg_model
         self.seg_model = get_seg_model(params)
         self.classif_model = get_classif_model(params)
+        in_shape = self.classif_model.get_features(torch.randn(1, 786, 786)).shape[1]
+
+        self.classifier = nn.Sequential(nn.Linear(3+in_shape, 3), nn.ReLU(), nn.Linear(3, 6))
+
 
         # transform
         self.transform = transforms.Compose(
