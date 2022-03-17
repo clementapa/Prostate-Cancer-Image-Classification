@@ -8,13 +8,15 @@ import wandb
 
 from torch.utils.data import Dataset
 
+
 class BaseDataset(Dataset):
     """
     A base dataset module to load the dataset for the challenge
     """
+
     def __init__(self, params, X, y, df, train=True, static=False):
         super().__init__()
-        
+
         self.params = params
         self.train = train
 
@@ -25,7 +27,9 @@ class BaseDataset(Dataset):
 
         if static:
             if train:
-                self.name_dataset = osp.basename(self.params.train_artifact).split(":")[0]
+                self.name_dataset = osp.basename(self.params.train_artifact).split(":")[
+                    0
+                ]
                 if not os.path.exists(
                     os.path.join(self.params.path_patches, self.name_dataset)
                 ):
@@ -40,7 +44,9 @@ class BaseDataset(Dataset):
                         zip_ref.extractall(os.path.join(datadir, self.name_dataset))
 
             else:
-                self.name_dataset = osp.basename(self.params.test_artifact).split(":")[0]
+                self.name_dataset = osp.basename(self.params.test_artifact).split(":")[
+                    0
+                ]
                 if not os.path.exists(
                     os.path.join(self.params.path_patches, self.name_dataset)
                 ):
@@ -62,10 +68,10 @@ class BaseDataset(Dataset):
         return len(self.X)
 
     def get_targets(self):
-        return np.array(self.df[self.df["image_id"].isin(self.X)]['isup_grade'])
+        return np.array(self.df[self.df["image_id"].isin(self.X)]["isup_grade"])
 
     def get_providers(self):
-        return np.array(self.df[self.df["image_id"].isin(self.X)]['data_provider'])
+        return np.array(self.df[self.df["image_id"].isin(self.X)]["data_provider"])
 
     def __getitem__(self, idx):
         raise NotImplementedError(f"Should be implemented in derived class!")

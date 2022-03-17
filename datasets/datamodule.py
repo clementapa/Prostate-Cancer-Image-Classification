@@ -32,18 +32,26 @@ class BaseDataModule(LightningDataModule):
             # Load dataset
 
             df = pd.read_csv(osp.join(self.config.root_dataset, "train.csv"))
-            
+
             if self.mode == "Segmentation":
                 name = df["image_id"] + ".tiff"
                 mask = name.isin(
-                    os.listdir(osp.join(self.config.root_dataset, "train_label_masks", "train_label_masks"))
+                    os.listdir(
+                        osp.join(
+                            self.config.root_dataset,
+                            "train_label_masks",
+                            "train_label_masks",
+                        )
+                    )
                 )
                 df = df[mask].copy()
-            
-            X = np.array(df['image_id'])
-            y = np.array(df['isup_grade'])
 
-            X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=self.config.split_val, stratify=y)
+            X = np.array(df["image_id"])
+            y = np.array(df["isup_grade"])
+
+            X_train, X_val, y_train, y_val = train_test_split(
+                X, y, test_size=self.config.split_val, stratify=y
+            )
 
             self.train_dataset = getattr(datasets, self.config.dataset_name)(
                 self.config, X_train, y_train, df, train=True
@@ -57,7 +65,7 @@ class BaseDataModule(LightningDataModule):
         if stage == "predict":
 
             df = pd.read_csv(osp.join(self.config.root_dataset, "test.csv"))
-            X_test = np.array(df['image_id'])
+            X_test = np.array(df["image_id"])
             y_dummy = np.ones_like(X_test)
 
             self.dataset = getattr(datasets, self.config.dataset_name)(

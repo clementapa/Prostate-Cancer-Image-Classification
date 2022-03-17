@@ -17,6 +17,7 @@ from utils.dataset_utils import (
 
 from datasets.BaseDatasets import BaseDataset
 
+
 class PatchDataset(BaseDataset):
     def __init__(self, params, X, y, df, train=True):
         super().__init__(params, X, y, df, train, static=False)
@@ -44,9 +45,7 @@ class PatchDataset(BaseDataset):
     def __getitem__(self, idx):
         image_id = self.X[idx]
 
-        img_path = osp.join(
-            self.params.root_dataset, self.subpath, image_id + ".tiff"
-        )
+        img_path = osp.join(self.params.root_dataset, self.subpath, image_id + ".tiff")
 
         if self.train:
             label = self.y[idx]
@@ -146,7 +145,7 @@ class ConcatPatchDataset(BaseDataset):
             )
 
     def __getitem__(self, idx):
-        
+
         image_id = self.X[idx]
 
         np_path = osp.join(
@@ -158,7 +157,7 @@ class ConcatPatchDataset(BaseDataset):
             label = self.y[idx]
         else:
             label = -1
-        
+
         images_to_pick = [
             random.randint(0, np_array.shape[0] - 1)
             for _ in range(self.params.nb_samples)
@@ -192,12 +191,10 @@ class PatchSegDataset(BaseDataset):
         )
 
     def __getitem__(self, idx):
-        
+
         image_id = self.X[idx]
 
-        img_path = osp.join(
-            self.params.root_dataset, self.subpath, image_id + ".tiff"
-        )
+        img_path = osp.join(self.params.root_dataset, self.subpath, image_id + ".tiff")
         wsi_image = openslide.OpenSlide(img_path)
 
         mask_path = img_path.replace("train", "train_label_masks")
@@ -213,7 +210,10 @@ class PatchSegDataset(BaseDataset):
                 self.params.percentage_blank,
                 self.params.level,
             )
-            if self.df[self.df["image_id"]==image_id]['data_provider'].iloc[0] == "radboud":
+            if (
+                self.df[self.df["image_id"] == image_id]["data_provider"].iloc[0]
+                == "radboud"
+            ):
                 seg_img = merge_cls(seg_img)
             pil_imgs.append(pil_img)
             seg_gt.append(seg_img)
@@ -221,6 +221,7 @@ class PatchSegDataset(BaseDataset):
         output_tensor = torch.stack([self.transform(pil_img) for pil_img in pil_imgs])
         seg_masks = torch.stack(seg_gt)
         return output_tensor, seg_masks
+
 
 # class SegDataset(BaseDataset):
 #     def __init__(self, params, train=True, transform=None):
