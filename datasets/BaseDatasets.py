@@ -10,6 +10,7 @@ class BaseDataset(Dataset):
     """
     A base dataset module to load the dataset for the challenge
     """
+
     def __init__(self, params, X, y, df, train, static):
         super().__init__()
 

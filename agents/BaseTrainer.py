@@ -213,20 +213,21 @@ class BaseTrainer:
         name_folder = f"{split}_{self.data_param.patch_size}_{self.data_param.level}_{self.data_param.percentage_blank}"
 
         self.logger.info(f"Static Patches mode {name_folder}...")
-        
-        if not osp.exists(osp.join(self.data_param.path_patches, name_folder)) or self.data_param.recreate_patches:
+
+        if (
+            not osp.exists(osp.join(self.data_param.path_patches, name_folder))
+            or self.data_param.recreate_patches
+        ):
             try:
                 path = f"attributes_classification_celeba/{self.config.wandb_project}/{name_folder}:latest"
                 self.logger.info(f"Try loading {path} in artifacts ...")
 
                 zip_file = get_artifact(path, type="dataset")
 
-                path_to_unzip_file = osp.join(
-                    self.data_param.path_patches, name_folder
-                )
+                path_to_unzip_file = osp.join(self.data_param.path_patches, name_folder)
                 with zipfile.ZipFile(zip_file, "r") as zip_ref:
                     zip_ref.extractall(path_to_unzip_file)
-                
+
                 self.data_param.patch_folder = path_to_unzip_file
 
                 self.logger.info(f"Load {path} in artifacts OK")
@@ -234,14 +235,16 @@ class BaseTrainer:
                 self.logger.info(f"{path} not exists as artifact, create patches")
 
                 self.data_param.patch_folder = images_to_patches(
-                    self.data_param.root_dataset, 
-                    self.data_param.patch_size, 
-                    split, 
+                    self.data_param.root_dataset,
+                    self.data_param.patch_size,
+                    split,
                     self.data_param.percentage_blank,
-                    self.data_param.level
-                    )
+                    self.data_param.level,
+                )
         else:
             self.logger.info(f"{name_folder} already exists in local")
-            self.data_param.patch_folder = osp.join(osp.join(self.data_param.path_patches, name_folder))
+            self.data_param.patch_folder = osp.join(
+                osp.join(self.data_param.path_patches, name_folder)
+            )
 
         self.logger.info(f"Patch folder : {self.data_param.patch_folder}")

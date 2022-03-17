@@ -15,6 +15,7 @@ from PIL import Image
 from tifffile import imread
 from tqdm import tqdm
 
+
 def merge_cls(seg_img):
     seg_img[seg_img == 2] = 1
     seg_img[(seg_img == 7)] = 0
@@ -164,6 +165,7 @@ def plot_split(name_split, dataset):
         }
     )
 
+
 def images_to_patches(root_dataset, patch_size, split, percentage_blank, level):
     df = pd.read_csv(osp.join(root_dataset, split + ".csv"))
 
@@ -272,6 +274,6 @@ def images_to_patches(root_dataset, patch_size, split, percentage_blank, level):
     )
 
     artifact.add_file(zip_name + ".zip")
-    wandb.log_artifact(artifact, aliases=["latest"])   
+    wandb.log_artifact(artifact, aliases=["latest"])
 
     return patch_path
