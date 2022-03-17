@@ -1,10 +1,11 @@
 import random
-from PIL import Image
 
 import albumentations as albu
 import numpy as np
 import torch
 from albumentations.pytorch.transforms import ToTensorV2
+from PIL import Image
+import wandb
 
 
 def merge_cls(seg_img):
@@ -113,3 +114,29 @@ def seg_max_to_score(seg_mask, patch_size):
     score_1 = torch.where(seg_mask == 1, 1.0, 0.0).sum(axis=-1).sum(axis=-1)
     score_2 = torch.where(seg_mask == 2, 1.0, 0.0).sum(axis=-1).sum(axis=-1)
     return torch.stack([score_0, score_1, score_2], dim=-1) / (patch_size * patch_size)
+
+
+def analyse_repartition(train_dataset, val_dataset):
+
+    plot_split("train", train_dataset)
+    plot_split("val", val_dataset)
+
+def _count(array):
+    unique, counts = np.unique(array, return_counts=True)
+    count = dict(zip(unique, counts))
+    count = [[label, val] for (label, val) in count.items()]
+    return count
+
+def plot_split(name_split, dataset):
+
+    targets = dataset.dataset.get_targets()[dataset.indices]
+    providers = dataset.dataset.get_providers()[dataset.indices]
+
+    targets_count = _count(targets)
+    providers_count = _count(providers)
+
+    table = wandb.Table(data=targets_count, columns = ["Class", "Count"])
+    wandb.log({f"Data Analysis/{name_split}_classes" : wandb.plot.bar(table, "Class", "Count", title=f"Classes repartition {name_split}")})
+
+    table = wandb.Table(data=providers_count, columns = ["Data provider", "Count"])
+    wandb.log({f"Data Analysis/{name_split}_providers" : wandb.plot.bar(table, "Data provider", "Count", title=f"Data providers repartition {name_split}")})

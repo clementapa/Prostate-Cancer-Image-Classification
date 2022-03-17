@@ -42,6 +42,12 @@ class BaseDataset(Dataset):
     def __len__(self):
         return len(self.df)
 
+    def get_targets(self):
+        return np.array(self.df['isup_grade'])
+
+    def get_providers(self):
+        return np.array(self.df['data_provider'])
+
     def __getitem__(self, idx):
         raise NotImplementedError(f"Should be implemented in derived class!")
 
@@ -117,6 +123,12 @@ class BaseSegDataset(Dataset):
 
     def __len__(self):
         return len(self.df)
+
+    def get_targets(self):
+        return np.array(self.df['isup_grade'])
+
+    def get_providers(self):
+        return np.array(self.df['data_provider'])
 
     def __getitem__(self, idx):
         raise NotImplementedError(f"Should be implemented in derived class!")
@@ -261,6 +273,12 @@ class BaseStaticDataset(Dataset):
 
     def __len__(self):
         return len(self.df)
+
+    def get_targets(self):
+        return np.array(self.df['isup_grade'])
+
+    def get_providers(self):
+        return np.array(self.df['data_provider'])
 
     def __getitem__(self, idx):
         raise NotImplementedError(f"Should be implemented in derived class!")
