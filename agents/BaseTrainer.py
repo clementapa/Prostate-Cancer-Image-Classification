@@ -185,13 +185,14 @@ class BaseTrainer:
                 )
             ]
         elif self.config.MODE == "Classif_WITH_Seg":
-            callbacks += [
-                LogImagesSegmentationClassification(
-                    self.callbacks_param.log_freq_img,
-                    self.callbacks_param.log_nb_img,
-                    self.callbacks_param.log_nb_patches,
-                    self.network_param.seg_param.data_provider,
-                )
-            ]
+            # callbacks += [
+            #     LogImagesSegmentationClassification(
+            #         self.callbacks_param.log_freq_img,
+            #         self.callbacks_param.log_nb_img,
+            #         self.callbacks_param.log_nb_patches,
+            #         self.network_param.seg_param.data_provider,
+            #     )
+            # ]
+            pass
 
         return callbacks
