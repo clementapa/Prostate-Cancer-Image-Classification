@@ -69,7 +69,7 @@ class BaseDataModule(LightningDataModule):
             y_dummy = np.ones_like(X_test)
 
             self.dataset = getattr(datasets, self.config.dataset_name)(
-                self.config, X_test, y_dummy, train=False
+                self.config, X_test, y_dummy, df, train=False
             )
 
     def train_dataloader(self):
