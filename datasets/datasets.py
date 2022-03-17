@@ -1,7 +1,7 @@
 import os.path as osp
 import random
 
-from math import sqrt 
+from math import sqrt
 
 import numpy as np
 import openslide
@@ -162,7 +162,8 @@ class ConcatPatchDataset(BaseDataset):
         # ] # tirage avec remise
 
         images_to_pick = random.sample(
-            [i for i in range(min(self.params.nb_samples, np_array.shape[0]-1))], min(self.params.nb_samples, np_array.shape[0]-1)
+            [i for i in range(min(self.params.nb_samples, np_array.shape[0] - 1))],
+            min(self.params.nb_samples, np_array.shape[0] - 1),
         )  # tirage sans remise
 
         output_tensor = torch.stack(
@@ -178,7 +179,9 @@ class ConcatPatchDataset(BaseDataset):
             output_tensor = torch.cat([output_tensor, diff_tensor], axis=0)
 
         output_tensor = rearrange(
-            output_tensor, "(n1 n2) c h w -> c (n1 h) (n2 w)", n1=int(sqrt(self.params.nb_samples))
+            output_tensor,
+            "(n1 n2) c h w -> c (n1 h) (n2 w)",
+            n1=int(sqrt(self.params.nb_samples)),
         )
 
         return output_tensor, label
