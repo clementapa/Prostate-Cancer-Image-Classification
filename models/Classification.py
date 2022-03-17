@@ -98,6 +98,9 @@ class SimpleModel(nn.Module):
         features = self.features_extractor(x)
         output = self.classifier(features)
         return output
+    
+    def get_features(self, x):
+        return self.features_extractor(x)
 
 
 class TDCNN(nn.Module):

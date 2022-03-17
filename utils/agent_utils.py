@@ -68,6 +68,27 @@ def get_seg_model(params):
     return model
 
 
+def get_classif_model(params):
+    # load seg_model
+    name_artifact = (
+        f"attributes_classification_celeba/test-dlmi/{params.wb_run_classif}:top-1"
+    )
+    artifact = wandb.use_artifact(name_artifact)
+
+    # model = get_net("Classification", params.classif_param.network_name)
+    mod = importlib.import_module(f"models.Classification")
+    model = getattr(mod, params.classif_param.network_name)(params.classif_param)
+    path_to_model = artifact.download()
+    pth = torch.load(
+        os.path.join(path_to_model, os.listdir(path_to_model)[0]),
+        map_location=torch.device("cpu"),
+    )["state_dict"]
+    pth = {".".join(k.split(".")[1:]): v for k, v in pth.items()}
+    model.load_state_dict(pth)
+
+    return model
+
+
 def get_features_extractor(feature_extractor_name):
     features_extractor = timm.create_model(feature_extractor_name, pretrained=True)
     features_extractor.reset_classifier(0)

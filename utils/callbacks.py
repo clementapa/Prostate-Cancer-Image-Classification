@@ -344,7 +344,7 @@ class LogImagesSegmentationClassification(Callback):
 
         batch_masks = []
         for b in images:
-            masks = seg_model(b).argmax(dim=1).cpu()
+            masks = seg_model(b.unsqueeze(0)).argmax(dim=1).cpu()
             batch_masks.append(masks)
         batch_masks = torch.stack(batch_masks)
 

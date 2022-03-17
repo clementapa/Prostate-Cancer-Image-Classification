@@ -42,7 +42,7 @@ class Hparams:
     best_model: str = "skilled-gorge-229"
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Segmentation"
+    MODE: str = "Classif_WITH_Seg"
 
 
 @dataclass
@@ -69,7 +69,7 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "PatchSegDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "ConcatPatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
     path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
@@ -83,14 +83,14 @@ class DatasetParams:
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 1  # FIXME
+    nb_samples: int = 36  # FIXME
 
-    nb_patches: int = 4  # FIXME
-    resized_patch: int = 256
+    nb_patches: int = 6  # FIXME
+    resized_patch: int = 128
 
     # dataloader
     num_workers: int = 2  # number of workers for dataloaders
-    batch_size: int = 4  # batch_size
+    batch_size: int = 1  # batch_size
 
     train_artifact: str = "attributes_classification_celeba/dlmi/train_256_1_0.5:v0"
     # train_artifact: str = "attributes_classification_celeba/dlmi/train_192_1_0.5:v0"
@@ -129,8 +129,8 @@ class NetworkClassificationParams:
 
 @dataclass
 class NetworkClassif_WITH_SegParams:
-    feature_extractor_name: str = "resnet34"
-    network_name: str = "OnlySeg"
+    feature_extractor_name: str = "resnet152"
+    network_name: str = "ClassifAndSeg"
 
     classifier_name: str = "Multiple Linear"
     # MLP parameters
@@ -139,7 +139,11 @@ class NetworkClassif_WITH_SegParams:
     activation: str = "ReLU"
 
     # Seg Model param
-    wb_run_seg: str = "expert-surf-171"
+    wb_run_seg: str = "drawn-dream-632"
+    patch_size: int = 384
+
+    # Classif Model
+    wb_run_classif: str = "true-oath-501"
 
 
 @dataclass
@@ -183,6 +187,7 @@ class NetworkSegmentationParams:
 
     # karolinska, radboud, radboud_merged or all
     data_provider: str = "all"
+
 
 
 @dataclass
@@ -244,6 +249,7 @@ class Parameters:
             self.network_param.seg_param.num_classes = CLASSES_PER_PROVIDER[
                 self.network_param.seg_param.data_provider
             ]
+            self.network_param.classif_param = NetworkClassificationParams()
         else:
             raise NotImplementedError(
                 f"Mode {self.hparams.MODE} does not exist only Segmentation, Classification or Classif_WITH_Seg!"

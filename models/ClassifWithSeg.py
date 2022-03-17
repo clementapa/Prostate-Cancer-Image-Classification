@@ -1,8 +1,10 @@
+from matplotlib import transforms
 import torch
 import torch.nn as nn
 from einops import rearrange
-from utils.agent_utils import get_seg_model
+from utils.agent_utils import get_classif_model, get_seg_model
 from utils.dataset_utils import seg_max_to_score
+import torchvision.transforms as transforms
 
 from models.BaseModels import BaseTopPatchMethods
 
@@ -173,4 +175,37 @@ class OnlySeg2(nn.Module):
 
         output = self.classifier(scores)
 
+        return output
+
+class ClassifAndSeg(nn.Module):
+    def __init__(self, params):
+        super().__init__()
+
+        self.classifier = nn.Sequential(nn.Linear(515, 3), nn.ReLU(), nn.Linear(3, 6))
+
+        # load seg_model
+        self.seg_model = get_seg_model(params)
+        self.classif_model = get_classif_model(params)
+
+        # transform
+        self.transform = transforms.Compose(
+            [
+                transforms.Resize((params.patch_size, params.patch_size))
+            ]
+        )
+
+    def forward(self, x):
+        scores = []
+        with torch.no_grad():
+            images_to_patches = rearrange(x, "b c (h n1) (w n2) -> b (n1 n2) c h w", n1=6, n2=6)
+            for batch in images_to_patches:
+                seg_mask = self.seg_model(self.transform(batch)).argmax(dim=1)
+                score = seg_max_to_score(seg_mask, seg_mask.shape[-1])
+                scores.append(score)
+        # bs, n_patches, h, w, c
+        # features = torch.stack(features)
+        features = self.classif_model.get_features(x)
+        scores = torch.stack(scores).mean(dim=1)
+        features_with_scores = torch.cat([features, scores], dim=1)
+        output = self.classifier(features_with_scores)
         return output
