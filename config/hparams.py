@@ -73,8 +73,8 @@ class DatasetParams:
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
     path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
-    # dataset static params
-    dataset_static: str = True  
+    # dataset static params
+    dataset_static: str = True
     recreate_patches: bool = False
 
     # Patches params
