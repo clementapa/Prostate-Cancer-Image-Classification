@@ -39,7 +39,7 @@ class Hparams:
     train: bool = True
 
     # for inference and test
-    best_model: str = "skilled-gorge-229"
+    best_model: str = "pious-firefly-747"
 
     # Segmentation, Classification & Classif_WITH_Seg
     MODE: str = "Classif_WITH_Seg"
