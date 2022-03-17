@@ -236,7 +236,9 @@ class Parameters:
             ]
 
             if self.data_param.dataset_name == "ConcatPatchDataset":
-                assert str(sqrt(self.data_param.nb_samples))[-1] == '0', f"{self.data_param.nb_samples} has to be squared root"
+                assert (
+                    str(sqrt(self.data_param.nb_samples))[-1] == "0"
+                ), f"{self.data_param.nb_samples} has to be squared root"
                 self.network_param.nb_samples = self.data_param.nb_samples
                 self.network_param.patch_size = self.data_param.patch_size
                 self.network_param.resized_img = self.data_param.resized_img

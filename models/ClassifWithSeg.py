@@ -198,32 +198,28 @@ class SimpleModelWithSeg(nn.Module):
             params.feature_extractor_name
         )
         self.classifier = nn.Sequential(
-                                        nn.Linear(3+self.feature_size, 3), 
-                                        nn.ReLU(), 
-                                        nn.Linear(3, 6)
-                                        )
+            nn.Linear(3 + self.feature_size, 3), nn.ReLU(), nn.Linear(3, 6)
+        )
 
         self.transform = transforms.Compose(
-            [
-                transforms.Resize((params.resized_img, params.resized_img))
-            ]
+            [transforms.Resize((params.resized_img, params.resized_img))]
         )
-    
+
     def forward(self, x):
         scores = []
         with torch.no_grad():
             images_to_patches = rearrange(
-                x, 
-                "b c (h p1) (w p2) -> b (h w) c p1 p2", 
-                h=int(sqrt(self.params.nb_samples)), 
+                x,
+                "b c (h p1) (w p2) -> b (h w) c p1 p2",
+                h=int(sqrt(self.params.nb_samples)),
                 p1=self.params.patch_size,
                 p2=self.params.patch_size,
-                )    
+            )
             for batch in images_to_patches:
                 seg_mask = self.seg_model(batch).argmax(dim=1)
                 score = seg_max_to_score(seg_mask, seg_mask.shape[-1])
                 scores.append(score)
-        
+
         features = self.features_extractor(self.transform(x))
         scores = torch.stack(scores).mean(dim=1)
         features_with_scores = torch.cat([features, scores], dim=1)
