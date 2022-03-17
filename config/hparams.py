@@ -117,7 +117,7 @@ class CallbacksParams:
 
 @dataclass
 class NetworkClassificationParams:
-    feature_extractor_name: str = "resnet34"
+    feature_extractor_name: str = "tresnet_xl_448"
     network_name: str = "SimpleModel"
     classifier_name: str = "Multiple Linear"
 
@@ -129,7 +129,7 @@ class NetworkClassificationParams:
 
 @dataclass
 class NetworkClassif_WITH_SegParams:
-    feature_extractor_name: str = "tresnet_xl_448"
+    feature_extractor_name: str = "resnet132"
     network_name: str = "ClassifAndSeg"
 
     classifier_name: str = "Multiple Linear"
