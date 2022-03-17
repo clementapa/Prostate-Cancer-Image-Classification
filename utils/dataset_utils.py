@@ -129,9 +129,8 @@ def _count(array):
 
 def plot_split(name_split, dataset):
 
-    targets = dataset.dataset.get_targets()[dataset.indices]
-    providers = dataset.dataset.get_providers()[dataset.indices]
-
+    targets = dataset.get_targets()
+    providers = dataset.get_providers()
     targets_count = _count(targets)
     providers_count = _count(providers)
 

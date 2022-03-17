@@ -1,5 +1,10 @@
 from pytorch_lightning import LightningDataModule
 from torch.utils.data import DataLoader, random_split
+from sklearn.model_selection import train_test_split
+
+import os, os.path as osp
+import pandas as pd
+import numpy as np
 
 from utils.dataset_utils import coll_fn, coll_fn_seg, analyse_repartition
 import datasets.datasets as datasets
@@ -11,8 +16,9 @@ class BaseDataModule(LightningDataModule):
 
         self.config = dataset_param
         self.batch_size = self.config.batch_size
+        self.mode = mode
 
-        if mode == "Segmentation":
+        if self.mode == "Segmentation":
             self.collate_fn = coll_fn_seg
         else:
             self.collate_fn = coll_fn
@@ -24,19 +30,38 @@ class BaseDataModule(LightningDataModule):
         # Build dataset
         if stage in (None, "fit"):
             # Load dataset
-            self.dataset = getattr(datasets, self.config.dataset_name)(
-                self.config, train=True
+
+            df = pd.read_csv(osp.join(self.config.root_dataset, "train.csv"))
+            
+            if self.mode == "Segmentation":
+                name = df["image_id"] + ".tiff"
+                mask = name.isin(
+                    os.listdir(osp.join(self.config.root_dataset, "train_label_masks", "train_label_masks"))
+                )
+                df = df[mask].copy()
+            
+            X = np.array(df['image_id'])
+            y = np.array(df['isup_grade'])
+
+            X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=self.config.split_val, stratify=y)
+
+            self.train_dataset = getattr(datasets, self.config.dataset_name)(
+                self.config, X_train, y_train, df, train=True
+            )
+            self.val_dataset = getattr(datasets, self.config.dataset_name)(
+                self.config, X_val, y_val, df, train=True
             )
 
-            val_length = int(len(self.dataset) * self.config.split_val)
-            lengths = [len(self.dataset) - val_length, val_length]
-            self.train_dataset, self.val_dataset = random_split(self.dataset, lengths)
-            
             analyse_repartition(self.train_dataset, self.val_dataset)
 
         if stage == "predict":
+
+            df = pd.read_csv(osp.join(self.config.root_dataset, "test.csv"))
+            X_test = np.array(df['image_id'])
+            y_dummy = np.ones_like(X_test)
+
             self.dataset = getattr(datasets, self.config.dataset_name)(
-                self.config, train=False
+                self.config, X_test, y_dummy, train=False
             )
 
     def train_dataloader(self):
