@@ -39,10 +39,10 @@ class Hparams:
     train: bool = True
 
     # for inference and test
-    best_model: str = "skilled-gorge-229"
+    best_model: str = "feasible-shape-757"
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Classif_WITH_Seg"
+    MODE: str = "Classification"
 
 
 @dataclass
@@ -78,8 +78,8 @@ class DatasetParams:
     recreate_patches: bool = False
 
     # Patches params
-    patch_size: int = 384
-    percentage_blank: float = 0.5
+    patch_size: int = 256
+    percentage_blank: float = 0.5 # max percentage
     level: int = 1
 
     # dataset params
