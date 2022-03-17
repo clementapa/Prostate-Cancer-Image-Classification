@@ -43,7 +43,7 @@ class Hparams:
     top: int = 1
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Classification"
+    MODE: str = "Classif_WITH_Seg"
 
 
 @dataclass
@@ -79,7 +79,7 @@ class DatasetParams:
     recreate_patches: bool = False
 
     # Patches params
-    patch_size: int = 256
+    patch_size: int = 384
     percentage_blank: float = 0.5  # max percentage
     level: int = 1
 
