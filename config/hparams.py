@@ -79,7 +79,7 @@ class DatasetParams:
 
     # Patches params
     patch_size: int = 256
-    percentage_blank: float = 0.5 # max percentage
+    percentage_blank: float = 0.5  # max percentage
     level: int = 1
 
     # dataset params

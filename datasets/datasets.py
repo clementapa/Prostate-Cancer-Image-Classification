@@ -159,7 +159,7 @@ class ConcatPatchDataset(BaseDataset):
         images_to_pick = [
             random.randint(0, np_array.shape[0] - 1)
             for _ in range(self.params.nb_samples)
-        ] # tirage avec remise
+        ]  # tirage avec remise
 
         # images_to_pick = random.sample(
         #     [i for i in range(min(self.params.nb_samples, np_array.shape[0] - 1))],
