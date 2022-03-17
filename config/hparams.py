@@ -28,14 +28,14 @@ class Hparams:
     # basic params
     seed_everything: Optional[int] = None  # seed for the whole run
     gpu: int = 0  # number or gpu
-    max_epochs: int = 60  # maximum number of epochs
+    max_epochs: int = 100  # maximum number of epochs
     weights_path: str = osp.join(os.getcwd(), "weights")
     enable_progress_bar: bool = True
 
     # modes
     tune_lr: bool = False
     tune_batch_size: bool = False
-    dev_run: bool = True
+    dev_run: bool = False
     train: bool = True
 
     # for inference and test
@@ -75,7 +75,7 @@ class DatasetParams:
 
     # dataset static params
     dataset_static: str = True  
-    recreate_patches: bool = True
+    recreate_patches: bool = False
 
     # Patches params
     patch_size: int = 384
@@ -84,9 +84,9 @@ class DatasetParams:
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 16  # FIXME
+    nb_samples: int = 36  # FIXME
 
-    nb_patches: int = 4  # FIXME
+    nb_patches: int = 6  # FIXME
     resized_patch: int = 256
 
     # dataloader
@@ -100,7 +100,7 @@ class CallbacksParams:
     # params log predictions
     log_freq_img: int = 1
     log_nb_img: int = 4
-    log_nb_patches: int = 18
+    log_nb_patches: int = 10000
 
     # Early Stopping
     early_stopping: bool = True
@@ -116,12 +116,6 @@ class CallbacksParams:
 class NetworkClassificationParams:
     feature_extractor_name: str = "resnet34"
     network_name: str = "SimpleModel"
-    classifier_name: str = "Multiple Linear"
-
-    # MLP parameters
-    dropout: float = 0.0
-    normalization: str = "BatchNorm1d"
-    activation: str = "ReLU"
 
 
 @dataclass

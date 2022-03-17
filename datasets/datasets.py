@@ -124,7 +124,7 @@ class ConcatPatchDataset(BaseDataset):
         if train:
             self.transform = transforms.Compose(
                 [
-                    transforms.Resize((params.resized_patch, params.resized_patch)),
+                    # transforms.Resize((params.resized_patch, params.resized_patch)),
                     transforms.RandomHorizontalFlip(),
                     transforms.RandomVerticalFlip(),
                     transforms.Normalize(
@@ -135,7 +135,7 @@ class ConcatPatchDataset(BaseDataset):
         else:
             self.transform = transforms.Compose(
                 [
-                    transforms.Resize((params.resized_patch, params.resized_patch)),
+                    # transforms.Resize((params.resized_patch, params.resized_patch)),
                     transforms.Normalize(
                         mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
                     ),
