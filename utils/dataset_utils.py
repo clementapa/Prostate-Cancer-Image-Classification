@@ -121,11 +121,13 @@ def analyse_repartition(train_dataset, val_dataset):
     plot_split("train", train_dataset)
     plot_split("val", val_dataset)
 
+
 def _count(array):
     unique, counts = np.unique(array, return_counts=True)
     count = dict(zip(unique, counts))
     count = [[label, val] for (label, val) in count.items()]
     return count
+
 
 def plot_split(name_split, dataset):
 
@@ -135,8 +137,23 @@ def plot_split(name_split, dataset):
     targets_count = _count(targets)
     providers_count = _count(providers)
 
-    table = wandb.Table(data=targets_count, columns = ["Class", "Count"])
-    wandb.log({f"Data Analysis/{name_split}_classes" : wandb.plot.bar(table, "Class", "Count", title=f"Classes repartition {name_split}")})
+    table = wandb.Table(data=targets_count, columns=["Class", "Count"])
+    wandb.log(
+        {
+            f"Data Analysis/{name_split}_classes": wandb.plot.bar(
+                table, "Class", "Count", title=f"Classes repartition {name_split}"
+            )
+        }
+    )
 
-    table = wandb.Table(data=providers_count, columns = ["Data provider", "Count"])
-    wandb.log({f"Data Analysis/{name_split}_providers" : wandb.plot.bar(table, "Data provider", "Count", title=f"Data providers repartition {name_split}")})
+    table = wandb.Table(data=providers_count, columns=["Data provider", "Count"])
+    wandb.log(
+        {
+            f"Data Analysis/{name_split}_providers": wandb.plot.bar(
+                table,
+                "Data provider",
+                "Count",
+                title=f"Data providers repartition {name_split}",
+            )
+        }
+    )
