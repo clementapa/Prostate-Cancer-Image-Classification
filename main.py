@@ -67,7 +67,7 @@ def main():
             entity=parameters.hparams.wandb_entity,
             allow_val_change=True,
         )
-        agent = BaseTrainer(parameters, wandb_logger, wb_run=wandb_run)
+        agent = BaseTrainer(parameters, wandb_logger)
         agent.predict()
 
 
