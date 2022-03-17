@@ -1,6 +1,7 @@
 import torch.nn as nn
 import segmentation_models_pytorch as smp
 
+
 class Segmentation(nn.Module):
     """
     https://smp.readthedocs.io/en/latest/
