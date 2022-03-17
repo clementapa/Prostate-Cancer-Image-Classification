@@ -1,4 +1,5 @@
 from utils.agent_utils import import_class
+import torch
 
 """
 https://torchmetrics.readthedocs.io/en/stable/references/modules.html#base-class MODULE METRICS
@@ -21,7 +22,11 @@ class BaseMetricsModule:
 
             # metric on all batches using custom accumulation
             metric = m.compute()
-            pl_module.log(name + k, metric)
+            if metric.shape != torch.Size([]):
+                for i, v in enumerate(metric):
+                    pl_module.log(f"{name+k}_{i}", v)
+            else:
+                pl_module.log(name + k, metric)
 
             # Reseting internal state such that metric ready for new data
             m.reset()
@@ -44,6 +49,12 @@ class MetricsModuleClassification(BaseMetricsModule):
                 average=params.average,
             )
             dict_metrics[name.lower()] = instance.to(device)
+
+        dict_metrics['auroc_class'] = import_class("torchmetrics.AUROC")(
+                compute_on_step=False,
+                num_classes=params.num_classes,
+                average=None,
+            )
 
         self.dict_metrics = dict_metrics
 
