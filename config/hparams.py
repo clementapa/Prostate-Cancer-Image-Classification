@@ -35,14 +35,14 @@ class Hparams:
     # modes
     tune_lr: bool = False
     tune_batch_size: bool = False
-    dev_run: bool = False
+    dev_run: bool = True
     train: bool = True
 
     # for inference and test
     best_model: str = "skilled-gorge-229"
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Segmentation"
+    MODE: str = "Classification"
 
 
 @dataclass
@@ -69,12 +69,13 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "PatchSegDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "ConcatPatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
     path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
-    # Static or OFY = On-the-fly TODO
-    MODE: str = "Static"  # doesnot implemented yet
+    # dataset static params
+    dataset_static: str = True  
+    recreate_patches: bool = True
 
     # Patches params
     patch_size: int = 384
@@ -83,7 +84,7 @@ class DatasetParams:
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 1  # FIXME
+    nb_samples: int = 16  # FIXME
 
     nb_patches: int = 4  # FIXME
     resized_patch: int = 256
@@ -91,10 +92,6 @@ class DatasetParams:
     # dataloader
     num_workers: int = 2  # number of workers for dataloaders
     batch_size: int = 4  # batch_size
-
-    train_artifact: str = "attributes_classification_celeba/dlmi/train_256_1_0.5:v0"
-    # train_artifact: str = "attributes_classification_celeba/dlmi/train_192_1_0.5:v0"
-    test_artifact: str = "attributes_classification_celeba/dlmi/test_256_1_0.5:v0"
 
 
 @dataclass

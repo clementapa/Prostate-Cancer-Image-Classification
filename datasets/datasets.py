@@ -94,9 +94,7 @@ class StaticPatchDataset(BaseDataset):
 
         image_id = self.X[idx]
 
-        np_path = osp.join(
-            self.params.path_patches, self.name_dataset, image_id + ".npy"
-        )
+        np_path = osp.join(self.params.patch_folder, image_id + ".npy")
         np_array = np.load(open(np_path, "rb"))
 
         if self.train:
@@ -149,9 +147,7 @@ class ConcatPatchDataset(BaseDataset):
         
         image_id = self.X[idx]
 
-        np_path = osp.join(
-            self.params.path_patches, self.name_dataset, image_id + ".npy"
-        )
+        np_path = osp.join(self.params.patch_folder, image_id + ".npy")
         np_array = np.load(open(np_path, "rb"))
 
         if self.train:

@@ -2,6 +2,9 @@ import pytorch_lightning as pl
 import torch
 import wandb
 import pandas as pd
+import os.path as osp
+import zipfile
+
 from models.BaseModule import BaseModule
 from pytorch_lightning.callbacks import (
     LearningRateMonitor,
@@ -10,6 +13,8 @@ from pytorch_lightning.callbacks import (
     EarlyStopping,
 )
 from utils.agent_utils import get_artifact, get_datamodule, create_dir
+from utils.dataset_utils import images_to_patches
+
 from utils.callbacks import (
     AutoSaveModelCheckpoint,
     LogImagesSegmentation,
@@ -52,6 +57,10 @@ class BaseTrainer:
             self.wb_logger.watch(self.pl_model.model)
 
     def run(self):
+
+        if self.data_param.dataset_static:
+            self._static_patches("train")
+
         if self.config.tune_batch_size:
             trainer = pl.Trainer(
                 logger=self.wb_logger,
@@ -93,7 +102,10 @@ class BaseTrainer:
         trainer.fit(self.pl_model, datamodule=self.datamodule)
 
     def predict(self):
-        # return
+
+        if self.data_param.dataset_static:
+            self._static_patches("test")
+
         trainer = pl.Trainer(gpus=self.config.gpu)
         best_path = f"attributes_classification_celeba/{self.config.wandb_project}/{self.config.best_model}:top-1"
         best_model = get_artifact(best_path, type="model")
@@ -195,3 +207,41 @@ class BaseTrainer:
             ]
 
         return callbacks
+
+    def _static_patches(self, split):
+
+        name_folder = f"{split}_{self.data_param.patch_size}_{self.data_param.level}_{self.data_param.percentage_blank}"
+
+        self.logger.info(f"Static Patches mode {name_folder}...")
+        
+        if not osp.exists(osp.join(self.data_param.path_patches, name_folder)) or self.data_param.recreate_patches:
+            try:
+                path = f"attributes_classification_celeba/{self.config.wandb_project}/{name_folder}:latest"
+                self.logger.info(f"Try loading {path} in artifacts ...")
+
+                zip_file = get_artifact(path, type="dataset")
+
+                path_to_unzip_file = osp.join(
+                    self.data_param.path_patches, name_folder
+                )
+                with zipfile.ZipFile(zip_file, "r") as zip_ref:
+                    zip_ref.extractall(path_to_unzip_file)
+                
+                self.data_param.patch_folder = path_to_unzip_file
+
+                self.logger.info(f"Load {path} in artifacts OK")
+            except:
+                self.logger.info(f"{path} not exists as artifact, create patches")
+
+                self.data_param.patch_folder = images_to_patches(
+                    self.data_param.root_dataset, 
+                    self.data_param.patch_size, 
+                    split, 
+                    self.data_param.percentage_blank,
+                    self.data_param.level
+                    )
+        else:
+            self.logger.info(f"{name_folder} already exists in local")
+            self.data_param.patch_folder = osp.join(osp.join(self.data_param.path_patches, name_folder))
+
+        self.logger.info(f"Patch folder : {self.data_param.patch_folder}")

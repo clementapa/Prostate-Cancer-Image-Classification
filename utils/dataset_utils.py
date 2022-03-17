@@ -1,12 +1,19 @@
+import os
+import os.path as osp
 import random
+import shutil
 
 import albumentations as albu
 import numpy as np
+import pandas as pd
 import torch
-from albumentations.pytorch.transforms import ToTensorV2
-from PIL import Image
+import torch.nn.functional as F
 import wandb
-
+from albumentations.pytorch.transforms import ToTensorV2
+from einops import rearrange
+from PIL import Image
+from tifffile import imread
+from tqdm import tqdm
 
 def merge_cls(seg_img):
     seg_img[seg_img == 2] = 1
@@ -156,3 +163,115 @@ def plot_split(name_split, dataset):
             )
         }
     )
+
+def images_to_patches(root_dataset, patch_size, split, percentage_blank, level):
+    df = pd.read_csv(osp.join(root_dataset, split + ".csv"))
+
+    patch_path = osp.join(
+        os.getcwd(),
+        "assets",
+        "dataset_patches",
+        f"{split}_{patch_size}_{level}_{percentage_blank}",
+    )
+
+    if not os.path.exists(patch_path):
+        os.makedirs(patch_path)
+
+    for i in tqdm(df.index):
+
+        img_path = osp.join(root_dataset, split, split, df["image_id"][i] + ".tiff")
+
+        img = imread(img_path, key=level)
+        img = torch.from_numpy(img)
+
+        # Square image
+        quantity_to_pad = abs(img.shape[0] - img.shape[1])
+        bool_temp = img.shape[1] < img.shape[0]
+        img = F.pad(
+            img,
+            pad=(
+                0,
+                0,
+                quantity_to_pad * bool_temp,
+                0,
+                quantity_to_pad * (1 - bool_temp),
+                0,
+            ),
+            mode="constant",
+            value=255,
+        ).unsqueeze(0)
+
+        assert img.shape[1] == img.shape[2]  # check that it is a square image
+
+        # process image to divide per patch
+        remaining_pixels = img.shape[1] % patch_size
+        if remaining_pixels != 0:
+            if (img.shape[1] + remaining_pixels) % patch_size == 0:
+                # padd
+                img = F.pad(
+                    img,
+                    pad=(
+                        0,
+                        0,
+                        remaining_pixels // 2,
+                        remaining_pixels // 2,
+                        remaining_pixels // 2,
+                        remaining_pixels // 2,
+                    ),
+                    mode="constant",
+                    value=255,
+                )
+            else:
+                # crop
+                img = img[
+                    :,
+                    0 : img.shape[1] - remaining_pixels,
+                    0 : img.shape[2] - remaining_pixels,
+                    :,
+                ]
+
+        # Divide image per patch
+        h = img.shape[1] // patch_size
+        w = img.shape[2] // patch_size
+        img = rearrange(
+            img,
+            "b (h p1) (w p2) c -> b (h w) p1 p2 c",
+            p1=patch_size,
+            p2=patch_size,
+            h=h,
+            w=w,
+        )
+        # Remove white patches
+        mask = (1.0 * (img >= 240)).sum(dim=(2, 3, 4)) / (
+            patch_size * patch_size * 3
+        ) <= percentage_blank  # remove patch with only blanks pixels
+        non_white_patches = img[mask]
+
+        np.save(osp.join(patch_path, df["image_id"][i]), non_white_patches.numpy())
+
+    zip_name = osp.join(
+        osp.join(
+            os.getcwd(),
+            "assets",
+            "dataset_patches",
+            f"{split}_{patch_size}_{level}_{percentage_blank}",
+        )
+    )
+    shutil.make_archive(zip_name, "zip", patch_path)
+
+    artifact = wandb.Artifact(
+        name=os.path.basename(zip_name),
+        type="dataset",
+        metadata={
+            "split": split,
+            "patch_size": patch_size,
+            "percentage_blank": percentage_blank,
+            "level": level,
+        },
+        description=f" {split} dataset of images split by patches {patch_size}, level {level}, percentage_blank {percentage_blank} ",
+    )
+
+    artifact.add_file(zip_name + ".zip")
+    wandb.log_artifact(artifact, aliases=["latest"])   
+
+    return patch_path

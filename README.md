@@ -44,15 +44,15 @@ labels  counts
 Need to apply data augmentation
 
 ## TODO:
-- [ ] merge code usefull of all branches
-- [ ] two mode to pick patches:
-    - [ ] before training (create if not exists)
-    - [ ] pick random patch with openslide open
-- [ ]  Deal with the dataset (split train/val)
+- [x] merge code usefull of all branches
+- [ ] two mode to pick patches:
+    - [x] before training (create if not exists)
+    - [x] pick random patch with openslide open
+- [x]  Deal with the dataset (split train/val)
     - equal repartition of data provider in the validation (train_test_split sklearn attribut stratify)
     - equal reparition of classes in the validation (train_test_split sklearn attribut stratify)
-- [ ] Segmentation
-    - [ ] possibility to chose data provider (radboud(6), karolinska (3) and all(3, merge radboud))
+- [x] Segmentation
+    - [x] possibility to chose data provider (radboud(6), karolinska (3) and all(3, merge radboud))
 - [ ] Ressayer les techniques de ML en utilisant le modèle de segmentation (https://www.nature.com/articles/s41746-019-0112-2.pdf)
 - [ ] combiner concat patches (donne une mosaique de patch) -> segmentation -> segmentation + features pour classifier
 
