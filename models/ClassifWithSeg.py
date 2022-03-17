@@ -185,7 +185,7 @@ class ClassifAndSeg(nn.Module):
         # load seg_model
         self.seg_model = get_seg_model(params)
         self.classif_model = get_classif_model(params)
-        in_shape = self.classif_model.get_features(torch.randn(1, 786, 786)).shape[1]
+        in_shape = self.classif_model.get_features(torch.randn(1, 3, 786, 786)).shape[1]
 
         self.classifier = nn.Sequential(nn.Linear(3+in_shape, 3), nn.ReLU(), nn.Linear(3, 6))
 
