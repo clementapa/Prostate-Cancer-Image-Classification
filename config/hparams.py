@@ -62,7 +62,7 @@ class OptimizerParams:
     scheduler: bool = True
     scheduler_name: str = "ReduceLROnPlateau"
     scheduler_params: Dict[str, Any] = dict_field(
-        dict(mode="min", patience=5, min_lr=5e-6)
+        dict(mode="min", patience=10, min_lr=5e-6)
     )
 
 
