@@ -50,11 +50,11 @@ class MetricsModuleClassification(BaseMetricsModule):
             )
             dict_metrics[name.lower()] = instance.to(device)
 
-        dict_metrics['auroc_class'] = import_class("torchmetrics.AUROC")(
-                compute_on_step=False,
-                num_classes=params.num_classes,
-                average=None,
-            )
+        dict_metrics["auroc_class"] = import_class("torchmetrics.AUROC")(
+            compute_on_step=False,
+            num_classes=params.num_classes,
+            average=None,
+        )
 
         self.dict_metrics = dict_metrics
 
@@ -74,7 +74,7 @@ class MetricsModuleSegmentation(BaseMetricsModule):
                     instance = import_class("torchmetrics." + name)(
                         compute_on_step=False,
                         num_classes=params.num_classes,
-                        **params.pixel_wise_parameters
+                        **params.pixel_wise_parameters,
                     )
                 else:
                     instance = import_class("torchmetrics." + name)(
