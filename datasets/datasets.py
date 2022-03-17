@@ -175,7 +175,14 @@ class ConcatPatchDataset(BaseDataset):
 
         if len(images_to_pick) != self.params.nb_samples:
             diff = self.params.nb_samples - len(images_to_pick)
-            diff_tensor = torch.ones_like(torch.randn(diff, output_tensor.shape[1], output_tensor.shape[2], output_tensor.shape[3]))
+            diff_tensor = torch.ones_like(
+                torch.randn(
+                    diff,
+                    output_tensor.shape[1],
+                    output_tensor.shape[2],
+                    output_tensor.shape[3],
+                )
+            )
             output_tensor = torch.cat([output_tensor, diff_tensor], axis=0)
 
         output_tensor = rearrange(
