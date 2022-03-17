@@ -24,7 +24,7 @@ def main():
         f"patch_size: {parameters.data_param.patch_size}",
         f"Backbone: {parameters.network_param.feature_extractor_name}",
         f"Level: {parameters.data_param.level}",
-        f"Perc. Blank: {parameters.data_param.percentage_blank}"
+        f"Perc. Blank: {parameters.data_param.percentage_blank}",
     ]
     if parameters.hparams.MODE == "Segmentation":
         tags += [f"provider: {parameters.network_param.data_provider}"]
