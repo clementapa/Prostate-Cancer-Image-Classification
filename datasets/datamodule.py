@@ -55,7 +55,11 @@ class BaseDataModule(LightningDataModule):
             y = np.array(df["isup_grade"])
 
             X_train, X_val, y_train, y_val = train_test_split(
-                X, y, test_size=self.config.split_val, stratify=y, random_state=self.config.seed 
+                X,
+                y,
+                test_size=self.config.split_val,
+                stratify=y,
+                random_state=self.config.seed,
             )
 
             self.train_dataset = getattr(datasets, self.config.dataset_name)(

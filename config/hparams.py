@@ -208,7 +208,7 @@ class Parameters:
         torch.manual_seed(self.hparams.seed_everything)
         pl.seed_everything(self.hparams.seed_everything)
 
-        self.data_param.seed = self.hparams.seed_everything 
+        self.data_param.seed = self.hparams.seed_everything
 
         self.hparams.wandb_project = f"{'test-'*self.hparams.debug}dlmi"
 
