@@ -43,7 +43,7 @@ class Hparams:
     top: int = 1
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Classif_WITH_Seg"
+    MODE: str = "Classification"
 
 
 @dataclass
@@ -70,7 +70,7 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "ConcatTopPatchDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "ConcatPatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
     path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
@@ -79,15 +79,16 @@ class DatasetParams:
     recreate_patches: bool = False
 
     # Patches params
-    patch_size: int = 384
+    patch_size: int = 128
     percentage_blank: float = 0.8  # max percentage
     level: int = 1
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 9
+    nb_samples: int = 36
 
-    resized_img: int = 768
+    resized_img: int = 1024
+    discounted_draw: bool = False
 
     # dataloader
     num_workers: int = 2  # number of workers for dataloaders
@@ -114,7 +115,7 @@ class CallbacksParams:
 
 @dataclass
 class NetworkClassificationParams:
-    feature_extractor_name: str = "resnet34"
+    feature_extractor_name: str = "tresnet_xl_448"
     network_name: str = "SimpleModel"
 
 
