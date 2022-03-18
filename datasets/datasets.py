@@ -16,7 +16,7 @@ from utils.dataset_utils import (
     merge_cls,
     return_random_patch,
     return_random_patch_with_mask,
-    seg_max_to_score
+    seg_max_to_score,
 )
 
 import utils.agent_utils as au
@@ -173,7 +173,7 @@ class ConcatTopPatchDataset(BaseDataset):
         )
 
         return output_tensor, label
-    
+
     @torch.no_grad()
     def select_top_patches(self):
 
@@ -191,17 +191,15 @@ class ConcatTopPatchDataset(BaseDataset):
             np_path = osp.join(self.params.patch_folder, image_id + ".npy")
             np_array = np.load(open(np_path, "rb"))
             output_tensor = torch.stack(
-                        [
-                            transform((torch.from_numpy(np_img) / 255.0).permute(2, 1, 0))
-                            for np_img in np_array
-                        ]
-                    )
+                [
+                    transform((torch.from_numpy(np_img) / 255.0).permute(2, 1, 0))
+                    for np_img in np_array
+                ]
+            )
             seg_masks = self.seg_model(output_tensor).argmax(dim=1)
             seg_scores = seg_max_to_score(seg_masks, self.params.patch_size)
 
-            top_k = torch.topk(
-                seg_scores[:, -1], self.params.nb_samples
-            ).indices
+            top_k = torch.topk(seg_scores[:, -1], self.params.nb_samples).indices
 
             self.images_to_pick[image_id] = top_k.cpu().numpy().tolist()
 
