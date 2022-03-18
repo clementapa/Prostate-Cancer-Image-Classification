@@ -6,7 +6,12 @@ import os, os.path as osp
 import pandas as pd
 import numpy as np
 
-from utils.dataset_utils import coll_fn, coll_fn_seg, analyse_repartition, get_random_sampler
+from utils.dataset_utils import (
+    coll_fn,
+    coll_fn_seg,
+    analyse_repartition,
+    get_random_sampler,
+)
 import datasets.datasets as datasets
 
 
@@ -81,7 +86,7 @@ class BaseDataModule(LightningDataModule):
             batch_size=self.batch_size,
             num_workers=self.config.num_workers,
             collate_fn=self.collate_fn,
-            sampler=self.sampler
+            sampler=self.sampler,
         )
         return train_loader
 
