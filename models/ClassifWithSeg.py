@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from einops import rearrange
-from utils.agent_utils import get_seg_model, get_features_extractor, get_classif_model
+from utils.agent_utils import get_seg_model, get_features_extractor
 from utils.dataset_utils import seg_max_to_score
 import torchvision.transforms as transforms
 
@@ -224,4 +224,23 @@ class SimpleModelWithSeg(nn.Module):
         scores = torch.stack(scores).mean(dim=1)
         features_with_scores = torch.cat([features, scores], dim=1)
         output = self.classifier(features_with_scores)
+        return output
+
+
+class SimpleModel(nn.Module):
+    def __init__(self, params):
+        super().__init__()
+        self.params = params
+
+        # get features extractor
+        self.features_extractor, self.feature_size = get_features_extractor(
+            params.feature_extractor_name
+        )
+
+        # self.classifier = nn.Linear(self.feature_size*self.params.nb_samples, 6)
+        self.classifier = nn.Linear(self.feature_size, 6)
+
+    def forward(self, x):
+        features = self.features_extractor(x)
+        output = self.classifier(features)
         return output

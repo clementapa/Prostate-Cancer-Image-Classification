@@ -8,6 +8,7 @@ import openslide
 import torch
 import torchvision.transforms as transforms
 from einops import rearrange
+from tqdm import tqdm
 
 from utils.dataset_utils import (
     get_training_augmentation,
@@ -15,14 +16,16 @@ from utils.dataset_utils import (
     merge_cls,
     return_random_patch,
     return_random_patch_with_mask,
+    seg_max_to_score
 )
 
+import utils.agent_utils as au
 from datasets.BaseDatasets import BaseDataset
 
 
 class PatchDataset(BaseDataset):
     def __init__(self, params, X, y, df, train=True):
-        super().__init__(params, X, y, df, train, static=False)
+        super().__init__(params, X, y, df, train)
 
         if train:
             self.transform = transforms.Compose(
@@ -71,7 +74,7 @@ class PatchDataset(BaseDataset):
 
 class StaticPatchDataset(BaseDataset):
     def __init__(self, params, X, y, df, train=True):
-        super().__init__(params, X, y, df, train, static=True)
+        super().__init__(params, X, y, df, train)
 
         if train:
             self.transform = transforms.Compose(
@@ -119,9 +122,93 @@ class StaticPatchDataset(BaseDataset):
         return output_tensor, label
 
 
+class ConcatTopPatchDataset(BaseDataset):
+    def __init__(self, params, X, y, df, train=True):
+        super().__init__(params, X, y, df, train)
+
+        if train:
+            self.transform = transforms.Compose(
+                [
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                ]
+            )
+        else:
+            self.transform = transforms.Compose(
+                [
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                ]
+            )
+
+        # load seg_model
+        self.seg_model = au.get_seg_model(params)
+
+        self.select_top_patches()
+
+    def __getitem__(self, idx):
+
+        image_id = self.X[idx]
+
+        np_path = osp.join(self.params.patch_folder, image_id + ".npy")
+        np_array = np.load(open(np_path, "rb"))
+
+        if self.train:
+            label = self.y[idx]
+        else:
+            label = -1
+
+        output_tensor = torch.stack(
+            [
+                self.transform((torch.from_numpy(np_img) / 255.0).permute(2, 1, 0))
+                for np_img in np_array[self.images_to_pick[image_id]]
+            ]
+        )
+        output_tensor = rearrange(
+            output_tensor,
+            "(n1 n2) c h w -> c (n1 h) (n2 w)",
+            n1=int(sqrt(self.params.nb_samples)),
+        )
+
+        return output_tensor, label
+    
+    @torch.no_grad()
+    def select_top_patches(self):
+
+        transform = transforms.Compose(
+            [
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )
+
+        self.images_to_pick = {}
+
+        for image_id in tqdm(self.X):
+            np_path = osp.join(self.params.patch_folder, image_id + ".npy")
+            np_array = np.load(open(np_path, "rb"))
+            output_tensor = torch.stack(
+                        [
+                            transform((torch.from_numpy(np_img) / 255.0).permute(2, 1, 0))
+                            for np_img in np_array
+                        ]
+                    )
+            seg_masks = self.seg_model(output_tensor).argmax(dim=1)
+            seg_scores = seg_max_to_score(seg_masks, self.params.patch_size)
+
+            top_k = torch.topk(
+                seg_scores[:, -1], self.params.nb_samples
+            ).indices
+
+            self.images_to_pick[image_id] = top_k.cpu().numpy().tolist()
+
+
 class ConcatPatchDataset(BaseDataset):
     def __init__(self, params, X, y, df, train=True):
-        super().__init__(params, X, y, df, train, static=True)
+        super().__init__(params, X, y, df, train)
 
         if train:
             self.transform = transforms.Compose(
@@ -196,11 +283,10 @@ class ConcatPatchDataset(BaseDataset):
 
 class PatchSegDataset(BaseDataset):
     def __init__(self, params, X, y, df, train=True):
-        super().__init__(params, X, y, df, train, static=False)
+        super().__init__(params, X, y, df, train)
 
         self.transform = transforms.Compose(
             [
-                transforms.ToTensor(),
                 transforms.Normalize(
                     mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
                 ),

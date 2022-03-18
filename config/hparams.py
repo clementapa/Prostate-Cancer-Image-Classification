@@ -43,7 +43,7 @@ class Hparams:
     top: int = 1
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Classification"
+    MODE: str = "Classif_WITH_Seg"
 
 
 @dataclass
@@ -70,7 +70,7 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "ConcatPatchDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "ConcatTopPatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
     path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
@@ -80,12 +80,12 @@ class DatasetParams:
 
     # Patches params
     patch_size: int = 384
-    percentage_blank: float = 0.5  # max percentage
+    percentage_blank: float = 0.8  # max percentage
     level: int = 1
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 36
+    nb_samples: int = 9
 
     resized_img: int = 768
 
@@ -114,14 +114,14 @@ class CallbacksParams:
 
 @dataclass
 class NetworkClassificationParams:
-    feature_extractor_name: str = "resnetv2_152x4_bitm_in21k"
+    feature_extractor_name: str = "resnet34"
     network_name: str = "SimpleModel"
 
 
 @dataclass
 class NetworkClassif_WITH_SegParams:
-    feature_extractor_name: str = "resnetv2_152x4_bitm_in21k"
-    network_name: str = "SimpleModelWithSeg"
+    feature_extractor_name: str = "resnet34"
+    network_name: str = "SimpleModel"
 
     # classifier_name: str = "Multiple Linear"
     # # MLP parameters
@@ -236,13 +236,16 @@ class Parameters:
                 self.network_param.seg_param.data_provider
             ]
 
-            if self.data_param.dataset_name == "ConcatPatchDataset":
+            if "Concat" in self.data_param.dataset_name:
                 assert (
                     str(sqrt(self.data_param.nb_samples))[-1] == "0"
                 ), f"{self.data_param.nb_samples} has to be squared root"
                 self.network_param.nb_samples = self.data_param.nb_samples
                 self.network_param.patch_size = self.data_param.patch_size
                 self.network_param.resized_img = self.data_param.resized_img
+                self.data_param.seg_param = self.network_param.seg_param
+                self.data_param.wb_run_seg = self.network_param.wb_run_seg
+
         else:
             raise NotImplementedError(
                 f"Mode {self.hparams.MODE} does not exist only Segmentation, Classification or Classif_WITH_Seg!"
