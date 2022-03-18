@@ -14,6 +14,7 @@ from einops import rearrange
 from PIL import Image
 from tifffile import imread
 from tqdm import tqdm
+from torch.utils.data.sampler import WeightedRandomSampler
 
 
 def merge_cls(seg_img):
@@ -277,3 +278,15 @@ def images_to_patches(root_dataset, patch_size, split, percentage_blank, level):
     wandb.log_artifact(artifact, aliases=["latest"])
 
     return patch_path
+
+
+def get_random_sampler(labels):
+    classes = np.unique(labels)
+    class_sample_count = np.array(
+        [len(np.where(labels == t)[0]) for t in classes]
+    )
+    weight = 1. / class_sample_count
+    samples_weight = np.array([weight[t] for t in labels])
+    samples_weight = torch.from_numpy(samples_weight)
+    samples_weight = samples_weight.double()
+    return WeightedRandomSampler(samples_weight, num_samples=len(samples_weight))

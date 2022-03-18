@@ -1,12 +1,12 @@
 from pytorch_lightning import LightningDataModule
-from torch.utils.data import DataLoader, random_split
+from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 
 import os, os.path as osp
 import pandas as pd
 import numpy as np
 
-from utils.dataset_utils import coll_fn, coll_fn_seg, analyse_repartition
+from utils.dataset_utils import coll_fn, coll_fn_seg, analyse_repartition, get_random_sampler
 import datasets.datasets as datasets
 
 
@@ -62,6 +62,8 @@ class BaseDataModule(LightningDataModule):
 
             analyse_repartition(self.train_dataset, self.val_dataset)
 
+            self.sampler = get_random_sampler(y_train)
+
         if stage == "predict":
 
             df = pd.read_csv(osp.join(self.config.root_dataset, "test.csv"))
@@ -75,10 +77,11 @@ class BaseDataModule(LightningDataModule):
     def train_dataloader(self):
         train_loader = DataLoader(
             self.train_dataset,
-            shuffle=True,
+            shuffle=False,
             batch_size=self.batch_size,
             num_workers=self.config.num_workers,
             collate_fn=self.collate_fn,
+            sampler=self.sampler
         )
         return train_loader
 
