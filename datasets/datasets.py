@@ -271,7 +271,9 @@ class ConcatPatchDataset(BaseDataset):
                     )
                 )
                 output_tensor = torch.cat([output_tensor, diff_tensor], axis=0)
-                output_tensor = output_tensor[torch.randperm(self.params.nb_samples)] # shuffle
+                output_tensor = output_tensor[
+                    torch.randperm(self.params.nb_samples)
+                ]  # shuffle
 
         output_tensor = rearrange(
             output_tensor,
