@@ -43,7 +43,7 @@ class Hparams:
     top: int = 1
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Classif_WITH_Seg"
+    MODE: str = "Classification"
 
 
 @dataclass
@@ -114,13 +114,13 @@ class CallbacksParams:
 
 @dataclass
 class NetworkClassificationParams:
-    feature_extractor_name: str = "tresnet_xl_448"
+    feature_extractor_name: str = "resnetv2_152x4_bitm_in21k"
     network_name: str = "SimpleModel"
 
 
 @dataclass
 class NetworkClassif_WITH_SegParams:
-    feature_extractor_name: str = "tresnet_xl_448"
+    feature_extractor_name: str = "resnetv2_152x4_bitm_in21k"
     network_name: str = "SimpleModelWithSeg"
 
     # classifier_name: str = "Multiple Linear"
