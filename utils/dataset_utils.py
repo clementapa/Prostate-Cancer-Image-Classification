@@ -282,10 +282,8 @@ def images_to_patches(root_dataset, patch_size, split, percentage_blank, level):
 
 def get_random_sampler(labels):
     classes = np.unique(labels)
-    class_sample_count = np.array(
-        [len(np.where(labels == t)[0]) for t in classes]
-    )
-    weight = 1. / class_sample_count
+    class_sample_count = np.array([len(np.where(labels == t)[0]) for t in classes])
+    weight = 1.0 / class_sample_count
     samples_weight = np.array([weight[t] for t in labels])
     samples_weight = torch.from_numpy(samples_weight)
     samples_weight = samples_weight.double()
