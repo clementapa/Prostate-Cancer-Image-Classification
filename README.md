@@ -78,7 +78,7 @@ Feature extractor from [timm library](https://rwightman.github.io/pytorch-image-
 
 ## :art: Semantic Segmentation 
 
-MODE: ```Segmentation```
+MODE: ```Segmentation```\
 dataset_name: ```PatchSegDataset```
 
 <p align="center">
