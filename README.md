@@ -18,7 +18,9 @@ The grading process consists of finding and classifying cancer tissue into so-ca
   <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/isup_grade_explain.png" width="100%" height="100%" alt="Isup Grade explication"/>
 </p>
 
-The goal of this challenge is to predict the ISUP Grade using only Histopathology images. For that, you will need to deal with the process of Whole Slide Images as huge gigapixel images and deal with the limited number of patients provided in the train set.
+The goal of this challenge is to predict the ISUP Grade using only Histopathology images. For that, we dealt with the process of Whole Slide Images as huge gigapixel images and deal with the limited number of patients provided in the train set.
+
+Classes: [0, 1, 2, 3, 4, 5]
 
 ## :hammer: Getting started
 
