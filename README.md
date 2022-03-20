@@ -40,11 +40,19 @@ Check dataset in [```datasets.py```](https://github.com/clementapa/Prostate-Canc
 ```
 python3 main.py
 ```
-## :star: :diamonds: Best model (Submission)
+## :star: Best model (Submission)
 
+MODE: Classification
+dataset_name: ConcatPatchDataset
+feature_extractor_name: tresnet_xl_448
+network_name: SimpleModel
+
+
+Command line to train the model:
 ```
-python main.py --MODE Classification --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatPatchDataset --patch_size 256 --nb_samples 36 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 16 --discounted_draw True 
+python main.py --train True --MODE Classification --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatPatchDataset --patch_size 256 --nb_samples 36 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 16 --discounted_draw True 
 ```
+
 <p align="center">
 
 | Model| Backbone |Area Under ROC (weighted) validation | Area Under ROC (macro) test (private leaderboard) | Run  |
@@ -55,13 +63,16 @@ python main.py --MODE Classification --feature_extractor_name tresnet_xl_448 --n
 
 ## :art: Semantic Segmentation 
 
+MODE: Segmentation
+dataset_name: PatchSegDataset
+
 <p align="center">
 
 | Model| Backbone | Data provider| Patch Size | Level | IoU (average over classes) validation | Run  |
 |---|---|---|---|---|---|---|
-| DeepLabV3Plus | resnet152 | All | 384 | 1 | 0.79 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/w1qry9c1?workspace=user-clementapa) |
-| DeepLabV3Plus | resnet34 | Radboud | 512 | 0 | 0.7029 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/dlmi/runs/3mmxo0az?workspace=user-clementapa) |
-| DeepLabV3Plus | resnet34 | Karolinska | 512 | 0 | 0.5958 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/dlmi/runs/egp1owm6?workspace=user-clementapa) |
+| [DeepLabV3Plus](https://smp.readthedocs.io/en/latest/models.html#id9) | resnet152 | All | 384 | 1 | 0.79 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/w1qry9c1?workspace=user-clementapa) |
+| [DeepLabV3Plus](https://smp.readthedocs.io/en/latest/models.html#id9) | resnet34 | Radboud | 512 | 0 | 0.7029 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/dlmi/runs/3mmxo0az?workspace=user-clementapa) |
+| [DeepLabV3Plus](https://smp.readthedocs.io/en/latest/models.html#id9) | resnet34 | Karolinska | 512 | 0 | 0.5958 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/dlmi/runs/egp1owm6?workspace=user-clementapa) |
 </p>
 
 Karolinska is composed of 3 classes:
@@ -103,6 +114,11 @@ We merged in 3 classes to have the same number as karolinska:
 - Blue: background or unknown 
 - Red: benign tissue 
 - Green: Cancerous tissue
+
+ <p align="center">
+    <a href="https://smp.readthedocs.io/en/latest/">
+  <img src="https://i.ibb.co/dc1XdhT/Segmentation-Models-V2-Side-1-1.png" width="50%" height="50%" alt="logo"/>
+</p>
 
 
 #########################################################################################
