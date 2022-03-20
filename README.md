@@ -132,7 +132,8 @@ We merged in 3 classes to have the same number as karolinska:
 
  <p align="center">
     <a href="https://smp.readthedocs.io/en/latest/">
-  <img src="https://i.ibb.co/dc1XdhT/Segmentation-Models-V2-Side-1-1.png" width="50%" height="50%" alt="logo"/>
+    <img src="https://i.ibb.co/dc1XdhT/Segmentation-Models-V2-Side-1-1.png" width="50%" height="50%" alt="logo"/>
+    </a>
 </p>
 
 
