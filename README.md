@@ -15,7 +15,7 @@ With more than 1 million new diagnoses reported every year, prostate cancer (PCa
 The grading process consists of finding and classifying cancer tissue into so-called Gleason patterns (3, 4, or 5) based on the architectural growth patterns of the tumor (Fig. 1). After the biopsy is assigned a Gleason score, it is converted into an ISUP grade on a 1-5 scale. The Gleason grading system is the most important prognostic marker for PCa, and the ISUP grade has a crucial role when deciding how a patient should be treated. There is both a risk of missing cancers and a large risk of overgrading resulting in unnecessary treatment. However, the system suffers from significant inter-observer variability between pathologists, limiting its usefulness for individual patients. This variability in ratings could lead to unnecessary treatment, or worse, missing a severe diagnosis.
 
  <p align="center">
-  <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/isup_grade_explain.png" width="100%" height="100%" alt="Isup Grade explication"/>
+  <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/isup_grade_explain.png" width="100%" height="100%" alt="Isup Grade explication"/>
 </p>
 
 The goal of this challenge is to predict the ISUP Grade using only Histopathology images. For that, you will need to deal with the process of Whole Slide Images as huge gigapixel images and deal with the limited number of patients provided in the train set.
@@ -40,23 +40,55 @@ Check dataset in [```datasets.py```](https://github.com/clementapa/Prostate-Canc
 ```
 python3 main.py
 ```
-## :star: Best model (Submission)
+## :star: :diamonds: Best model (Submission)
 
 ```
 python main.py --MODE Classification --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatPatchDataset --patch_size 256 --nb_samples 36 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 16 --discounted_draw True 
 ```
 <p align="center">
 
-| Model| Area Under ROC (weighted) validation | Area Under ROC (macro) test (private leaderboard) | Run  |
-|---|---|---|---|
-| Best model | 0.80 | 0.92647 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/2cbesog0/overview?workspace=user-clementapa) |
+| Model| Backbone |Area Under ROC (weighted) validation | Area Under ROC (macro) test (private leaderboard) | Run  |
+|---|---|---|---|---|
+| SimpleModel | tresnet_xl_448 | 0.80 | 0.92647 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/2cbesog0/overview?workspace=user-clementapa) |
 </p>
 
 
 ## :art: Semantic Segmentation 
 
+<p align="center">
 
+| Model| Backbone | Data provider| Patch Size | Level | IoU (average over classes) validation | Run  |
+|---|---|---|---|---|---|---|
+| DeepLabV3Plus | resnet152 | All | 384 | 1 | 0.79 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/w1qry9c1?workspace=user-clementapa) |
+| DeepLabV3Plus | resnet34 | Radboud | 512 | 0 | 0.7029 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/dlmi/runs/3mmxo0az?workspace=user-clementapa) |
+| DeepLabV3Plus | resnet34 | Karolinska | 512 | 0 | 0.5958 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/dlmi/runs/egp1owm6?workspace=user-clementapa) |
+</p>
 
+Karolinska is composed of 3 classes:
+- 0: background (non tissue) or unknown 
+- 1: benign tissue (stroma and epithelium combined) 
+- 2: cancerous tissue (stroma and epithelium combined)
+
+Radboud is composed of 6 classes:  
+- 0: background (non tissue) or unknown 
+- 1: stroma (connective tissue, non-epithelium tissue) 
+- 2: healthy (benign) epithelium 
+- 3: cancerous epithelium (Gleason 3) 
+- 4: cancerous epithelium (Gleason 4) 
+- 5: cancerous epithelium (Gleason 5)
+
+We merged in 3 classes to have the same number as karolinska: 
+- 0: background (non tissue) or unknown {0} 
+- 1: benign tissue (stroma and epithelium combined) {1,2} 
+- 2: cancerous tissue (stroma and epithelium combined) {3,4,5}
+
+ <p align="center">
+     <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0.png" width="100%" height="100%" alt="segmentation prediction"/>
+    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0_pred.png" width="100%" height="100%" alt="segmentation prediction"/>
+    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0_gt.png" width="100%" height="100%" alt="segmentation ground truth"/>
+</p>
+
+##########################################################################################
 - [x] Set-up template code
 - [x] Understand how to load the dataset
 - [x] create dataset
