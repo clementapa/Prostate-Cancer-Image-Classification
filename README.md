@@ -25,9 +25,9 @@ The goal of this challenge is to predict the ISUP Grade using only Histopatholog
 Dowload the dataset and put it in the [```assets```](https://github.com/clementapa/Prostate-Cancer-Image-Classification/tree/main/assets/) folder. 
 
 Chose the mode that you want:
-- Classification: Classify isup grade of images
-- Segmentation: Semantic segmentation on images 
-- Classif_WITH_Seg: Classification using a semantic segmentation models trained with Segmentation
+- ```Classification```: Classify isup grade of images
+- ```Segmentation```: Semantic segmentation on images 
+- ```Classif_WITH_Seg```: Classification using a semantic segmentation models trained with Segmentation
 
 Chose a dataset and a model adapted to the mode.\
 Models for: 
@@ -40,10 +40,10 @@ Check dataset in [```datasets.py```](https://github.com/clementapa/Prostate-Canc
 
 ## :star: Best model (Submission)
 
-MODE: Classification
-dataset_name: ConcatPatchDataset
-feature_extractor_name: tresnet_xl_448
-network_name: SimpleModel
+MODE: ```Classification```\
+dataset_name: ```ConcatPatchDataset```\
+feature_extractor_name: ```tresnet_xl_448```\
+network_name: ```SimpleModel```
 
 
 Command line to train the model:
@@ -55,7 +55,7 @@ Command line to create submission csv file:
 ```
 python main.py --train False --MODE Classification --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatPatchDataset --patch_size 256 --nb_samples 36 --discounted_draw True --best_model denim-terrain-844
 ```
-denim-terrain-844 is the name of the wandb run with weights of the model. (Name change if you train your model yourself)
+```denim-terrain-844``` is the name of the wandb run with weights of the model. (Name change if you train your model yourself)
 
 <p align="center">
 
@@ -76,8 +76,8 @@ Feature extractor from [timm library](https://rwightman.github.io/pytorch-image-
 
 ## :art: Semantic Segmentation 
 
-MODE: Segmentation
-dataset_name: PatchSegDataset
+MODE: ```Segmentation```
+dataset_name: ```PatchSegDataset```
 
 <p align="center">
 
