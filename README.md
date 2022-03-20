@@ -49,7 +49,7 @@ python main.py --MODE Classification --feature_extractor_name tresnet_xl_448 --n
 
 | Model| Backbone |Area Under ROC (weighted) validation | Area Under ROC (macro) test (private leaderboard) | Run  |
 |---|---|---|---|---|
-| SimpleModel | tresnet_xl_448 | 0.80 | 0.92647 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/2cbesog0/overview?workspace=user-clementapa) |
+| SimpleModel | tresnet_xl_448 | 0.80 | 0.92647 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/2cbesog0?workspace=user-clementapa) |
 </p>
 
 
@@ -83,12 +83,20 @@ We merged in 3 classes to have the same number as karolinska:
 - 2: cancerous tissue (stroma and epithelium combined) {3,4,5}
 
  <p align="center">
-     <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0.png" width="100%" height="100%" alt="segmentation prediction"/>
-    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0_pred.png" width="100%" height="100%" alt="segmentation prediction"/>
-    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0_gt.png" width="100%" height="100%" alt="segmentation ground truth"/>
+     <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0.png" width="50%" height="50%" alt="segmentation prediction"/>
+    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0_pred.png" width="50%" height="50%" alt="segmentation prediction"/>
+    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0_gt.png" width="50%" height="50%" alt="segmentation ground truth"/>
+</p>
+<p align="center">
+<em> Segmentation of a Patch 384x384 from WSI of the Radboud data provider: Patch, Prediction, Ground Truth </em>
 </p>
 
-##########################################################################################
+- Blue: background or unknown 
+- Red: benign tissue 
+- Green: Cancerous tissue
+
+
+#########################################################################################
 - [x] Set-up template code
 - [x] Understand how to load the dataset
 - [x] create dataset
