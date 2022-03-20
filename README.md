@@ -83,9 +83,9 @@ We merged in 3 classes to have the same number as karolinska:
 - 2: cancerous tissue (stroma and epithelium combined) {3,4,5}
 
  <p align="center">
-     <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0.png" width="50%" height="50%" alt="segmentation prediction"/>
-    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0_pred.png" width="50%" height="50%" alt="segmentation prediction"/>
-    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0_gt.png" width="50%" height="50%" alt="segmentation ground truth"/>
+     <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0.png" width="25%" height="25%" alt="segmentation prediction"/>
+    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0_pred.png" width="25%" height="25%" alt="segmentation prediction"/>
+    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_508_0_gt.png" width="25%" height="25%" alt="segmentation ground truth"/>
 </p>
 <p align="center">
 <em> Segmentation of a Patch 384x384 from WSI of the Radboud data provider: Patch, Prediction, Ground Truth </em>
