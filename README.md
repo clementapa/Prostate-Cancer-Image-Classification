@@ -22,7 +22,7 @@ The goal of this challenge is to predict the ISUP Grade using only Histopatholog
 
 ## :hammer: Getting started
 
-Dowload the dataset and put it on the [assets](https://github.com/clementapa/Prostate-Cancer-Image-Classification/tree/main/assets/) folder. 
+Dowload the dataset and put it in the [```assets```](https://github.com/clementapa/Prostate-Cancer-Image-Classification/tree/main/assets/) folder. 
 
 Chose the mode that you want:
 - Classification: Classify isup grade of images
@@ -35,11 +35,26 @@ Models for:
 - [Segmentation](https://github.com/clementapa/Prostate-Cancer-Image-Classification/tree/main/models/Segmentation.py)
 - [Classif_WITH_Seg](https://github.com/clementapa/Prostate-Cancer-Image-Classification/tree/main/models/ClassifWithSeg.py) 
 
-Check dataset in [datasets.py](https://github.com/clementapa/Prostate-Cancer-Image-Classification/tree/main/datasets/datasets.py) 
+Check dataset in [```datasets.py```](https://github.com/clementapa/Prostate-Cancer-Image-Classification/tree/main/datasets/datasets.py) 
 
 ```
 python3 main.py
 ```
+## :star: Best model (Submission)
+
+```
+python main.py --MODE Classification --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatPatchDataset --patch_size 256 --nb_samples 36 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 16 --discounted_draw True 
+```
+<p align="center">
+
+| Model| Area Under ROC (weighted) validation | Area Under ROC (macro) test (private leaderboard) | Run  |
+|---|---|---|---|
+| Best model | 0.80 | 0.92647 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/2cbesog0/overview?workspace=user-clementapa) |
+</p>
+
+
+## :art: Semantic Segmentation 
+
 
 
 - [x] Set-up template code
