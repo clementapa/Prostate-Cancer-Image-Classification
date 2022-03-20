@@ -67,8 +67,8 @@ python main.py --train False --MODE Classification --feature_extractor_name tres
 Feature extractor from [timm library](https://rwightman.github.io/pytorch-image-models/). 
 
  <p align="center">
-     <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_902_0.png" width="50%" height="50%" alt="wsi"/>
-    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_902_1.png" width="50%" height="50%" alt="wsi"/>
+     <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_902_0.png" width="25%" height="25%" alt="wsi"/>
+    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_902_1.png" width="25%" height="25%" alt="wsi"/>
 </p>
 <p align="center">
 <em> Random patches concatenated from a wsi images. Left: label 1, Radboud provider, Right: label 1, Karolinska provider </em>
