@@ -37,9 +37,7 @@ Models for:
 
 Check dataset in [```datasets.py```](https://github.com/clementapa/Prostate-Cancer-Image-Classification/tree/main/datasets/datasets.py) 
 
-```
-python3 main.py
-```
+
 ## :star: Best model (Submission)
 
 MODE: Classification
@@ -53,13 +51,28 @@ Command line to train the model:
 python main.py --train True --MODE Classification --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatPatchDataset --patch_size 256 --nb_samples 36 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 16 --discounted_draw True 
 ```
 
+Command line to create submission csv file:
+```
+python main.py --train False --MODE Classification --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatPatchDataset --patch_size 256 --nb_samples 36 --discounted_draw True --best_model denim-terrain-844
+```
+denim-terrain-844 is the name of the wandb run with weights of the model. (Name change if you train your model yourself)
+
 <p align="center">
 
 | Model| Backbone |Area Under ROC (weighted) validation | Area Under ROC (macro) test (private leaderboard) | Run  |
 |---|---|---|---|---|
-| SimpleModel | tresnet_xl_448 | 0.80 | 0.92647 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/2cbesog0?workspace=user-clementapa) |
+| SimpleModel | [tresnet_xl_448](https://rwightman.github.io/pytorch-image-models/models/tresnet/) | 0.80 | 0.92647 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/2cbesog0?workspace=user-clementapa) |
 </p>
 
+Feature extractor from [timm library](https://rwightman.github.io/pytorch-image-models/). 
+
+ <p align="center">
+     <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_902_0.png" width="50%" height="50%" alt="wsi"/>
+    <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_902_1.png" width="50%" height="50%" alt="wsi"/>
+</p>
+<p align="center">
+<em> Random patches concatenated from a wsi images. Left: label 1, Radboud provider, Right: label 1, Karolinska provider </em>
+</p>
 
 ## :art: Semantic Segmentation 
 
