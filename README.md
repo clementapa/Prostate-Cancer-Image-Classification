@@ -13,15 +13,15 @@ The grading process consists of finding and classifying cancer tissue into so-ca
 - [x] Set-up template code
 - [x] Understand how to load the dataset
 - [x] create dataset
-- [ ] model baseline ? ViT ? timm library https://github.com/rwightman/pytorch-image-models
+- [x] model baseline ? ViT ? timm library https://github.com/rwightman/pytorch-image-models
 - [x] metrics for classification + metrics for the competition (Area Under ROC metric) (all with torchmetrics)
-- [ ] implement the prediction function for submissions
-- [ ] analyse the dataset for split (individual etc...)
-- [ ] data augmentations for medical imaging ?
+- [x] implement the prediction function for submissions
+- [x] analyse the dataset for split (individual etc...)
+- [x] data augmentations for medical imaging ?
 - [ ] set-up clean conda environment
-- [ ] create wandb team 
+- [x] create wandb team 
 
-- [ ] let's experiments :
+- [x] let's experiments :
     - different split (may be the best thing to achieve good results on the test)
     - various architectures 
     - tune hyper-parameters
@@ -45,7 +45,7 @@ Need to apply data augmentation
 
 ## TODO:
 - [x] merge code usefull of all branches
-- [ ] two mode to pick patches:
+- [x] two mode to pick patches:
     - [x] before training (create if not exists)
     - [x] pick random patch with openslide open
 - [x]  Deal with the dataset (split train/val)
@@ -54,6 +54,6 @@ Need to apply data augmentation
 - [x] Segmentation
     - [x] possibility to chose data provider (radboud(6), karolinska (3) and all(3, merge radboud))
 - [ ] Ressayer les techniques de ML en utilisant le modèle de segmentation (https://www.nature.com/articles/s41746-019-0112-2.pdf)
-- [ ] combiner concat patches (donne une mosaique de patch) -> segmentation -> segmentation + features pour classifier
+- [x] combiner concat patches (donne une mosaique de patch) -> segmentation -> segmentation + features pour classifier
 
 Bien faire attention à la taille des patchs qu'on prends et le level count quand on ouvre le tiff
