@@ -39,7 +39,7 @@ class Hparams:
     train: bool = True
 
     # for inference and test
-    best_model: str = "dutiful-paper-872"
+    best_model: str = "honest-night-870"
     top: int = 1
 
     # Segmentation, Classification & Classif_WITH_Seg
@@ -80,7 +80,7 @@ class DatasetParams:
 
     # Patches params
     patch_size: int = 192
-    percentage_blank: float = 0.2  # max percentage
+    percentage_blank: float = 0.5  # max percentage
     level: int = 1
 
     # dataset params
