@@ -201,7 +201,9 @@ class ConcatTopPatchDataset(BaseDataset):
             seg_masks = self.seg_model(output_tensor.to(device)).argmax(dim=1)
             seg_scores = seg_max_to_score(seg_masks, self.params.patch_size)
 
-            top_k = torch.topk(seg_scores[:, -1], min(self.params.nb_samples, output_tensor.shape[0])).indices
+            top_k = torch.topk(
+                seg_scores[:, -1], min(self.params.nb_samples, output_tensor.shape[0])
+            ).indices
 
             self.images_to_pick[image_id] = top_k.cpu().numpy().tolist()
 
