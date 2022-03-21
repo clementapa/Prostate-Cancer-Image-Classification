@@ -70,6 +70,7 @@ class BaseTrainer:
                 accelerator="auto",
                 default_root_dir=self.wb_logger.save_dir,
                 enable_progress_bar=self.config.enable_progress_bar,
+                precision=self.config.precision,
             )
             trainer.logger = self.wb_logger
             trainer.tune(self.pl_model, datamodule=self.datamodule)
@@ -83,6 +84,7 @@ class BaseTrainer:
                 accelerator="auto",
                 default_root_dir=self.wb_logger.save_dir,
                 enable_progress_bar=self.config.enable_progress_bar,
+                precision=self.config.precision,
             )
             trainer.logger = self.wb_logger
             trainer.tune(self.pl_model, datamodule=self.datamodule)

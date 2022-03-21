@@ -31,6 +31,7 @@ class Hparams:
     max_epochs: int = 100  # maximum number of epochs
     weights_path: str = osp.join(os.getcwd(), "weights")
     enable_progress_bar: bool = True
+    precision: int = 16
 
     # modes
     tune_lr: bool = False
