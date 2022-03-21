@@ -85,7 +85,7 @@ class DatasetParams:
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 49
+    nb_samples: int = 36
 
     resized_img: int = 1024
     discounted_draw: bool = False

@@ -166,6 +166,23 @@ class ConcatTopPatchDataset(BaseDataset):
                 for np_img in np_array[self.images_to_pick[image_id]]
             ]
         )
+
+        if len(self.images_to_pick[image_id]) != self.params.nb_samples:
+            diff = self.params.nb_samples - len(self.images_to_pick[image_id])
+            diff_tensor = torch.ones_like(
+                torch.randn(
+                    diff,
+                    output_tensor.shape[1],
+                    output_tensor.shape[2],
+                    output_tensor.shape[3],
+                )
+            )
+            output_tensor = torch.cat([output_tensor, diff_tensor], axis=0)
+            output_tensor = output_tensor[
+                torch.randperm(self.params.nb_samples)
+            ]  # shuffle
+
+
         output_tensor = rearrange(
             output_tensor,
             "(n1 n2) c h w -> c (n1 h) (n2 w)",
