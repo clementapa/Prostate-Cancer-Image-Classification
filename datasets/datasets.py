@@ -185,7 +185,7 @@ class ConcatTopPatchDataset(BaseDataset):
             ]
         )
 
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.images_to_pick = {}
 
