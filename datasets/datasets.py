@@ -182,7 +182,6 @@ class ConcatTopPatchDataset(BaseDataset):
                 torch.randperm(self.params.nb_samples)
             ]  # shuffle
 
-
         output_tensor = rearrange(
             output_tensor,
             "(n1 n2) c h w -> c (n1 h) (n2 w)",
