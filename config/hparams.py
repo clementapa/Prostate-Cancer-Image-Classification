@@ -39,7 +39,7 @@ class Hparams:
     train: bool = True
 
     # for inference and test
-    best_model: str = "honest-night-870"
+    best_model: str = "vocal-forest-876"
     top: int = 1
 
     # Segmentation, Classification & Classif_WITH_Seg
