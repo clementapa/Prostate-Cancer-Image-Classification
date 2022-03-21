@@ -121,7 +121,7 @@ class NetworkClassificationParams:
 
 @dataclass
 class NetworkClassif_WITH_SegParams:
-    feature_extractor_name: str = "resnet34"
+    feature_extractor_name: str = "resnet152"
     network_name: str = "SimpleModel"
 
     # classifier_name: str = "Multiple Linear"
