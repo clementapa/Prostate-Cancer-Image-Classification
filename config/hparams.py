@@ -79,7 +79,7 @@ class DatasetParams:
     recreate_patches: bool = False
 
     # Patches params
-    patch_size: int = 192
+    patch_size: int = 256
     percentage_blank: float = 0.5  # max percentage
     level: int = 1
 
@@ -115,7 +115,7 @@ class CallbacksParams:
 
 @dataclass
 class NetworkClassificationParams:
-    feature_extractor_name: str = "tresnet_xl_448"
+    feature_extractor_name: str = "resnetv2_152x4_bitm_in21k"
     network_name: str = "SimpleModel"
 
 
