@@ -145,7 +145,6 @@ class ConcatTopPatchDataset(BaseDataset):
 
         # load seg_model
         self.seg_model = au.get_seg_model(params)
-
         self.select_top_patches()
 
     def __getitem__(self, idx):

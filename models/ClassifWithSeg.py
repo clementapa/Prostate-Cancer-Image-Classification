@@ -239,6 +239,9 @@ class SimpleModel(nn.Module):
 
         # self.classifier = nn.Linear(self.feature_size*self.params.nb_samples, 6)
         self.classifier = nn.Linear(self.feature_size, 6)
+        self.seg_model = get_seg_model(params)
+        for param in self.seg_model.parameters():
+            param.requires_grad = False
 
     def forward(self, x):
         features = self.features_extractor(x)

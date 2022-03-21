@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 from pytorch_lightning import LightningModule
-from utils.agent_utils import import_class
+from utils.agent_utils import import_class, get_seg_model
 
 from models.Segmentation import Segmentation
 import models.Classification as Classification
@@ -33,6 +33,7 @@ class BaseModule(LightningModule):
             self.model = getattr(ClassifWithSeg, network_param.network_name)(
                 network_param
             )
+            
 
     def forward(self, x):
         output = self.model(x)
