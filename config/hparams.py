@@ -115,7 +115,7 @@ class CallbacksParams:
 
 @dataclass
 class NetworkClassificationParams:
-    feature_extractor_name: str = "resnet32"
+    feature_extractor_name: str = "resnet34"
     network_name: str = "SimpleModel"
 
 
