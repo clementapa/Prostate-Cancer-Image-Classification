@@ -185,6 +185,8 @@ class ConcatTopPatchDataset(BaseDataset):
             ]
         )
 
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
         self.images_to_pick = {}
 
         for image_id in tqdm(self.X):
@@ -196,7 +198,7 @@ class ConcatTopPatchDataset(BaseDataset):
                     for np_img in np_array
                 ]
             )
-            seg_masks = self.seg_model(output_tensor).argmax(dim=1)
+            seg_masks = self.seg_model(output_tensor.to(device)).argmax(dim=1)
             seg_scores = seg_max_to_score(seg_masks, self.params.patch_size)
 
             top_k = torch.topk(seg_scores[:, -1], min(self.params.nb_samples, output_tensor.shape[0])).indices
