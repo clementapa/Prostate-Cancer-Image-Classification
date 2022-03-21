@@ -33,7 +33,6 @@ class BaseModule(LightningModule):
             self.model = getattr(ClassifWithSeg, network_param.network_name)(
                 network_param
             )
-            
 
     def forward(self, x):
         output = self.model(x)
