@@ -106,6 +106,7 @@ class BaseTrainer:
         trainer.logger = self.wb_logger
         trainer.fit(self.pl_model, datamodule=self.datamodule)
 
+    @torch.no_grad()
     def predict(self):
 
         if self.data_param.dataset_static:
