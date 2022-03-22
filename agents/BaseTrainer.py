@@ -143,14 +143,14 @@ class BaseTrainer:
                 raw_predictions = torch.cat(raw_predictions, axis=0)
                 y_pred = raw_predictions.detach().cpu().numpy()
                 predictions.append(y_pred)
-                
+
             predictions = np.array(predictions)
             majority_labels = []
             for i in range(predictions.shape[1]):
                 c = Counter(predictions[:, i].tolist())
                 voted_label = c.most_common()[0]
                 majority_labels.append(voted_label[0])
-            
+
             ids = self.datamodule.dataset.df["image_id"].values
 
             output_df = pd.DataFrame({"Id": {}, "Predicted": {}})
