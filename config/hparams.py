@@ -3,7 +3,7 @@ import random
 from dataclasses import dataclass
 from math import sqrt
 from os import path as osp
-from typing import Any, ClassVar, Dict, List, Optional
+from typing import Any, ClassVar, Dict, List, Optional, Tuple
 
 import pytorch_lightning as pl
 import simple_parsing
@@ -27,7 +27,7 @@ class Hparams:
 
     # basic params
     seed_everything: Optional[int] = None  # seed for the whole run
-    gpu: int = 0  # number or gpu
+    gpu: int = 1  # number or gpu
     max_epochs: int = 100  # maximum number of epochs
     weights_path: str = osp.join(os.getcwd(), "weights")
     enable_progress_bar: bool = True
@@ -37,14 +37,17 @@ class Hparams:
     tune_lr: bool = False
     tune_batch_size: bool = False
     dev_run: bool = False
-    train: bool = True
+    train: bool = False
 
     # for inference and test
-    best_model: str = "vocal-forest-876"
+    best_model: str = "dutiful-paper-872"
     top: int = 1
 
     # Segmentation, Classification & Classif_WITH_Seg
     MODE: str = "Classification"
+
+    # Only for test: add voting
+    voting: Tuple[bool, int] = (True, 2)
 
 
 @dataclass
@@ -116,7 +119,7 @@ class CallbacksParams:
 
 @dataclass
 class NetworkClassificationParams:
-    feature_extractor_name: str = "resnetv2_152x4_bitm_in21k"
+    feature_extractor_name: str = "resnet34"
     network_name: str = "SimpleModel"
 
 

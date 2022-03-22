@@ -5,6 +5,9 @@ import pandas as pd
 import os.path as osp
 import zipfile
 
+from collections import Counter
+import numpy as np
+
 from models.BaseModule import BaseModule
 from pytorch_lightning.callbacks import (
     LearningRateMonitor,
@@ -112,23 +115,55 @@ class BaseTrainer:
         best_path = f"attributes_classification_celeba/{self.config.wandb_project}/{self.config.best_model}:top-{self.config.top}"
         best_model = get_artifact(best_path, type="model")
 
-        raw_predictions = trainer.predict(
-            self.pl_model, self.datamodule, ckpt_path=best_model
-        )
-        raw_predictions = torch.cat(raw_predictions, axis=0)
-        y_pred = raw_predictions.detach().cpu().numpy()
-        ids = self.datamodule.dataset.df["image_id"].values
+        enable_voting, nb_iter = self.config.voting
+        if not enable_voting:
+            raw_predictions = trainer.predict(
+                self.pl_model, self.datamodule, ckpt_path=best_model
+            )
+            raw_predictions = torch.cat(raw_predictions, axis=0)
+            y_pred = raw_predictions.detach().cpu().numpy()
+            ids = self.datamodule.dataset.df["image_id"].values
 
-        output_df = pd.DataFrame({"Id": {}, "Predicted": {}})
-        output_df["Id"] = ids
-        output_df["Predicted"] = y_pred
+            output_df = pd.DataFrame({"Id": {}, "Predicted": {}})
+            output_df["Id"] = ids
+            output_df["Predicted"] = y_pred
 
-        create_dir("submissions")
+            create_dir("submissions")
 
-        output_df.to_csv(
-            f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv",
-            index=False,
-        )
+            output_df.to_csv(
+                f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv",
+                index=False,
+            )
+        else:
+            predictions = []
+            for _ in range(nb_iter):
+                raw_predictions = trainer.predict(
+                    self.pl_model, self.datamodule, ckpt_path=best_model
+                )
+                raw_predictions = torch.cat(raw_predictions, axis=0)
+                y_pred = raw_predictions.detach().cpu().numpy()
+                predictions.append(y_pred)
+                
+            predictions = np.array(predictions)
+            majority_labels = []
+            for i in range(predictions.shape[1]):
+                c = Counter(predictions[:, i].tolist())
+                voted_label = c.most_common()[0]
+                majority_labels.append(voted_label[0])
+            
+            ids = self.datamodule.dataset.df["image_id"].values
+
+            output_df = pd.DataFrame({"Id": {}, "Predicted": {}})
+            output_df["Id"] = ids
+            output_df["Predicted"] = np.array(majority_labels)
+
+            create_dir("submissions")
+
+            output_df.to_csv(
+                f"submissions/{self.config.best_model}{'-debug'*self.config.debug}.csv",
+                index=False,
+            )
+            # https://stackoverflow.com/questions/20038011/trying-to-find-majority-element-in-a-list
 
     # def load_artifact(self, network_param, data_param):
     #     return
