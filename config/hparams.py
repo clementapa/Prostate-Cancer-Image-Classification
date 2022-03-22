@@ -31,7 +31,7 @@ class Hparams:
     max_epochs: int = 100  # maximum number of epochs
     weights_path: str = osp.join(os.getcwd(), "weights")
     enable_progress_bar: bool = True
-    precision: int = 16
+    precision: int = 16 # floating point precision, default is 16
 
     # modes
     tune_lr: bool = False
@@ -119,7 +119,7 @@ class CallbacksParams:
 
 @dataclass
 class NetworkClassificationParams:
-    feature_extractor_name: str = "resnet34"
+    feature_extractor_name: str = "tresnet_xl_448"
     network_name: str = "SimpleModel"
 
 
