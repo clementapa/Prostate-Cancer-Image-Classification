@@ -47,7 +47,7 @@ class Hparams:
     MODE: str = "Classification"
 
     # Only for test: add voting
-    voting: Tuple[bool, int] = (True, 15)
+    voting: Tuple[bool, int] = (False, 15)
 
 
 @dataclass
