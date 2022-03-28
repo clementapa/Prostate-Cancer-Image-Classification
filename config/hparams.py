@@ -40,7 +40,7 @@ class Hparams:
     train: bool = False
 
     # for inference and test
-    best_model: str = "denim-terrain-844"
+    best_model: str = "comfy-lake-907"
     top: int = 1
 
     # Segmentation, Classification & Classif_WITH_Seg
