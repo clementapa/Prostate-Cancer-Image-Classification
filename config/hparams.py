@@ -40,14 +40,14 @@ class Hparams:
     train: bool = False
 
     # for inference and test
-    best_model: str = "comfy-lake-907"
+    best_model: str = "rich-jazz-915"
     top: int = 1
 
     # Segmentation, Classification & Classif_WITH_Seg
     MODE: str = "Classification"
 
     # Only for test: add voting
-    voting: Tuple[bool, int] = (False, 15)
+    voting: Tuple[bool, int] = (True, 15)
 
 
 @dataclass
