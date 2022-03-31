@@ -178,7 +178,7 @@ network_name: ```DeepLabV3Plus```\
 feature_extractor_name: ```resnet152```
 
 ```
-python main.py --train True --MODE Segmentation --dataset_name PatchSegDataset --dataset_static False --max_epochs 150 --batch_size 4 --accumulate_grad_batches 16 --nb_samples 4 --patch_size 256 --percentage_blank 0.5 --level 1 --seed_everything 4882
+python main.py --train True --MODE Segmentation --dataset_name PatchSegDataset --dataset_static False --max_epochs 150 --batch_size 4 --accumulate_grad_batches 16 --nb_samples 4 --patch_size 384 --percentage_blank 0.5 --level 1 --seed_everything 4882
 ```
 <p align="center">
 
