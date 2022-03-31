@@ -39,8 +39,48 @@ Models for:
 
 Check dataset in [```datasets.py```](https://github.com/clementapa/Prostate-Cancer-Image-Classification/tree/main/datasets/datasets.py) 
 
+Feature extractor from [timm library](https://rwightman.github.io/pytorch-image-models/). 
 
-## :star: Best model (Submission)
+## :star: Best model with segmentation (Final Submission selected)
+
+Name method: ```Concatenate top patches``` 
+
+MODE: ```Classif_WITH_Seg```\
+dataset_name: ```ConcatTopPatchDataset```\
+feature_extractor_name: ```tresnet_xl_448```\
+network_name: ```SimpleModel```
+
+Command line to train the model:
+```
+python main.py --train True --MODE Classif_WITH_Seg --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 8 --discounted_draw False --percentage_blank 0.5 --resized_img 512
+```
+
+Command line to create submission csv file:
+```
+python main.py --train False --MODE Classif_WITH_Seg --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --discounted_draw False --best_model denim-terrain-844
+```
+```denim-terrain-844``` is the name of the wandb run with weights of the model. (Name change if you train your model yourself)
+
+<p align="center">
+
+| Model| Backbone |Area Under ROC (weighted) validation | Area Under ROC (macro) test (private leaderboard) | Run  |
+|---|---|---|---|---|
+| SimpleModel | [tresnet_xl_448](https://rwightman.github.io/pytorch-image-models/models/tresnet/) | 0.8126 | 0.8833 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/nm7y1p0l?workspace=user-clementapa) |
+</p>
+
+
+ <p align="center">
+     <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_train_predictions_seg_1756_0" width="50%" height="50%" alt="wsi"/>
+
+</p>
+<p align="center">
+<em> Top patches concatenated from a wsi images. Prediction: 4, Label: 4.  </em>
+</p>
+
+
+## :star: Best model without segmentation (Submission)
+
+Name method: ```Concatenate random patches``` 
 
 MODE: ```Classification```\
 dataset_name: ```ConcatPatchDataset```\
@@ -61,12 +101,11 @@ python main.py --train False --MODE Classification --feature_extractor_name tres
 
 <p align="center">
 
-| Model| Backbone |Area Under ROC (weighted) validation | Area Under ROC (macro) test (private leaderboard) | Run  |
-|---|---|---|---|---|
-| SimpleModel | [tresnet_xl_448](https://rwightman.github.io/pytorch-image-models/models/tresnet/) | 0.80 | 0.92647 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/2cbesog0?workspace=user-clementapa) |
+| Model| Backbone |Area Under ROC (weighted) validation | Area Under ROC (macro) test (private leaderboard) without voting| with voting | Run  |
+|---|---|---|---|---|---|
+| SimpleModel | [tresnet_xl_448](https://rwightman.github.io/pytorch-image-models/models/tresnet/) | 0.80 | [0.8774, 0.92647] | 0.8641 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/2cbesog0?workspace=user-clementapa) |
 </p>
 
-Feature extractor from [timm library](https://rwightman.github.io/pytorch-image-models/). 
 
  <p align="center">
      <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_val_predictions_902_0.png" width="25%" height="25%" alt="wsi"/>
@@ -135,53 +174,3 @@ We merged in 3 classes to have the same number as karolinska:
     <img src="https://i.ibb.co/dc1XdhT/Segmentation-Models-V2-Side-1-1.png" width="50%" height="50%" alt="logo"/>
     </a>
 </p>
-
-
-#########################################################################################
-- [x] Set-up template code
-- [x] Understand how to load the dataset
-- [x] create dataset
-- [x] model baseline ? ViT ? timm library https://github.com/rwightman/pytorch-image-models
-- [x] metrics for classification + metrics for the competition (Area Under ROC metric) (all with torchmetrics)
-- [x] implement the prediction function for submissions
-- [x] analyse the dataset for split (individual etc...)
-- [x] data augmentations for medical imaging ?
-- [ ] set-up clean conda environment
-- [x] create wandb team 
-
-- [x] let's experiments :
-    - different split (may be the best thing to achieve good results on the test)
-    - various architectures 
-    - tune hyper-parameters
-
-## Interesting articles:
-- https://openreview.net/pdf?id=Hk2YYqssf
-- https://www.nature.com/articles/s41586-021-03922-4
-
-## Data statistics:
-
-```
-labels  counts
-0      85
-1      85
-2      37
-3      45
-4      42
-5      46
-```
-Need to apply data augmentation
-
-## TODO:
-- [x] merge code usefull of all branches
-- [x] two mode to pick patches:
-    - [x] before training (create if not exists)
-    - [x] pick random patch with openslide open
-- [x]  Deal with the dataset (split train/val)
-    - equal repartition of data provider in the validation (train_test_split sklearn attribut stratify)
-    - equal reparition of classes in the validation (train_test_split sklearn attribut stratify)
-- [x] Segmentation
-    - [x] possibility to chose data provider (radboud(6), karolinska (3) and all(3, merge radboud))
-- [ ] Ressayer les techniques de ML en utilisant le modèle de segmentation (https://www.nature.com/articles/s41746-019-0112-2.pdf)
-- [x] combiner concat patches (donne une mosaique de patch) -> segmentation -> segmentation + features pour classifier
-
-Bien faire attention à la taille des patchs qu'on prends et le level count quand on ouvre le tiff
