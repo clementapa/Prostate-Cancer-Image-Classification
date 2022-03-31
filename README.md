@@ -170,7 +170,7 @@ We merged in 3 classes to have the same number as karolinska:
 - Red: benign tissue 
 - Green: Cancerous tissue
 
-### Best Segmentation Model
+### :star: Best Segmentation Model
 
 MODE: ```Segmentation```\
 dataset_name: ```PatchSegDataset```
