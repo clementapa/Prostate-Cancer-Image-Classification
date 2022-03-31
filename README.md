@@ -57,7 +57,7 @@ python main.py --train True --MODE Classif_WITH_Seg --feature_extractor_name tre
 
 Command line to create submission csv file:
 ```
-python main.py --train False --MODE Classif_WITH_Seg --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --discounted_draw False --best_model denim-terrain-844
+python main.py --train False --MODE Classif_WITH_Seg --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --discounted_draw False --percentage_blank 0.5 --resized_img 512 --best_model denim-terrain-844
 ```
 ```denim-terrain-844``` is the name of the wandb run with weights of the model. (Name change if you train your model yourself)
 
@@ -70,7 +70,7 @@ python main.py --train False --MODE Classif_WITH_Seg --feature_extractor_name tr
 
 
  <p align="center">
-     <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_train_predictions_seg_1756_0" width="50%" height="50%" alt="wsi"/>
+     <img src="https://github.com/clementapa/Prostate-Cancer-Image-Classification/blob/main/assets/readme_img/media_images_train_predictions_seg_1756_0.png" width="50%" height="50%" alt="wsi"/>
 
 </p>
 <p align="center">

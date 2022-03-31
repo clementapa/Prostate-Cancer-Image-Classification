@@ -44,7 +44,7 @@ class Hparams:
     top: int = 1
 
     # Segmentation, Classification & Classif_WITH_Seg
-    MODE: str = "Classification"
+    MODE: str = "Classif_WITH_Seg"
 
     # Only for test: add voting
     voting: Tuple[bool, int] = (False, 15)
@@ -60,7 +60,7 @@ class OptimizerParams:
     min_lr: float = 5e-9  # min lr reached at the end of the cosine schedule
     weight_decay: float = 0.0
 
-    accumulate_grad_batches: int = 1
+    accumulate_grad_batches: int = 8
 
     # Scheduler
     scheduler: bool = True
@@ -74,7 +74,7 @@ class OptimizerParams:
 class DatasetParams:
     """Dataset Parameters"""
 
-    dataset_name: str = "ConcatPatchDataset"  # dataset, use <Dataset>Eval for FT
+    dataset_name: str = "ConcatTopPatchDataset"  # dataset, use <Dataset>Eval for FT
     root_dataset: str = osp.join(os.getcwd(), "assets", "mvadlmi")
     path_patches: str = osp.join(os.getcwd(), "assets", "dataset_patches")
 
@@ -89,9 +89,9 @@ class DatasetParams:
 
     # dataset params
     split_val: float = 0.1
-    nb_samples: int = 36
+    nb_samples: int = 16
 
-    resized_img: int = 1024
+    resized_img: int = 512
     discounted_draw: bool = False
 
     # dataloader
@@ -127,12 +127,6 @@ class NetworkClassificationParams:
 class NetworkClassif_WITH_SegParams:
     feature_extractor_name: str = "tresnet_xl_448"
     network_name: str = "SimpleModel"
-
-    # classifier_name: str = "Multiple Linear"
-    # # MLP parameters
-    # dropout: float = 0.0
-    # normalization: str = "BatchNorm1d"
-    # activation: str = "ReLU"
 
     # Seg Model param
     wb_run_seg: str = "drawn-dream-632"
