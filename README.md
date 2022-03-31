@@ -173,8 +173,8 @@ We merged in 3 classes to have the same number as karolinska:
 ### :star: Best Segmentation Model
 
 MODE: ```Segmentation```\
-dataset_name: ```PatchSegDataset```
-network_name: ```DeepLabV3Plus```
+dataset_name: ```PatchSegDataset```\
+network_name: ```DeepLabV3Plus```\
 feature_extractor_name: ```resnet152```
 
 ```
