@@ -170,12 +170,6 @@ We merged in 3 classes to have the same number as karolinska:
 - Red: benign tissue 
 - Green: Cancerous tissue
 
- <p align="center">
-    <a href="https://smp.readthedocs.io/en/latest/">
-    <img src="https://i.ibb.co/dc1XdhT/Segmentation-Models-V2-Side-1-1.png" width="50%" height="50%" alt="logo"/>
-    </a>
-</p>
-
 ### Best Segmentation Model
 
 MODE: ```Segmentation```\
@@ -184,3 +178,15 @@ dataset_name: ```PatchSegDataset```
 ```
 python main.py --train True --MODE Segmentation --dataset_name PatchSegDataset --dataset_static False --max_epochs 150 --batch_size 4 --accumulate_grad_batches 16 --nb_samples 4 --patch_size 256 --percentage_blank 0.5 --level 1 --seed_everything 4882
 ```
+<p align="center">
+
+| Model| Backbone | Data Provider | mIoU validation | Run  |
+|---|---|---|---|---|
+| [DeepLabV3Plus](https://smp.readthedocs.io/en/latest/models.html#id9) | resnet152 | Both | 0.7858 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/w1qry9c1?workspace=user-clementapa) |
+</p>
+
+ <p align="center">
+    <a href="https://smp.readthedocs.io/en/latest/">
+    <img src="https://i.ibb.co/dc1XdhT/Segmentation-Models-V2-Side-1-1.png" width="50%" height="50%" alt="logo"/>
+    </a>
+</p>
