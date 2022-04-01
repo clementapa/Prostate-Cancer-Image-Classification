@@ -58,7 +58,7 @@ python main.py --train True --MODE Classif_WITH_Seg --feature_extractor_name tre
 
 Command line to create submission csv file:
 ```
-python main.py --root_dataset [PATH TO THE DATASET] --train False --MODE Classif_WITH_Seg --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --discounted_draw False --percentage_blank 0.5 --resized_img 512 --best_model rich-jazz-915
+python main.py --train False --MODE Classif_WITH_Seg --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --discounted_draw False --percentage_blank 0.5 --resized_img 512 --best_model rich-jazz-915
 ```
 ```rich-jazz-915``` is the name of the wandb run with weights of the model. (Name change if you train your model yourself)
 
