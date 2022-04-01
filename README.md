@@ -52,7 +52,7 @@ network_name: ```SimpleModel```
 
 Command line to train the model:
 ```
-python main.py --train True --MODE Classif_WITH_Seg --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 8 --discounted_draw False --percentage_blank 0.5 --resized_img 512 --wb_run_seg drawn-dream-632 --seed_everything 6836
+python main.py --train True --MODE Classif_WITH_Seg --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 8 --discounted_draw False --percentage_blank 0.5 --resized_img 512 --seed_everything 6836
 ```
 ```drawn-dream-632``` is the name of the wandb run of the segmentation model trained with our framework (mode ```Segmentation```)
 
