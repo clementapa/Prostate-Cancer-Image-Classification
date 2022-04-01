@@ -104,7 +104,7 @@ python main.py --train False --MODE Classification --dataset_name ConcatPatchDat
 
 | Model| Backbone |Area Under ROC (weighted) validation | Area Under ROC (macro) test (private leaderboard) without voting| with voting | Run  |
 |---|---|---|---|---|---|
-| SimpleModel | [tresnet_xl_448](https://rwightman.github.io/pytorch-image-models/models/tresnet/) | 0.80 | [0.8774, 0.92647] | 0.8641 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/2cbesog0?workspace=user-clementapa) |
+| SimpleModel | [tresnet_xl_448](https://rwightman.github.io/pytorch-image-models/models/tresnet/) | 0.8034 | [0.8774, 0.92647] | 0.8641 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/2cbesog0?workspace=user-clementapa) |
 </p>
 
 
@@ -125,7 +125,7 @@ dataset_name: ```PatchSegDataset```
 
 | Model| Backbone | Data provider| Patch Size | Level | IoU (average over classes) validation | Run  |
 |---|---|---|---|---|---|---|
-| [DeepLabV3Plus](https://smp.readthedocs.io/en/latest/models.html#id9) | resnet152 | All | 384 | 1 | 0.79 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/w1qry9c1?workspace=user-clementapa) |
+| [DeepLabV3Plus](https://smp.readthedocs.io/en/latest/models.html#id9) | resnet152 | All | 384 | 1 | 0.7858 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/test-dlmi/runs/w1qry9c1?workspace=user-clementapa) |
 | [DeepLabV3Plus](https://smp.readthedocs.io/en/latest/models.html#id9) | resnet34 | Radboud | 512 | 0 | 0.7029 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/dlmi/runs/3mmxo0az?workspace=user-clementapa) |
 | [DeepLabV3Plus](https://smp.readthedocs.io/en/latest/models.html#id9) | resnet34 | Karolinska | 512 | 0 | 0.5958 | [![](https://github.com/wandb/assets/blob/main/wandb-github-badge-gradient.svg)](https://wandb.ai/attributes_classification_celeba/dlmi/runs/egp1owm6?workspace=user-clementapa) |
 </p>
