@@ -41,7 +41,7 @@ Check dataset in [```datasets.py```](https://github.com/clementapa/Prostate-Canc
 
 Feature extractor from [timm library](https://rwightman.github.io/pytorch-image-models/). 
 
-## :star: Best model with segmentation (Final Submission selected)
+## :star: Best model with segmentation (Final Submission)
 
 Name method: ```Concatenate top patches``` 
 
@@ -52,13 +52,13 @@ network_name: ```SimpleModel```
 
 Command line to train the model:
 ```
-python main.py --train True --MODE Classif_WITH_Seg --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 8 --discounted_draw False --percentage_blank 0.5 --resized_img 512 --wb_run_seg drawn-dream-632 --seed_everything 6836
+python main.py --train True --MODE Classif_WITH_Seg --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 8 --discounted_draw False --percentage_blank 0.5 --resized_img 512 --seed_everything 6836
 ```
 ```drawn-dream-632``` is the name of the wandb run of the segmentation model trained with our framework (mode ```Segmentation```)
 
 Command line to create submission csv file:
 ```
-python main.py --train False --MODE Classif_WITH_Seg --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --discounted_draw False --percentage_blank 0.5 --resized_img 512 --best_model rich-jazz-915
+python main.py --train False --MODE Classif_WITH_Seg --dataset_name ConcatTopPatchDataset --patch_size 256 --nb_samples 16 --discounted_draw False --percentage_blank 0.5 --resized_img 512 --best_model rich-jazz-915
 ```
 ```rich-jazz-915``` is the name of the wandb run with weights of the model. (Name change if you train your model yourself)
 
@@ -91,12 +91,12 @@ network_name: ```SimpleModel```
 
 Command line to train the model:
 ```
-python main.py --train True --MODE Classification --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatPatchDataset --patch_size 256 --nb_samples 36 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 16 --discounted_draw True --seed_everything 6130
+python main.py --train True --MODE Classification --dataset_name ConcatPatchDataset --patch_size 256 --nb_samples 36 --max_epochs 150 --batch_size 2 --accumulate_grad_batches 16 --discounted_draw True --seed_everything 6130
 ```
 
 Command line to create submission csv file:
 ```
-python main.py --train False --MODE Classification --feature_extractor_name tresnet_xl_448 --network_name SimpleModel --dataset_name ConcatPatchDataset --patch_size 256 --nb_samples 36 --discounted_draw True --best_model denim-terrain-844
+python main.py --train False --MODE Classification --dataset_name ConcatPatchDataset --patch_size 256 --nb_samples 36 --discounted_draw True --best_model denim-terrain-844
 ```
 ```denim-terrain-844``` is the name of the wandb run with weights of the model. (Name change if you train your model yourself)
 
