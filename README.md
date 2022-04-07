@@ -24,7 +24,7 @@ Classes: [0, 1, 2, 3, 4, 5]
 
 ## :hammer: Getting started
 
-Dowload the dataset and put it in the [```assets```](https://github.com/clementapa/Prostate-Cancer-Image-Classification/tree/main/assets/) folder. 
+Download the dataset and extract it in the [```assets```](https://github.com/clementapa/Prostate-Cancer-Image-Classification/tree/main/assets/) folder. 
 
 Chose the mode that you want:
 - ```Classification```: Classify isup grade of images
